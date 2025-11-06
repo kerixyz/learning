@@ -1,8 +1,21 @@
-# LLM & Transformers Learning Page
+# LLM & Transformers Learning Guide
 
-An interactive educational web page to learn about Large Language Models, Generative AI, and Transformer architectures.
+A professional, interactive documentation-style website to learn about Large Language Models, Generative AI, and Transformer architectures.
+
+Built with a clean, modern interface featuring sidebar navigation and smooth page transitions for an optimal learning experience.
 
 ## Features
+
+### Documentation-Style Interface
+
+- **Left Sidebar Navigation** - Organized chapters with instant navigation
+- **Smooth Page Transitions** - Fade animations between sections
+- **Progress Tracking** - Visual indicator showing completion percentage
+- **Breadcrumb Navigation** - Always know where you are
+- **Previous/Next Buttons** - Easy chapter-by-chapter progression
+- **Keyboard Navigation** - Use arrow keys to navigate between pages
+- **Mobile Responsive** - Hamburger menu for mobile devices
+- **Professional Design** - Clean, modern docs aesthetic inspired by GitBook/VuePress
 
 ### Interactive Learning Sections
 
