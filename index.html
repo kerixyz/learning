@@ -3208,57 +3208,492 @@ def apply_lora_to_model(model, rank=16, target_modules=['q_proj', 'v_proj']):
                 <!-- Essential Concepts Page -->
                 <div class="page-section" id="page-concepts">
                     <h1 class="page-title">Essential Concepts</h1>
-                    <p class="page-description">Key concepts you need to understand about LLMs</p>
+                    <p class="page-description">Deep dive into tokens, embeddings, sampling, and more</p>
 
                     <div class="content-card">
                         <h2>Tokens & Tokenization</h2>
-                        <p><strong>Tokens</strong> are the basic units that LLMs process. A token can be a word, part of a word, or even a character. Understanding tokenization is crucial for working with LLMs.</p>
+                        <p><strong>Tokens</strong> are the atomic units that LLMs process. Modern LLMs don't operate on characters or words directly - they use subword tokenization to balance vocabulary size and coverage.</p>
 
-                        <div class="interactive-section">
-                            <p>Example: "Understanding" might be split into ["Under", "stand", "ing"]</p>
-                            <button onclick="tokenizeText()">Tokenize Your Own Text</button>
-                            <input type="text" id="tokenInput" placeholder="Enter text here...">
-                            <div id="tokenOutput" style="margin-top: 15px; font-weight: 500;"></div>
+                        <h3>Why Subword Tokenization?</h3>
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #000;">
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Character-level:</strong> Tiny vocabulary (~256), but very long sequences → expensive</li>
+                                <li><strong>Word-level:</strong> Huge vocabulary (millions), can't handle unseen words (OOV problem)</li>
+                                <li><strong>Subword-level:</strong> Balanced! ~50K vocab, handles rare words via subword splitting</li>
+                            </ul>
                         </div>
 
-                        <h3>Embeddings</h3>
-                        <p>Words are converted into numerical vectors (embeddings) that capture their meaning. Similar words have similar vectors in this high-dimensional space.</p>
-                        <div class="info-box success">
-                            <p><strong>Famous Example:</strong> "king" - "man" + "woman" ≈ "queen"</p>
-                            <p style="margin-top: 10px;">This shows how embeddings capture semantic relationships!</p>
+                        <h3>Byte Pair Encoding (BPE)</h3>
+                        <p>The most common tokenization algorithm used by GPT, LLaMA, and most modern LLMs.</p>
+
+                        <div class="code-example">
+# BPE Algorithm (simplified)
+def train_bpe(corpus, num_merges=10000):
+    """
+    Train BPE tokenizer on corpus
+
+    Args:
+        corpus: List of words
+        num_merges: Number of merge operations (vocabulary size control)
+
+    Returns:
+        merge_rules: List of (pair, merged_token) rules
+    """
+    # Start with character-level vocabulary
+    vocab = {word: freq for word, freq in count_words(corpus).items()}
+
+    merge_rules = []
+
+    for i in range(num_merges):
+        # Find most frequent adjacent pair
+        pairs = count_pairs(vocab)
+        if not pairs:
+            break
+
+        best_pair = max(pairs, key=pairs.get)
+
+        # Merge the pair
+        vocab = merge_vocab(vocab, best_pair)
+        merge_rules.append(best_pair)
+
+        print(f"Merge {i}: {best_pair[0]} + {best_pair[1]} → {best_pair[0]}{best_pair[1]}")
+
+    return merge_rules
+
+# Example tokenization:
+# "understanding" with BPE:
+# 1. Start: ['u', 'n', 'd', 'e', 'r', 's', 't', 'a', 'n', 'd', 'i', 'n', 'g']
+# 2. After merges: ['under', 'stand', 'ing']
+
+# "unexpected" (less common):
+# 1. Start: ['u', 'n', 'e', 'x', 'p', 'e', 'c', 't', 'e', 'd']
+# 2. After merges: ['un', 'exp', 'ect', 'ed']  # More fragmented
                         </div>
 
-                        <h3>Context Window</h3>
-                        <p>The maximum amount of text the model can consider at once. This is a hard limit that affects what the model can "remember."</p>
-                        <div class="key-concepts">
-                            <div class="concept-card">
-                                <h3>GPT-3</h3>
-                                <p>4K tokens<br>~3,000 words</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>GPT-4</h3>
-                                <p>32K-128K tokens<br>~24K-96K words</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>Claude</h3>
-                                <p>200K tokens<br>~150K words</p>
+                        <h3>Tokenization Examples</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Text</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Tokens (GPT-2 BPE)</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Token Count</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">"Hello, world!"</td>
+                                <td style="padding: 12px; border: 1px solid #000;">["Hello", ",", " world", "!"]</td>
+                                <td style="padding: 12px; border: 1px solid #000;">4</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">"ChatGPT"</td>
+                                <td style="padding: 12px; border: 1px solid #000;">["Chat", "G", "PT"]</td>
+                                <td style="padding: 12px; border: 1px solid #000;">3</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">"antidisestablishmentarianism"</td>
+                                <td style="padding: 12px; border: 1px solid #000;">["ant", "idis", "establish", "ment", "arian", "ism"]</td>
+                                <td style="padding: 12px; border: 1px solid #000;">6</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">" strawberry" (with space)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">[" straw", "berry"]</td>
+                                <td style="padding: 12px; border: 1px solid #000;">2</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">"🤖🚀"</td>
+                                <td style="padding: 12px; border: 1px solid #000;">["�", "�", "�", "�", "�", "�", "�", "�"]</td>
+                                <td style="padding: 12px; border: 1px solid #000;">8 (UTF-8 bytes)</td>
+                            </tr>
+                        </table>
+
+                        <p style="margin-top: 15px;"><strong>Key insight:</strong> Spaces are part of tokens! " world" ≠ "world". This affects prompting and token counting.</p>
+
+                        <h3>Vocabulary Sizes</h3>
+                        <ul style="margin-left: 20px; line-height: 1.8; margin-top: 10px;">
+                            <li><strong>GPT-2:</strong> 50,257 tokens</li>
+                            <li><strong>GPT-3/GPT-4:</strong> ~50,000 tokens (cl100k_base)</li>
+                            <li><strong>LLaMA:</strong> 32,000 tokens (SentencePiece)</li>
+                            <li><strong>LLaMA-2:</strong> 32,000 tokens</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Embeddings: From Tokens to Vectors</h2>
+                        <p>Embeddings convert discrete tokens into continuous vector representations that capture semantic meaning.</p>
+
+                        <h3>Embedding Layer</h3>
+                        <div class="code-example">
+import torch
+import torch.nn as nn
+
+# Embedding layer: lookup table
+vocab_size = 50000
+embedding_dim = 768  # GPT-2 small
+
+embedding = nn.Embedding(vocab_size, embedding_dim)
+
+# Token IDs → vectors
+token_ids = torch.tensor([145, 892, 319])  # [cat, sat, on]
+embeddings = embedding(token_ids)  # [3, 768]
+
+# Each token is now a 768-dimensional vector
+print(embeddings.shape)  # torch.Size([3, 768])
+print(embeddings[0])  # Vector for "cat": [0.234, -0.512, 0.891, ...]
+                        </div>
+
+                        <h3>Embedding Properties</h3>
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h4>Semantic Similarity</h4>
+                            <p>Tokens with similar meanings have similar vectors (high cosine similarity).</p>
+                            <div class="code-example">
+import torch.nn.functional as F
+
+# Cosine similarity
+def cosine_sim(vec1, vec2):
+    return F.cosine_similarity(vec1, vec2, dim=0)
+
+# Example (learned embeddings):
+emb_king = embedding(torch.tensor([1234]))
+emb_queen = embedding(torch.tensor([5678]))
+emb_man = embedding(torch.tensor([789]))
+emb_car = embedding(torch.tensor([456]))
+
+sim_king_queen = cosine_sim(emb_king, emb_queen)  # High (~0.8)
+sim_king_car = cosine_sim(emb_king, emb_car)      # Low (~0.2)
                             </div>
                         </div>
 
-                        <h3>Temperature & Sampling</h3>
-                        <p><strong>Temperature</strong> controls randomness in text generation:</p>
-                        <ul>
-                            <li><strong>Low (0.1-0.5):</strong> More focused and deterministic - good for factual tasks</li>
-                            <li><strong>Medium (0.6-0.8):</strong> Balanced creativity and coherence</li>
-                            <li><strong>High (0.9-1.5):</strong> More creative and diverse - good for brainstorming</li>
+                        <h3>Famous Word Analogies</h3>
+                        <div class="code-example">
+# Vector arithmetic captures relationships!
+
+king - man + woman ≈ queen
+# vec("king") - vec("man") + vec("woman") ≈ vec("queen")
+
+paris - france + italy ≈ rome
+# Geographic relationships
+
+walked - walk + run ≈ ran
+# Grammatical transformations
+
+# This works because embeddings learn semantic structure!
+                        </div>
+
+                        <h3>Positional Embeddings</h3>
+                        <p>Since attention is permutation-invariant, we add positional information to embeddings.</p>
+
+                        <div class="code-example">
+# Learned positional embeddings (GPT-2, BERT)
+max_position = 1024
+pos_embedding = nn.Embedding(max_position, embedding_dim)
+
+# For input tokens at positions [0, 1, 2]
+positions = torch.arange(3)
+pos_embeds = pos_embedding(positions)  # [3, 768]
+
+# Combined embedding
+token_embeds = embedding(token_ids)     # [3, 768]
+final_embeds = token_embeds + pos_embeds  # [3, 768]
+
+# Now each token knows its position in the sequence!
+                        </div>
+
+                        <p style="margin-top: 15px;"><strong>Reference:</strong> "Attention Is All You Need" introduced sinusoidal positional encodings. Modern models (GPT, BERT) use learned positional embeddings. LLaMA uses RoPE (Rotary Position Embedding).</p>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Context Window: The Attention Bottleneck</h2>
+                        <p>The <strong>context window</strong> (or context length) is the maximum number of tokens the model can process at once. This is a hard architectural limit.</p>
+
+                        <h3>Why Context Matters</h3>
+                        <ul style="margin-left: 20px; line-height: 1.8;">
+                            <li><strong>Hard limit:</strong> Model can only "see" last N tokens</li>
+                            <li><strong>Affects memory:</strong> Can't reference information beyond context</li>
+                            <li><strong>Quadratic cost:</strong> O(n²) attention computation</li>
+                            <li><strong>Determines use cases:</strong> Short contexts → chat; Long contexts → document analysis</li>
                         </ul>
 
-                        <div class="code-example" style="margin-top: 20px;">
-# Temperature affects probability distribution
-probabilities = softmax(logits / temperature)
+                        <h3>Context Lengths of Modern LLMs</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Model</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Context Length</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">~Word Count</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">~Pages (250 words/page)</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-3</td>
+                                <td style="padding: 12px; border: 1px solid #000;">4,096 tokens</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~3,000 words</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~12 pages</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-4 (8K)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">8,192 tokens</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~6,000 words</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~24 pages</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-4 (32K)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">32,768 tokens</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~24,000 words</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~96 pages</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-4 Turbo</td>
+                                <td style="padding: 12px; border: 1px solid #000;">128,000 tokens</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~96,000 words</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~384 pages</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Claude 2</td>
+                                <td style="padding: 12px; border: 1px solid #000;">100,000 tokens</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~75,000 words</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~300 pages</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Claude 3</td>
+                                <td style="padding: 12px; border: 1px solid #000;">200,000 tokens</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~150,000 words</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~600 pages</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">LLaMA-2</td>
+                                <td style="padding: 12px; border: 1px solid #000;">4,096 tokens</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~3,000 words</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~12 pages</td>
+                            </tr>
+                        </table>
 
-# Low temperature: probabilities become more peaked
-# High temperature: probabilities become more uniform
+                        <h3>Context Window Trade-offs</h3>
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <p><strong>Larger context = more memory and compute</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Memory:</strong> Storing attention matrix: O(n²) memory</li>
+                                <li><strong>Compute:</strong> Computing attention: O(n²·d) FLOPs</li>
+                                <li><strong>Latency:</strong> Longer sequences → slower generation</li>
+                            </ul>
+                            <div class="code-example">
+# Example: GPT-4 128K context
+# If each attention score is 2 bytes (FP16):
+memory = (128_000)^2 * 2 bytes
+       = 32.8 GB just for attention scores!
+
+# This is why long context is expensive and requires
+# techniques like Flash Attention for efficiency
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Sampling & Decoding Strategies</h2>
+                        <p>How models generate text by sampling from probability distributions over tokens.</p>
+
+                        <h3>Temperature Scaling</h3>
+                        <p><strong>Temperature</strong> controls the randomness of predictions by scaling logits before softmax.</p>
+
+                        <div class="code-example">
+import torch
+import torch.nn.functional as F
+
+# Model outputs logits (unnormalized scores)
+logits = torch.tensor([2.0, 1.0, 0.1])  # Three possible next tokens
+
+# Apply temperature
+def sample_with_temperature(logits, temperature=1.0):
+    scaled_logits = logits / temperature
+    probs = F.softmax(scaled_logits, dim=-1)
+    return probs
+
+# Low temperature (T=0.5): More confident, peaked distribution
+probs_low = sample_with_temperature(logits, temperature=0.5)
+# [0.709, 0.259, 0.032]  ← First token dominates
+
+# Medium temperature (T=1.0): Balanced
+probs_medium = sample_with_temperature(logits, temperature=1.0)
+# [0.659, 0.242, 0.099]  ← Still peaked but less extreme
+
+# High temperature (T=2.0): More uniform, diverse
+probs_high = sample_with_temperature(logits, temperature=2.0)
+# [0.502, 0.307, 0.191]  ← More spread out
+
+# Very low (T=0.1): Nearly deterministic
+probs_very_low = sample_with_temperature(logits, temperature=0.1)
+# [0.998, 0.002, 0.000]  ← Almost always first token
+                        </div>
+
+                        <h3>Sampling Strategies Comparison</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Strategy</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">How It Works</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Use Cases</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>Greedy</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;">Always pick highest probability token</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Factual Q&A, translation (deterministic)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>Beam Search</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;">Keep top K sequences at each step</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Machine translation, summarization</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>Top-K Sampling</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;">Sample from top K most likely tokens</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Creative writing (K=40-100)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>Top-P (Nucleus)</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;">Sample from smallest set with cumulative prob ≥ P</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Most versatile (P=0.9-0.95)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>Temperature + Top-P</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;">Combine both for fine control</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Production systems (T=0.7, P=0.9)</td>
+                            </tr>
+                        </table>
+
+                        <h3>Top-K vs Top-P (Nucleus) Sampling</h3>
+                        <div class="code-example">
+def top_k_sampling(logits, k=50):
+    """Keep only top K tokens"""
+    top_k_logits, top_k_indices = torch.topk(logits, k)
+    probs = F.softmax(top_k_logits, dim=-1)
+    # Sample from top K
+    next_token = torch.multinomial(probs, 1)
+    return top_k_indices[next_token]
+
+def top_p_sampling(logits, p=0.9):
+    """Nucleus sampling: keep smallest set with cumulative prob ≥ p"""
+    sorted_logits, sorted_indices = torch.sort(logits, descending=True)
+    probs = F.softmax(sorted_logits, dim=-1)
+
+    # Compute cumulative probabilities
+    cumulative_probs = torch.cumsum(probs, dim=-1)
+
+    # Remove tokens with cumulative prob > p
+    remove_mask = cumulative_probs > p
+    remove_mask[..., 1:] = remove_mask[..., :-1].clone()
+    remove_mask[..., 0] = False
+
+    # Zero out removed tokens
+    sorted_logits[remove_mask] = float('-inf')
+
+    # Sample from remaining tokens
+    probs = F.softmax(sorted_logits, dim=-1)
+    next_token_idx = torch.multinomial(probs, 1)
+    return sorted_indices[next_token_idx]
+
+# Example: Probability distribution
+# Token 0: 0.4  ←
+# Token 1: 0.3  ← Top-P (p=0.9) includes these (cum=0.7)
+# Token 2: 0.2  ← and this one (cum=0.9)
+# Token 3: 0.05 ← Excluded (would exceed p)
+# Token 4: 0.03
+# Token 5: 0.02
+
+# Top-K (k=3) would include tokens 0, 1, 2 regardless of probabilities
+# Top-P (p=0.9) includes 0, 1, 2 because they sum to ≥ 0.9
+                        </div>
+
+                        <h3>Recommended Settings</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Task</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Temperature</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Top-P</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Notes</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Factual Q&A</td>
+                                <td style="padding: 12px; border: 1px solid #000;">0.0-0.3</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1.0</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Deterministic, accurate</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Code generation</td>
+                                <td style="padding: 12px; border: 1px solid #000;">0.2-0.5</td>
+                                <td style="padding: 12px; border: 1px solid #000;">0.95</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Mostly deterministic</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Chat assistant</td>
+                                <td style="padding: 12px; border: 1px solid #000;">0.7-0.9</td>
+                                <td style="padding: 12px; border: 1px solid #000;">0.9</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Balanced</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Creative writing</td>
+                                <td style="padding: 12px; border: 1px solid #000;">0.9-1.2</td>
+                                <td style="padding: 12px; border: 1px solid #000;">0.95</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Diverse, creative</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Brainstorming</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1.0-1.5</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1.0</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Very diverse</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Key Papers and Resources</h2>
+
+                        <h3>Tokenization</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"Neural Machine Translation of Rare Words with Subword Units"</strong> (Sennrich et al., 2016) - BPE<br>
+                                <a href="https://arxiv.org/abs/1508.07909" style="color: #000; text-decoration: underline;">arxiv.org/abs/1508.07909</a></li>
+
+                            <li><strong>"SentencePiece: A simple and language independent approach"</strong> (Kudo & Richardson, 2018)<br>
+                                <a href="https://arxiv.org/abs/1808.06226" style="color: #000; text-decoration: underline;">arxiv.org/abs/1808.06226</a></li>
+                        </ul>
+
+                        <h3>Embeddings</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"Efficient Estimation of Word Representations"</strong> (Mikolov et al., 2013) - Word2Vec<br>
+                                <a href="https://arxiv.org/abs/1301.3781" style="color: #000; text-decoration: underline;">arxiv.org/abs/1301.3781</a></li>
+
+                            <li><strong>"GloVe: Global Vectors for Word Representation"</strong> (Pennington et al., 2014)<br>
+                                <a href="https://nlp.stanford.edu/pubs/glove.pdf" style="color: #000; text-decoration: underline;">nlp.stanford.edu/pubs/glove.pdf</a></li>
+                        </ul>
+
+                        <h3>Sampling Strategies</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"The Curious Case of Neural Text Degeneration"</strong> (Holtzman et al., 2019) - Nucleus sampling<br>
+                                <a href="https://arxiv.org/abs/1904.09751" style="color: #000; text-decoration: underline;">arxiv.org/abs/1904.09751</a></li>
+                        </ul>
+
+                        <h3>Long Context</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"Flash Attention: Fast and Memory-Efficient Exact Attention"</strong> (Dao et al., 2022)<br>
+                                <a href="https://arxiv.org/abs/2205.14135" style="color: #000; text-decoration: underline;">arxiv.org/abs/2205.14135</a></li>
+
+                            <li><strong>"Extending Context Window of Large Language Models via RoPE"</strong> (Chen et al., 2023)<br>
+                                <a href="https://arxiv.org/abs/2309.16039" style="color: #000; text-decoration: underline;">arxiv.org/abs/2309.16039</a></li>
+                        </ul>
+
+                        <h3>Practical Tools</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>tiktoken</strong> - OpenAI's fast BPE tokenizer<br>
+                                <a href="https://github.com/openai/tiktoken" style="color: #000; text-decoration: underline;">github.com/openai/tiktoken</a></li>
+
+                            <li><strong>Hugging Face Tokenizers</strong> - Fast tokenizer library<br>
+                                <a href="https://github.com/huggingface/tokenizers" style="color: #000; text-decoration: underline;">github.com/huggingface/tokenizers</a></li>
+                        </ul>
+
+                        <div class="info-box success" style="margin-top: 30px;">
+                            <h3>Recommended Learning Path</h3>
+                            <ol style="margin-left: 20px; margin-top: 10px; line-height: 2;">
+                                <li>Experiment with tiktoken to see how text is tokenized</li>
+                                <li>Read BPE paper (Sennrich et al.) to understand the algorithm</li>
+                                <li>Implement simple embedding layer in PyTorch</li>
+                                <li>Read Word2Vec paper for embedding intuition</li>
+                                <li>Experiment with temperature and top-p sampling</li>
+                                <li>Read Nucleus sampling paper (Holtzman et al.)</li>
+                                <li>Implement all sampling strategies from scratch</li>
+                            </ol>
                         </div>
                     </div>
                 </div>
