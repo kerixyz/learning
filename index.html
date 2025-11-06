@@ -675,6 +675,13 @@
                 </div>
 
                 <div class="nav-section">
+                    <div class="nav-section-title">Coding & Algorithms</div>
+                    <div class="nav-item" data-page="coding">How LLMs Code</div>
+                    <div class="nav-item" data-page="algorithms">Algorithmic Reasoning</div>
+                    <div class="nav-item" data-page="prompting">Prompting for Coding</div>
+                </div>
+
+                <div class="nav-section">
                     <div class="nav-section-title">Practice</div>
                     <div class="nav-item" data-page="quiz">Knowledge Quiz</div>
                     <div class="nav-item" data-page="resources">Learning Resources</div>
@@ -1484,6 +1491,922 @@ probabilities = softmax(logits / temperature)
                     </div>
                 </div>
 
+                <!-- How LLMs Code Page -->
+                <div class="page-section" id="page-coding">
+                    <h1 class="page-title">How LLMs Understand and Generate Code</h1>
+                    <p class="page-description">Deep dive into code comprehension, generation, and the patterns LLMs recognize</p>
+
+                    <div class="content-card">
+                        <h2>Code as a Language</h2>
+                        <p>LLMs treat programming code as just another language. During pre-training, models see billions of lines of code from GitHub, Stack Overflow, documentation, and tutorials. They learn:</p>
+
+                        <ul>
+                            <li><strong>Syntax patterns:</strong> Language-specific grammar, keywords, operators</li>
+                            <li><strong>Semantic relationships:</strong> How variables, functions, and classes relate</li>
+                            <li><strong>Common idioms:</strong> Standard patterns like loops, recursion, error handling</li>
+                            <li><strong>API usage:</strong> How to use libraries and frameworks correctly</li>
+                            <li><strong>Code structure:</strong> File organization, imports, module patterns</li>
+                            <li><strong>Documentation patterns:</strong> Docstrings, comments, type hints</li>
+                        </ul>
+
+                        <h3>What Makes Code Different from Natural Language</h3>
+                        <div class="key-concepts">
+                            <div class="concept-card">
+                                <h3>Precise Syntax</h3>
+                                <p>One missing semicolon breaks everything. No room for ambiguity.</p>
+                            </div>
+                            <div class="concept-card">
+                                <h3>Logical Structure</h3>
+                                <p>Code follows strict logical flow: control structures, state changes, algorithms.</p>
+                            </div>
+                            <div class="concept-card">
+                                <h3>Compositionality</h3>
+                                <p>Complex programs built from simple, reusable components.</p>
+                            </div>
+                            <div class="concept-card">
+                                <h3>Execution Semantics</h3>
+                                <p>Code must be executable. The computer is the ultimate judge.</p>
+                            </div>
+                        </div>
+
+                        <h3>Code Training Data</h3>
+                        <p>Modern code-capable LLMs are trained on massive code repositories:</p>
+
+                        <table style="width: 100%; margin-top: 20px;">
+                            <thead>
+                                <tr style="background: #f5f5f5;">
+                                    <th style="padding: 12px; text-align: left;">Source</th>
+                                    <th style="padding: 12px; text-align: left;">Size</th>
+                                    <th style="padding: 12px; text-align: left;">Content</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>GitHub</strong></td>
+                                    <td style="padding: 10px;">100M+ repositories</td>
+                                    <td style="padding: 10px;">Open source code in all languages</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 10px;"><strong>Stack Overflow</strong></td>
+                                    <td style="padding: 10px;">20M+ questions</td>
+                                    <td style="padding: 10px;">Q&A with code examples</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>Documentation</strong></td>
+                                    <td style="padding: 10px;">Billions of tokens</td>
+                                    <td style="padding: 10px;">Official docs, tutorials, guides</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 10px;"><strong>LeetCode/HackerRank</strong></td>
+                                    <td style="padding: 10px;">100K+ problems</td>
+                                    <td style="padding: 10px;">Algorithmic problems with solutions</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Common Programming Patterns LLMs Learn</h3>
+                        <p>Through exposure to millions of code examples, LLMs develop strong intuitions about common patterns:</p>
+
+                        <h4>1. Data Structure Patterns</h4>
+                        <div class="code-example">
+# Array/List Patterns
+two_pointers = lambda arr: ...  # Two pointer technique
+sliding_window = lambda arr: ...  # Sliding window
+prefix_sum = lambda arr: [sum(arr[:i+1]) for i in range(len(arr))]
+
+# HashMap Patterns
+frequency_map = {}  # Count occurrences
+seen = set()  # Track visited elements
+memo = {}  # Memoization for DP
+
+# Tree Patterns
+def dfs(node):
+    if not node: return
+    # Process node
+    dfs(node.left)
+    dfs(node.right)
+
+# Graph Patterns
+adj_list = {i: [] for i in range(n)}  # Adjacency list
+visited = set()  # Track visited nodes
+                        </div>
+
+                        <h4>2. Algorithm Patterns</h4>
+                        <div class="code-example">
+# Binary Search Pattern
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+
+# Dynamic Programming Pattern
+def dp_problem(n):
+    dp = [0] * (n + 1)
+    dp[0] = base_case
+    for i in range(1, n + 1):
+        dp[i] = transition_function(dp, i)
+    return dp[n]
+
+# Backtracking Pattern
+def backtrack(path, choices):
+    if is_solution(path):
+        result.append(path[:])
+        return
+    for choice in choices:
+        path.append(choice)
+        backtrack(path, remaining_choices)
+        path.pop()  # Undo choice
+                        </div>
+
+                        <h4>3. Edge Case Handling</h4>
+                        <div class="code-example">
+# LLMs learn these common edge cases:
+if not nums or len(nums) == 0:  # Empty input
+    return []
+
+if len(nums) == 1:  # Single element
+    return nums[0]
+
+if target < nums[0] or target > nums[-1]:  # Out of range
+    return -1
+
+if left > right:  # Invalid range
+    return None
+
+# Handling None/null
+if root is None:
+    return 0
+                        </div>
+
+                        <h3>How LLMs Generate Code</h3>
+                        <p>When generating code, LLMs follow a probabilistic process:</p>
+
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <h3>1. Understand the Problem</h3>
+                                <p>Parse the natural language description, identify key requirements, constraints, and expected inputs/outputs. Extract data structure needs and algorithmic requirements.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>2. Recall Similar Problems</h3>
+                                <p>Attention mechanism activates memories of similar problems seen during training. Pattern matching against thousands of known solutions.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>3. Select High-Level Approach</h3>
+                                <p>Choose algorithm family (greedy, DP, divide-and-conquer, etc.) based on problem characteristics. Select appropriate data structures.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>4. Generate Structure</h3>
+                                <p>Start with function signature, parameter types. Add main logic scaffold (loops, conditionals, base cases). Structure follows learned templates.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>5. Fill in Details</h3>
+                                <p>Token by token generation of the actual logic. Each token is predicted based on all previous context. Variable names follow conventions.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>6. Add Error Handling</h3>
+                                <p>Insert edge case checks, validation, and error handling based on learned patterns from high-quality code.</p>
+                            </div>
+                        </div>
+
+                        <h3>Strengths of LLMs in Coding</h3>
+                        <ul>
+                            <li><strong>Pattern Recognition:</strong> Excellent at recognizing which algorithm pattern fits a problem</li>
+                            <li><strong>Boilerplate:</strong> Great at generating standard code structures and setup</li>
+                            <li><strong>Syntax:</strong> Strong knowledge of syntax across many programming languages</li>
+                            <li><strong>Common Algorithms:</strong> Can implement standard algorithms (sorting, searching, graph traversal)</li>
+                            <li><strong>Code Translation:</strong> Can convert code between programming languages</li>
+                            <li><strong>Explanation:</strong> Can explain what code does line by line</li>
+                            <li><strong>Debugging:</strong> Can spot common bugs and suggest fixes</li>
+                        </ul>
+
+                        <h3>Limitations in Coding</h3>
+                        <ul>
+                            <li><strong>Complex Logic:</strong> Struggles with highly nested or intricate logical conditions</li>
+                            <li><strong>Novel Algorithms:</strong> Can't invent truly new algorithmic approaches</li>
+                            <li><strong>Mathematical Proofs:</strong> Can't rigorously prove correctness</li>
+                            <li><strong>Optimization:</strong> May not generate the most efficient solution</li>
+                            <li><strong>Edge Cases:</strong> Might miss rare or subtle edge cases</li>
+                            <li><strong>Testing:</strong> Generated code needs human verification</li>
+                            <li><strong>Large Codebases:</strong> Context window limits understanding of large projects</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Algorithmic Reasoning Page -->
+                <div class="page-section" id="page-algorithms">
+                    <h1 class="page-title">Algorithmic Reasoning in LLMs</h1>
+                    <p class="page-description">How LLMs solve algorithmic problems and approach LeetCode-style challenges</p>
+
+                    <div class="content-card">
+                        <h2>Understanding Algorithmic Reasoning</h2>
+                        <p>Algorithmic reasoning requires step-by-step logical thinking, understanding of complexity, and systematic problem-solving. LLMs develop these capabilities through exposure to millions of algorithm implementations and explanations.</p>
+
+                        <h3>How LLMs Learn Algorithms</h3>
+                        <p>During training, LLMs see algorithms presented in multiple forms:</p>
+
+                        <div class="key-concepts">
+                            <div class="concept-card">
+                                <h3>Code Implementations</h3>
+                                <p>Working code in Python, Java, C++, etc.</p>
+                            </div>
+                            <div class="concept-card">
+                                <h3>Pseudocode</h3>
+                                <p>High-level algorithmic descriptions</p>
+                            </div>
+                            <div class="concept-card">
+                                <h3>Natural Language</h3>
+                                <p>Written explanations and tutorials</p>
+                            </div>
+                            <div class="concept-card">
+                                <h3>Examples & Traces</h3>
+                                <p>Step-by-step execution examples</p>
+                            </div>
+                        </div>
+
+                        <h3>Core Algorithm Categories LLMs Understand</h3>
+
+                        <h4>1. Searching & Sorting (Mastery: High)</h4>
+                        <div class="code-example">
+# Binary Search - LLMs excel at this
+def binary_search(nums, target):
+    """
+    Time: O(log n), Space: O(1)
+    LLMs understand: logarithmic complexity, divide-and-conquer
+    """
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        mid = left + (right - left) // 2  # Avoid overflow
+        if nums[mid] == target:
+            return mid
+        elif nums[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+
+# Merge Sort - Recursive pattern well-learned
+def merge_sort(arr):
+    """
+    Time: O(n log n), Space: O(n)
+    LLMs understand: divide-and-conquer, recursion
+    """
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)
+                        </div>
+
+                        <h4>2. Dynamic Programming (Mastery: Medium-High)</h4>
+                        <div class="code-example">
+# Fibonacci - Classic DP pattern
+def fib_dp(n):
+    """
+    LLMs recognize: overlapping subproblems, memoization
+    Bottom-up vs top-down approaches
+    """
+    dp = [0] * (n + 1)
+    dp[1] = 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i-1] + dp[i-2]
+    return dp[n]
+
+# Longest Common Subsequence
+def lcs(s1, s2):
+    """
+    LLMs understand: 2D DP table, recurrence relations
+    Building solution from smaller subproblems
+    """
+    m, n = len(s1), len(s2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if s1[i-1] == s2[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            else:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+
+    return dp[m][n]
+                        </div>
+
+                        <h4>3. Graph Algorithms (Mastery: Medium)</h4>
+                        <div class="code-example">
+# DFS - Depth First Search
+def dfs(graph, start, visited=None):
+    """
+    LLMs understand: recursion, backtracking
+    Visited set pattern, adjacency lists
+    """
+    if visited is None:
+        visited = set()
+    visited.add(start)
+
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited)
+
+    return visited
+
+# BFS - Breadth First Search
+from collections import deque
+
+def bfs(graph, start):
+    """
+    LLMs recognize: queue usage, level-by-level traversal
+    Shortest path in unweighted graphs
+    """
+    visited = set([start])
+    queue = deque([start])
+
+    while queue:
+        node = queue.popleft()
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+    return visited
+
+# Dijkstra's Algorithm
+import heapq
+
+def dijkstra(graph, start):
+    """
+    LLMs understand: priority queue, greedy approach
+    Distance tracking, relaxation step
+    """
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    pq = [(0, start)]
+
+    while pq:
+        current_dist, current_node = heapq.heappop(pq)
+
+        if current_dist > distances[current_node]:
+            continue
+
+        for neighbor, weight in graph[current_node].items():
+            distance = current_dist + weight
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                heapq.heappush(pq, (distance, neighbor))
+
+    return distances
+                        </div>
+
+                        <h4>4. Tree Algorithms (Mastery: High)</h4>
+                        <div class="code-example">
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+# Inorder Traversal - LLMs excel at this
+def inorder(root):
+    """
+    Pattern: left -> root -> right
+    LLMs understand: recursive tree traversal
+    """
+    if not root:
+        return []
+    return inorder(root.left) + [root.val] + inorder(root.right)
+
+# Lowest Common Ancestor
+def lca(root, p, q):
+    """
+    LLMs recognize: recursive structure
+    Base cases and divide-and-conquer
+    """
+    if not root or root == p or root == q:
+        return root
+
+    left = lca(root.left, p, q)
+    right = lca(root.right, p, q)
+
+    if left and right:
+        return root
+    return left if left else right
+
+# Validate BST
+def isValidBST(root, min_val=float('-inf'), max_val=float('inf')):
+    """
+    LLMs understand: constraints propagation
+    Range validation pattern
+    """
+    if not root:
+        return True
+
+    if root.val <= min_val or root.val >= max_val:
+        return False
+
+    return (isValidBST(root.left, min_val, root.val) and
+            isValidBST(root.right, root.val, max_val))
+                        </div>
+
+                        <h3>Problem-Solving Strategies LLMs Learn</h3>
+
+                        <table style="width: 100%; margin-top: 20px;">
+                            <thead>
+                                <tr style="background: #f5f5f5;">
+                                    <th style="padding: 12px; text-align: left;">Strategy</th>
+                                    <th style="padding: 12px; text-align: left;">When to Use</th>
+                                    <th style="padding: 12px; text-align: left;">Example Problems</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>Two Pointers</strong></td>
+                                    <td style="padding: 10px;">Sorted arrays, strings, linked lists</td>
+                                    <td style="padding: 10px;">Two Sum II, Container With Most Water</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 10px;"><strong>Sliding Window</strong></td>
+                                    <td style="padding: 10px;">Subarray/substring problems</td>
+                                    <td style="padding: 10px;">Longest Substring, Max Sum Subarray</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>Fast & Slow Pointers</strong></td>
+                                    <td style="padding: 10px;">Cycle detection, middle element</td>
+                                    <td style="padding: 10px;">Linked List Cycle, Happy Number</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 10px;"><strong>Merge Intervals</strong></td>
+                                    <td style="padding: 10px;">Overlapping intervals</td>
+                                    <td style="padding: 10px;">Merge Intervals, Meeting Rooms</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>Top K Elements</strong></td>
+                                    <td style="padding: 10px;">Finding largest/smallest K items</td>
+                                    <td style="padding: 10px;">Kth Largest, Top K Frequent</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 10px;"><strong>Binary Search</strong></td>
+                                    <td style="padding: 10px;">Sorted data, search space reduction</td>
+                                    <td style="padding: 10px;">Search in Rotated Array, Find Min</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>Backtracking</strong></td>
+                                    <td style="padding: 10px;">All combinations, permutations</td>
+                                    <td style="padding: 10px;">Subsets, N-Queens, Sudoku</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 10px;"><strong>Dynamic Programming</strong></td>
+                                    <td style="padding: 10px;">Optimal substructure, overlapping</td>
+                                    <td style="padding: 10px;">Coin Change, Longest Palindrome</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Time Complexity Recognition</h3>
+                        <p>LLMs develop intuition about complexity by seeing code annotated with Big-O notation:</p>
+
+                        <div class="code-example">
+# Common Complexity Classes LLMs Recognize
+
+# O(1) - Constant
+def get_first(arr):
+    return arr[0] if arr else None
+
+# O(log n) - Logarithmic (binary search pattern)
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        # ... halving search space each time
+
+# O(n) - Linear (single pass)
+def find_max(arr):
+    return max(arr)
+
+# O(n log n) - Linearithmic (efficient sorting)
+def sort(arr):
+    return sorted(arr)  # Timsort
+
+# O(n²) - Quadratic (nested loops)
+def bubble_sort(arr):
+    for i in range(len(arr)):
+        for j in range(len(arr) - 1 - i):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+
+# O(2^n) - Exponential (recursive branching)
+def fibonacci_naive(n):
+    if n <= 1:
+        return n
+    return fibonacci_naive(n-1) + fibonacci_naive(n-2)
+                        </div>
+
+                        <h3>LLM Reasoning Process for LeetCode Problems</h3>
+
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <h3>Step 1: Pattern Recognition</h3>
+                                <p>Identify which algorithmic pattern the problem fits. Keywords trigger pattern matching: "sorted array" → binary search, "subarray" → sliding window, "paths" → DFS/BFS.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>Step 2: Data Structure Selection</h3>
+                                <p>Choose appropriate data structures based on operations needed. HashMap for fast lookups, heap for priority, stack for LIFO, queue for BFS.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>Step 3: Algorithm Template</h3>
+                                <p>Apply learned template for the identified pattern. Start with the scaffolding that fits the problem type.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>Step 4: Implementation</h3>
+                                <p>Fill in problem-specific logic within the template structure. Handle indices, boundaries, update rules.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>Step 5: Edge Cases</h3>
+                                <p>Add checks for empty inputs, single elements, negative numbers, duplicates, etc.</p>
+                            </div>
+                        </div>
+
+                        <h3>What LLMs Struggle With</h3>
+                        <ul>
+                            <li><strong>Novel Problem Types:</strong> Completely new problems without similar training examples</li>
+                            <li><strong>Multi-step Mathematical Reasoning:</strong> Problems requiring careful mathematical derivation</li>
+                            <li><strong>Subtle Optimizations:</strong> Finding the most space-efficient or time-efficient solution</li>
+                            <li><strong>Complex State Management:</strong> Problems with many interacting state variables</li>
+                            <li><strong>Proof of Correctness:</strong> Formally proving an algorithm is correct</li>
+                            <li><strong>Rare Edge Cases:</strong> Unusual boundary conditions not well-represented in training</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Prompting for Coding Page -->
+                <div class="page-section" id="page-prompting">
+                    <h1 class="page-title">Prompting LLMs for Coding Problems</h1>
+                    <p class="page-description">Master techniques for getting the best solutions from LLMs for LeetCode-style problems</p>
+
+                    <div class="content-card">
+                        <h2>Effective Prompting Strategies</h2>
+                        <p>How you ask an LLM to solve a coding problem dramatically affects the quality of the solution. Well-structured prompts lead to better, more reliable code.</p>
+
+                        <h3>The Anatomy of a Good Coding Prompt</h3>
+                        <div class="code-example">
+# Poor Prompt:
+"Solve two sum problem"
+
+# Good Prompt:
+"Given an array of integers nums and an integer target,
+return indices of the two numbers that add up to target.
+
+Constraints:
+- 2 <= nums.length <= 10^4
+- -10^9 <= nums[i] <= 10^9
+- Only one valid answer exists
+
+Example:
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: nums[0] + nums[1] == 9
+
+Please provide:
+1. Optimal solution with explanation
+2. Time and space complexity analysis
+3. Edge cases to consider"
+                        </div>
+
+                        <h3>Essential Prompting Techniques</h3>
+
+                        <h4>1. Chain-of-Thought Prompting</h4>
+                        <p>Ask the LLM to think step-by-step before coding:</p>
+                        <div class="code-example">
+Prompt: "Solve this problem step by step:
+
+1. First, analyze the problem and identify the pattern
+2. Explain your high-level approach
+3. Discuss time and space complexity
+4. Then provide the implementation
+5. Finally, test with edge cases
+
+Problem: [Your problem here]"
+
+# This leads to better reasoning and more reliable solutions
+                        </div>
+
+                        <h4>2. Few-Shot Learning</h4>
+                        <p>Provide examples of similar solved problems:</p>
+                        <div class="code-example">
+Prompt: "Here's a similar problem I solved:
+
+Problem: Two Sum
+Solution: Use HashMap for O(n) time
+[code example]
+
+Now solve this similar problem:
+Problem: Three Sum
+[problem description]"
+
+# LLM learns from the pattern in your example
+                        </div>
+
+                        <h4>3. Specify Constraints and Requirements</h4>
+                        <div class="code-example">
+Prompt: "Solve this problem with these requirements:
+
+- Time complexity: Must be O(n log n) or better
+- Space complexity: Must be O(1) auxiliary space
+- Language: Python 3
+- Style: Use type hints and docstrings
+- Handle edge cases: empty array, single element, duplicates
+- Add comments explaining the algorithm
+
+Problem: [description]"
+                        </div>
+
+                        <h4>4. Ask for Multiple Approaches</h4>
+                        <div class="code-example">
+Prompt: "Provide three different solutions:
+
+1. Brute force approach (for understanding)
+2. Optimized approach with trade-offs explained
+3. Most optimal approach
+
+For each, include:
+- Code implementation
+- Time and space complexity
+- When to use this approach
+
+Problem: [description]"
+                        </div>
+
+                        <h4>5. Iterative Refinement</h4>
+                        <p>Build on previous responses:</p>
+                        <div class="code-example">
+First prompt: "Solve this problem: [description]"
+[Get initial solution]
+
+Second prompt: "The solution works but fails for edge case:
+[specific case]. Please fix this bug."
+[Get improved solution]
+
+Third prompt: "Can you optimize the space complexity?
+Currently using O(n) space."
+[Get optimized solution]
+
+Fourth prompt: "Add comprehensive unit tests"
+                        </div>
+
+                        <h3>Prompting Patterns for Common Problem Types</h3>
+
+                        <h4>For Array Problems:</h4>
+                        <div class="code-example">
+"Solve this array problem:
+[problem]
+
+Consider these approaches:
+- Two pointers
+- Sliding window
+- Prefix sum
+- HashMap for tracking
+
+Choose the most appropriate and explain why."
+                        </div>
+
+                        <h4>For Tree Problems:</h4>
+                        <div class="code-example">
+"Solve this binary tree problem:
+[problem]
+
+Specify whether to use:
+- DFS (preorder/inorder/postorder)
+- BFS (level-order)
+- Recursive vs iterative
+- Any special tree properties (BST, balanced, etc.)
+
+Include the TreeNode class definition."
+                        </div>
+
+                        <h4>For Dynamic Programming:</h4>
+                        <div class="code-example">
+"Solve this DP problem:
+[problem]
+
+Please:
+1. Define the state (what does dp[i] represent?)
+2. Write the recurrence relation
+3. Identify base cases
+4. Implement bottom-up solution
+5. Discuss if space optimization is possible"
+                        </div>
+
+                        <h4>For Graph Problems:</h4>
+                        <div class="code-example">
+"Solve this graph problem:
+[problem]
+
+Clarify:
+- Graph representation (adjacency list/matrix)
+- Directed or undirected
+- Weighted or unweighted
+- Algorithm choice (DFS/BFS/Dijkstra/etc.)
+
+Include graph construction from input."
+                        </div>
+
+                        <h3>Advanced Prompting Techniques</h3>
+
+                        <h4>Self-Consistency Prompting</h4>
+                        <div class="code-example">
+"Generate 3 different solutions to this problem.
+Then analyze which one is best and why.
+Finally, provide the optimal solution.
+
+Problem: [description]"
+
+# This makes the LLM reason about different approaches
+                        </div>
+
+                        <h4>Socratic Prompting</h4>
+                        <div class="code-example">
+"Let's solve this problem together:
+
+Problem: [description]
+
+Question 1: What data structure would best suit this problem?
+[Wait for response]
+
+Question 2: What would be the time complexity of using that?
+[Wait for response]
+
+Question 3: Can we do better? If so, how?
+[Wait for response]
+
+Now implement the optimal solution."
+                        </div>
+
+                        <h4>Explain-Then-Code Pattern</h4>
+                        <div class="code-example">
+"First, explain the algorithm in plain English without code.
+Walk through an example step by step.
+Only after the explanation is clear, provide the implementation.
+
+Problem: [description]"
+
+# Forces logical thinking before coding
+                        </div>
+
+                        <h3>Debugging with LLMs</h3>
+
+                        <h4>When Code Fails:</h4>
+                        <div class="code-example">
+"This code fails for test case: [test case]
+Expected: [expected output]
+Got: [actual output]
+
+Here's the code:
+[your code]
+
+Please:
+1. Identify the bug
+2. Explain why it fails
+3. Provide the corrected code
+4. Suggest similar edge cases to test"
+                        </div>
+
+                        <h4>Code Review Prompt:</h4>
+                        <div class="code-example">
+"Review this solution:
+[your code]
+
+Check for:
+1. Correctness
+2. Edge cases
+3. Time/space complexity
+4. Code quality and readability
+5. Potential optimizations
+
+Provide detailed feedback."
+                        </div>
+
+                        <h3>Anti-Patterns to Avoid</h3>
+                        <div class="info-box">
+                            <p><strong>Don't:</strong></p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Give vague prompts like "help with this problem"</li>
+                                <li>Omit problem constraints and examples</li>
+                                <li>Accept first solution without testing</li>
+                                <li>Ask for code without understanding the approach first</li>
+                                <li>Trust LLM blindly for complex mathematical proofs</li>
+                                <li>Skip edge case discussion</li>
+                                <li>Forget to specify language and style preferences</li>
+                            </ul>
+                        </div>
+
+                        <h3>Testing LLM-Generated Solutions</h3>
+                        <div class="code-example">
+"After providing the solution, generate:
+
+1. Unit tests covering:
+   - Happy path cases
+   - Edge cases (empty, single element, max size)
+   - Boundary conditions
+   - Invalid inputs
+
+2. Performance tests for large inputs
+
+3. Comparison with expected output format"
+                        </div>
+
+                        <h3>Best Practices for LeetCode with LLMs</h3>
+
+                        <table style="width: 100%; margin-top: 20px;">
+                            <thead>
+                                <tr style="background: #f5f5f5;">
+                                    <th style="padding: 12px; text-align: left;">Practice</th>
+                                    <th style="padding: 12px; text-align: left;">Why</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>Start with understanding</strong></td>
+                                    <td style="padding: 10px;">Ask LLM to explain problem before coding</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 10px;"><strong>Request multiple solutions</strong></td>
+                                    <td style="padding: 10px;">Learn different approaches and trade-offs</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>Verify complexity claims</strong></td>
+                                    <td style="padding: 10px;">LLMs can be wrong about Big-O analysis</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 10px;"><strong>Test edge cases</strong></td>
+                                    <td style="padding: 10px;">LLM might miss rare boundary conditions</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>Understand before copying</strong></td>
+                                    <td style="padding: 10px;">Learn the pattern for future problems</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 10px;"><strong>Iterate and refine</strong></td>
+                                    <td style="padding: 10px;">First solution may not be optimal</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Example: Complete LeetCode Session</h3>
+                        <div class="code-example">
+# Step 1: Understanding
+Prompt: "Explain the 'Container With Most Water' problem.
+What's the intuition? What patterns does it use?"
+
+# Step 2: Approach
+Prompt: "What approaches can solve this? Compare brute force
+vs optimal. Include complexity for each."
+
+# Step 3: Implementation
+Prompt: "Implement the optimal solution in Python with:
+- Type hints
+- Detailed comments
+- Clear variable names"
+
+# Step 4: Testing
+Prompt: "Generate 5 test cases including edge cases.
+Show the execution trace for one example."
+
+# Step 5: Optimization
+Prompt: "Can we reduce space complexity further?
+Are there any micro-optimizations?"
+
+# Step 6: Similar Problems
+Prompt: "What are 3 similar problems that use
+the same two-pointer technique?"
+                        </div>
+
+                        <div class="info-box success">
+                            <p><strong>Remember:</strong> LLMs are powerful tools for learning and problem-solving, but they work best when you:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                                <li>Provide clear, detailed prompts</li>
+                                <li>Think critically about responses</li>
+                                <li>Test thoroughly</li>
+                                <li>Understand rather than blindly copy</li>
+                                <li>Use them as learning aids, not crutches</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Navigation Buttons -->
                 <div class="page-navigation">
                     <button class="nav-button prev" id="prevBtn" onclick="navigatePage(-1)">
@@ -1499,7 +2422,7 @@ probabilities = softmax(logits / temperature)
 
     <script>
         // Page navigation system
-        const pages = ['intro', 'transformer', 'attention', 'pretraining', 'posttraining', 'concepts', 'models', 'quiz', 'resources'];
+        const pages = ['intro', 'transformer', 'attention', 'pretraining', 'posttraining', 'concepts', 'models', 'coding', 'algorithms', 'prompting', 'quiz', 'resources'];
         let currentPageIndex = 0;
         const visitedPages = new Set(['intro']);
 
@@ -1511,6 +2434,9 @@ probabilities = softmax(logits / temperature)
             'posttraining': 'Post-training',
             'concepts': 'Essential Concepts',
             'models': 'Popular Models',
+            'coding': 'How LLMs Code',
+            'algorithms': 'Algorithmic Reasoning',
+            'prompting': 'Prompting for Coding',
             'quiz': 'Knowledge Quiz',
             'resources': 'Learning Resources'
         };
