@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning LLMs & Transformers - Interactive Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .card h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .interactive-section {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .transformer-diagram {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea22 0%, #764ba233 100%);
+            border-radius: 10px;
+            flex-wrap: wrap;
+        }
+
+        .layer-box {
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            min-width: 150px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .layer-box:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .arrow {
+            font-size: 2em;
+            color: #764ba2;
+        }
+
+        .quiz-container {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .quiz-question {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .quiz-option {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .quiz-option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .quiz-option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .code-example {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .highlight {
+            background: #ffeb3b;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 30px 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background: #667eea;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #667eea;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 16px;
+            width: 2px;
+            height: calc(100% - 16px);
+            background: #667eea;
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        .attention-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .word-token {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .word-token:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .word-token.active {
+            background: #764ba2;
+            color: white;
+            box-shadow: 0 0 20px rgba(118, 75, 162, 0.5);
+        }
+
+        .key-concepts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .concept-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .transformer-diagram {
+                flex-direction: column;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Understanding LLMs & Transformers</h1>
+            <p>An Interactive Learning Journey into Generative AI</p>
+        </header>
+
+        <!-- Progress Tracker -->
+        <div class="card">
+            <h2>Your Learning Progress</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar">0%</div>
+            </div>
+            <p id="progressText">Start exploring the sections below to track your progress!</p>
+        </div>
+
+        <!-- Introduction -->
+        <div class="card" data-section="intro">
+            <h2>What are Large Language Models (LLMs)?</h2>
+            <p>Large Language Models are AI systems trained on vast amounts of text data to understand and generate human-like text. They're the technology behind tools like ChatGPT, Claude, and many other AI assistants.</p>
+
+            <h3>Key Characteristics:</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Scale:</strong> Billions or trillions of parameters</li>
+                <li><strong>Training Data:</strong> Massive text corpora from books, websites, and more</li>
+                <li><strong>Capabilities:</strong> Text generation, translation, summarization, coding, and reasoning</li>
+                <li><strong>Architecture:</strong> Based on the Transformer model</li>
+            </ul>
+
+            <div class="interactive-section">
+                <h3>Try It: Understanding Scale</h3>
+                <p>GPT-3 has 175 billion parameters. If each parameter was a grain of rice, you'd need:</p>
+                <button onclick="revealScale()">Calculate the Scale</button>
+                <p id="scaleResult" style="margin-top: 10px; font-weight: bold;"></p>
+            </div>
+        </div>
+
+        <!-- The Transformer Architecture -->
+        <div class="card" data-section="transformer">
+            <h2>The Transformer Architecture</h2>
+            <p>The Transformer, introduced in the 2017 paper "Attention Is All You Need," revolutionized natural language processing. It's the foundation of modern LLMs.</p>
+
+            <h3>How Information Flows Through a Transformer:</h3>
+            <div class="transformer-diagram">
+                <div class="layer-box" onclick="explainLayer('input')">
+                    <strong>Input</strong><br>
+                    Text Tokens
+                </div>
+                <span class="arrow">→</span>
+                <div class="layer-box" onclick="explainLayer('embedding')">
+                    <strong>Embedding</strong><br>
+                    Vector Representation
+                </div>
+                <span class="arrow">→</span>
+                <div class="layer-box" onclick="explainLayer('attention')">
+                    <strong>Attention</strong><br>
+                    Context Understanding
+                </div>
+                <span class="arrow">→</span>
+                <div class="layer-box" onclick="explainLayer('ffn')">
+                    <strong>Feed Forward</strong><br>
+                    Processing
+                </div>
+                <span class="arrow">→</span>
+                <div class="layer-box" onclick="explainLayer('output')">
+                    <strong>Output</strong><br>
+                    Predictions
+                </div>
+            </div>
+
+            <div class="interactive-section">
+                <h3 id="layerTitle">Click on any layer above to learn more!</h3>
+                <p id="layerExplanation"></p>
+            </div>
+        </div>
+
+        <!-- Attention Mechanism -->
+        <div class="card" data-section="attention">
+            <h2>The Attention Mechanism</h2>
+            <p>Attention is the core innovation that makes Transformers work. It allows the model to focus on relevant parts of the input when processing each word.</p>
+
+            <h3>Interactive Demo: How Attention Works</h3>
+            <p>Click on a word to see what other words it "pays attention to":</p>
+
+            <div class="attention-demo">
+                <div class="word-token" onclick="showAttention(0, 'The')">The</div>
+                <div class="word-token" onclick="showAttention(1, 'cat')">cat</div>
+                <div class="word-token" onclick="showAttention(2, 'sat')">sat</div>
+                <div class="word-token" onclick="showAttention(3, 'on')">on</div>
+                <div class="word-token" onclick="showAttention(4, 'the')">the</div>
+                <div class="word-token" onclick="showAttention(5, 'mat')">mat</div>
+            </div>
+
+            <div class="interactive-section">
+                <p id="attentionExplanation">Click a word to see the attention pattern!</p>
+            </div>
+
+            <h3>Types of Attention:</h3>
+            <div class="key-concepts">
+                <div class="concept-card">
+                    <h3>Self-Attention</h3>
+                    <p>Each word attends to all other words in the sequence</p>
+                </div>
+                <div class="concept-card">
+                    <h3>Multi-Head Attention</h3>
+                    <p>Multiple attention mechanisms run in parallel</p>
+                </div>
+                <div class="concept-card">
+                    <h3>Cross-Attention</h3>
+                    <p>Attending between encoder and decoder sequences</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Process -->
+        <div class="card" data-section="training">
+            <h2>How LLMs Learn: The Training Process</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3>1. Pre-training</h3>
+                    <p>The model learns from massive amounts of text by predicting the next word in sentences. This is called <span class="highlight">self-supervised learning</span>.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>2. Fine-tuning</h3>
+                    <p>The model is trained on specific tasks or domains to improve performance on targeted applications.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>3. Reinforcement Learning from Human Feedback (RLHF)</h3>
+                    <p>Human raters provide feedback on model outputs, helping it learn to produce more helpful and aligned responses.</p>
+                </div>
+            </div>
+
+            <h3>Training Objective Example:</h3>
+            <div class="code-example">
+Input:  "The quick brown fox jumps over the ____"
+Target: "lazy"
+
+The model learns to predict the next word based on context.
+            </div>
+        </div>
+
+        <!-- Key Concepts -->
+        <div class="card" data-section="concepts">
+            <h2>Essential Concepts in Generative AI</h2>
+
+            <h3>Tokens & Tokenization</h3>
+            <p><strong>Tokens</strong> are the basic units that LLMs process. A token can be a word, part of a word, or even a character.</p>
+            <div class="interactive-section">
+                <p>Example: "Understanding" might be split into ["Under", "stand", "ing"]</p>
+                <button onclick="tokenizeText()">Tokenize Your Own Text</button>
+                <input type="text" id="tokenInput" placeholder="Enter text here..." style="width: 100%; padding: 10px; margin-top: 10px; border-radius: 5px; border: 2px solid #ddd;">
+                <p id="tokenOutput" style="margin-top: 10px; font-weight: bold;"></p>
+            </div>
+
+            <h3>Embeddings</h3>
+            <p>Words are converted into numerical vectors (embeddings) that capture their meaning. Similar words have similar vectors.</p>
+            <div class="interactive-section">
+                <p>Example: "king" - "man" + "woman" ≈ "queen"</p>
+            </div>
+
+            <h3>Context Window</h3>
+            <p>The maximum amount of text the model can consider at once. Modern models have context windows ranging from 4K to 200K+ tokens.</p>
+
+            <h3>Temperature & Sampling</h3>
+            <p><strong>Temperature</strong> controls randomness in generation:</p>
+            <ul style="margin-left: 20px;">
+                <li>Low (0.1-0.5): More focused and deterministic</li>
+                <li>High (0.7-1.0): More creative and diverse</li>
+            </ul>
+        </div>
+
+        <!-- Popular Models -->
+        <div class="card" data-section="models">
+            <h2>Popular LLM Families</h2>
+
+            <div class="key-concepts">
+                <div class="concept-card">
+                    <h3>GPT Series</h3>
+                    <p>OpenAI's Generative Pre-trained Transformer models (GPT-3, GPT-4)</p>
+                </div>
+                <div class="concept-card">
+                    <h3>Claude</h3>
+                    <p>Anthropic's constitutional AI assistant with strong reasoning</p>
+                </div>
+                <div class="concept-card">
+                    <h3>LLaMA</h3>
+                    <p>Meta's open-source models enabling research and development</p>
+                </div>
+                <div class="concept-card">
+                    <h3>BERT</h3>
+                    <p>Google's bidirectional encoder for understanding tasks</p>
+                </div>
+                <div class="concept-card">
+                    <h3>PaLM</h3>
+                    <p>Google's Pathways Language Model with multimodal capabilities</p>
+                </div>
+                <div class="concept-card">
+                    <h3>Gemini</h3>
+                    <p>Google's latest multimodal AI model</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div class="card" data-section="quiz">
+            <h2>Test Your Knowledge!</h2>
+
+            <div class="quiz-container">
+                <div class="quiz-question">1. What is the key innovation that makes Transformers powerful?</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">A) Recurrent connections</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true)">B) Attention mechanism</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">C) Convolutional layers</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">D) Decision trees</div>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-question">2. What does RLHF stand for?</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">A) Recursive Learning from Hidden Features</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true)">B) Reinforcement Learning from Human Feedback</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">C) Random Learning for High Frequency</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">D) Regulated Learning for Helpful Functions</div>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-question">3. What are tokens in the context of LLMs?</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">A) Physical hardware components</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true)">B) Basic units of text the model processes</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">C) Security credentials</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)">D) Neural network layers</div>
+            </div>
+        </div>
+
+        <!-- Resources -->
+        <div class="card" data-section="resources">
+            <h2>Learn More: Resources</h2>
+
+            <h3>Essential Papers:</h3>
+            <ul style="margin-left: 20px; line-height: 2;">
+                <li><strong>"Attention Is All You Need"</strong> - The original Transformer paper (Vaswani et al., 2017)</li>
+                <li><strong>"BERT: Pre-training of Deep Bidirectional Transformers"</strong> (Devlin et al., 2018)</li>
+                <li><strong>"Language Models are Few-Shot Learners"</strong> - GPT-3 paper (Brown et al., 2020)</li>
+            </ul>
+
+            <h3>Online Courses & Tutorials:</h3>
+            <ul style="margin-left: 20px; line-height: 2;">
+                <li>Stanford CS224N: Natural Language Processing with Deep Learning</li>
+                <li>Hugging Face NLP Course</li>
+                <li>Fast.ai Practical Deep Learning</li>
+                <li>DeepLearning.AI courses on Transformers</li>
+            </ul>
+
+            <h3>Tools to Experiment:</h3>
+            <ul style="margin-left: 20px; line-height: 2;">
+                <li><strong>Hugging Face:</strong> Pre-trained models and datasets</li>
+                <li><strong>OpenAI Playground:</strong> Experiment with GPT models</li>
+                <li><strong>Google Colab:</strong> Free GPU for training small models</li>
+                <li><strong>PyTorch / TensorFlow:</strong> Deep learning frameworks</li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <div class="card">
+            <h2>Keep Learning!</h2>
+            <p>This is just the beginning of your journey into LLMs and Generative AI. The field is rapidly evolving, with new breakthroughs happening regularly.</p>
+            <p style="margin-top: 15px;"><strong>Next Steps:</strong></p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Read the foundational papers</li>
+                <li>Experiment with pre-trained models on Hugging Face</li>
+                <li>Build your own small projects using LLM APIs</li>
+                <li>Follow AI research communities and blogs</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Progress tracking
+        const sections = document.querySelectorAll('.card[data-section]');
+        const visitedSections = new Set();
+
+        function updateProgress() {
+            const progress = (visitedSections.size / sections.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressBar').textContent = Math.round(progress) + '%';
+            document.getElementById('progressText').textContent =
+                `You've explored ${visitedSections.size} out of ${sections.length} sections!`;
+        }
+
+        // Track section visibility
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && entry.target.dataset.section) {
+                    visitedSections.add(entry.target.dataset.section);
+                    updateProgress();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        sections.forEach(section => observer.observe(section));
+
+        // Scale calculation
+        function revealScale() {
+            const result = document.getElementById('scaleResult');
+            result.innerHTML = `
+                <p>• About 3.5 million kilograms of rice!</p>
+                <p>• That's roughly the weight of 500 elephants</p>
+                <p>• Or about 35 blue whales</p>
+                <p>This shows the incredible scale of modern LLMs!</p>
+            `;
+        }
+
+        // Transformer layer explanations
+        function explainLayer(layer) {
+            const title = document.getElementById('layerTitle');
+            const explanation = document.getElementById('layerExplanation');
+
+            const explanations = {
+                input: {
+                    title: 'Input: Text Tokens',
+                    text: 'Text is first split into tokens (words or subwords). Each sentence becomes a sequence of token IDs that the model can process.'
+                },
+                embedding: {
+                    title: 'Embedding: Vector Representation',
+                    text: 'Each token is converted into a dense vector (typically 768 or 1024 dimensions). These embeddings capture semantic meaning - similar words have similar vectors. Position information is also added here.'
+                },
+                attention: {
+                    title: 'Attention: Context Understanding',
+                    text: 'The attention mechanism allows each token to "look at" and gather information from all other tokens in the sequence. This is how the model understands context and relationships between words.'
+                },
+                ffn: {
+                    title: 'Feed Forward Network: Processing',
+                    text: 'After attention, each token representation goes through a feed-forward neural network. This applies non-linear transformations to extract higher-level features.'
+                },
+                output: {
+                    title: 'Output: Predictions',
+                    text: 'The final layer produces predictions - typically a probability distribution over all possible next tokens in the vocabulary. The model can then generate text by sampling from these predictions.'
+                }
+            };
+
+            const info = explanations[layer];
+            title.textContent = info.title;
+            explanation.textContent = info.text;
+        }
+
+        // Attention visualization
+        function showAttention(index, word) {
+            const tokens = document.querySelectorAll('.word-token');
+            tokens.forEach(t => t.classList.remove('active'));
+            tokens[index].classList.add('active');
+
+            const attentionPatterns = {
+                'The': 'The word "The" pays most attention to "cat" (the noun it modifies) and some attention to "sat" (the main verb).',
+                'cat': 'The word "cat" attends strongly to "The" (its determiner), "sat" (what it\'s doing), and "mat" (where it is).',
+                'sat': 'The word "sat" focuses on "cat" (the subject) and "on" (the preposition showing relationship).',
+                'on': 'The word "on" connects "sat" and "mat", paying attention to both the action and the location.',
+                'the': 'This "the" attends primarily to "mat" (the noun it modifies) and "on" (the preposition).',
+                'mat': 'The word "mat" looks back at "on" (the relation), "cat" (what\'s on it), and "the" (its determiner).'
+            };
+
+            document.getElementById('attentionExplanation').textContent = attentionPatterns[word];
+        }
+
+        // Tokenization demo
+        function tokenizeText() {
+            const input = document.getElementById('tokenInput').value;
+            if (!input) {
+                document.getElementById('tokenOutput').textContent = 'Please enter some text first!';
+                return;
+            }
+
+            // Simple tokenization (real tokenizers like BPE are more complex)
+            const tokens = input.match(/\w+|[^\w\s]/g) || [];
+            const tokenCount = tokens.length;
+
+            document.getElementById('tokenOutput').innerHTML = `
+                <p>Tokens: [${tokens.map(t => '"' + t + '"').join(', ')}]</p>
+                <p>Token count: ${tokenCount}</p>
+                <p style="font-size: 0.9em; margin-top: 10px;">Note: Real LLM tokenizers (like BPE) are more sophisticated and may split words differently!</p>
+            `;
+        }
+
+        // Quiz functionality
+        function checkAnswer(element, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+
+            if (isCorrect) {
+                element.classList.add('correct');
+                element.textContent += ' ✓ Correct!';
+            } else {
+                element.classList.add('incorrect');
+                element.textContent += ' ✗ Try again!';
+                // Find and highlight the correct answer
+                options.forEach(opt => {
+                    if (opt.onclick.toString().includes('true')) {
+                        opt.classList.add('correct');
+                        opt.textContent += ' ✓ This is correct';
+                    }
+                });
+            }
+        }
+
+        // Add enter key support for tokenization
+        document.addEventListener('DOMContentLoaded', function() {
+            const tokenInput = document.getElementById('tokenInput');
+            if (tokenInput) {
+                tokenInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        tokenizeText();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
