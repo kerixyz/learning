@@ -969,61 +969,580 @@ the model learns language patterns, facts, reasoning, and more.
                 <!-- Attention Mechanism Page -->
                 <div class="page-section" id="page-attention">
                     <h1 class="page-title">The Attention Mechanism</h1>
-                    <p class="page-description">Understanding the core innovation that powers Transformers</p>
+                    <p class="page-description">Deep dive into the core innovation that powers Transformers</p>
 
                     <div class="content-card">
                         <h2>What is Attention?</h2>
-                        <p>Attention is the mechanism that allows models to focus on relevant parts of the input when processing each word. It's like highlighting important words in a sentence to understand its meaning.</p>
+                        <p>Attention is a mechanism that allows models to <strong>dynamically focus on relevant parts of the input</strong> when processing each position. Unlike traditional models that process sequences word-by-word, attention allows the model to look at the entire sequence at once and decide what's important.</p>
 
-                        <h3>Interactive Demo: See Attention in Action</h3>
-                        <p>Click on a word to see what other words it "pays attention to":</p>
+                        <p><strong>Intuition:</strong> When you read "The animal didn't cross the street because <em>it</em> was too tired", you know "it" refers to "animal" not "street". Attention allows models to make these connections by computing relevance scores between all word pairs.</p>
 
-                        <div class="attention-demo">
-                            <div class="word-token" onclick="showAttention(0, 'The')">The</div>
-                            <div class="word-token" onclick="showAttention(1, 'cat')">cat</div>
-                            <div class="word-token" onclick="showAttention(2, 'sat')">sat</div>
-                            <div class="word-token" onclick="showAttention(3, 'on')">on</div>
-                            <div class="word-token" onclick="showAttention(4, 'the')">the</div>
-                            <div class="word-token" onclick="showAttention(5, 'mat')">mat</div>
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3>Key Innovation from "Attention Is All You Need" (Vaswani et al., 2017)</h3>
+                            <p>The original Transformer paper introduced <strong>Scaled Dot-Product Attention</strong>, which replaced recurrence entirely with a parallelizable attention mechanism. This breakthrough enabled training on much longer sequences and led to the modern LLM revolution.</p>
+                            <p><strong>Paper:</strong> <a href="https://arxiv.org/abs/1706.03762" style="color: #000; text-decoration: underline;">arxiv.org/abs/1706.03762</a></p>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Scaled Dot-Product Attention: The Mathematics</h2>
+
+                        <h3>The Complete Formula</h3>
+                        <div class="code-example" style="font-size: 1.1em; padding: 20px;">
+Attention(Q, K, V) = softmax(QK^T / √d_k) V
+
+Where:
+- Q (Query):  [seq_len × d_k]  "What am I looking for?"
+- K (Key):    [seq_len × d_k]  "What do I contain?"
+- V (Value):  [seq_len × d_v]  "What information do I have?"
+- d_k: dimension of queries/keys (typically 64)
+- √d_k: scaling factor (prevents vanishing gradients)
                         </div>
 
-                        <div class="interactive-section">
-                            <p id="attentionExplanation">Click a word to see the attention pattern!</p>
+                        <h3>Step-by-Step Breakdown with Concrete Example</h3>
+                        <p>Let's walk through attention for the sentence: <strong>"The cat sat"</strong> (3 tokens)</p>
+
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #000;">
+                            <h4>Step 1: Create Q, K, V from Input Embeddings</h4>
+                            <div class="code-example">
+# Input: word embeddings (assume d_model = 512)
+X = [x_The, x_cat, x_sat]  # shape: [3, 512]
+
+# Linear projections (learned weight matrices)
+Q = X @ W_Q  # [3, 512] @ [512, 64] = [3, 64]
+K = X @ W_K  # [3, 512] @ [512, 64] = [3, 64]
+V = X @ W_V  # [3, 512] @ [512, 64] = [3, 64]
+
+# Now each token has 64-dim query, key, and value vectors
+# Example values (simplified):
+Q[0] = [0.2, 0.5, ..., 0.1]  # Query for "The"
+K[1] = [0.8, 0.3, ..., 0.7]  # Key for "cat"
+V[2] = [0.1, 0.9, ..., 0.4]  # Value for "sat"
+                            </div>
                         </div>
 
-                        <h3>Types of Attention</h3>
-                        <div class="key-concepts">
-                            <div class="concept-card">
-                                <h3>Self-Attention</h3>
-                                <p>Each word attends to all other words in the sequence</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>Multi-Head Attention</h3>
-                                <p>Multiple attention mechanisms run in parallel</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>Cross-Attention</h3>
-                                <p>Attending between encoder and decoder sequences</p>
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #000;">
+                            <h4>Step 2: Compute Attention Scores (QK^T)</h4>
+                            <div class="code-example">
+# Dot product between queries and keys
+# Each query attends to all keys
+scores = Q @ K.T  # [3, 64] @ [64, 3] = [3, 3]
+
+# Resulting score matrix (before scaling):
+#           The_k  cat_k  sat_k
+# The_q  [  45.2   12.3   8.7  ]
+# cat_q  [  10.1   52.8   31.4 ]
+# sat_q  [   5.2   28.9   49.1 ]
+
+# Interpretation:
+# - "cat" (row 2) attends strongly to itself (52.8) and "sat" (31.4)
+# - "The" (row 1) attends mostly to itself (45.2)
                             </div>
                         </div>
 
-                        <h3>How Attention Works (Simplified)</h3>
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #000;">
+                            <h4>Step 3: Scale by √d_k</h4>
+                            <div class="code-example">
+import math
+
+d_k = 64
+scaled_scores = scores / math.sqrt(d_k)
+# Division by √64 = 8
+
+# Scaled scores (prevents saturation in softmax):
+#           The_k  cat_k  sat_k
+# The_q  [  5.65   1.54   1.09 ]
+# cat_q  [  1.26   6.60   3.93 ]
+# sat_q  [  0.65   3.61   6.14 ]
+                            </div>
+                            <p><strong>Why scale?</strong> Without scaling, large dot products → large softmax inputs → near-zero gradients. Scaling by √d_k keeps values in a reasonable range.</p>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #000;">
+                            <h4>Step 4: Apply Softmax (Get Attention Weights)</h4>
+                            <div class="code-example">
+import torch.nn.functional as F
+
+attention_weights = F.softmax(scaled_scores, dim=-1)
+# Softmax over each row (each query attends to all keys)
+
+# Attention weights (probabilities sum to 1 per row):
+#           The_k  cat_k  sat_k
+# The_q  [ 0.823  0.131  0.046 ]  ← "The" mostly attends to itself
+# cat_q  [ 0.041  0.752  0.207 ]  ← "cat" attends to itself and "sat"
+# sat_q  [ 0.018  0.337  0.645 ]  ← "sat" attends to itself and "cat"
+
+# These weights are interpretable! Higher = more relevant
+                            </div>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #000;">
+                            <h4>Step 5: Weighted Sum of Values (Get Output)</h4>
+                            <div class="code-example">
+output = attention_weights @ V  # [3, 3] @ [3, 64] = [3, 64]
+
+# For "cat" (row 2):
+output[1] = 0.041 * V[0] + 0.752 * V[1] + 0.207 * V[2]
+#           ^small weight   ^large weight  ^medium weight
+#           from "The"      from "cat"     from "sat"
+
+# The output is a context-aware representation that mixes
+# information from all tokens, weighted by relevance
+                            </div>
+                        </div>
+
+                        <div class="info-box success" style="margin-top: 20px;">
+                            <p><strong>Key Insight:</strong> Attention is a <em>differentiable lookup mechanism</em>. Instead of hard-indexing (like a dictionary), we do a soft weighted average where the weights are learned based on content similarity (Q·K).</p>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Complete PyTorch Implementation</h2>
                         <div class="code-example">
-# For each word in the sentence:
-# 1. Create Query (what am I looking for?)
-# 2. Create Keys (what do I contain?)
-# 3. Create Values (what information do I have?)
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import math
 
-# Calculate attention scores
-scores = Query × Keys^T / sqrt(d_k)
-attention_weights = softmax(scores)
+class ScaledDotProductAttention(nn.Module):
+    """
+    Scaled Dot-Product Attention from 'Attention Is All You Need'
 
-# Get context-aware representation
-output = attention_weights × Values
+    Args:
+        d_k: dimension of keys/queries (typically 64)
+        dropout: dropout probability (typically 0.1)
+    """
+    def __init__(self, d_k, dropout=0.1):
+        super().__init__()
+        self.d_k = d_k
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, Q, K, V, mask=None):
+        """
+        Args:
+            Q: Queries [batch, seq_len, d_k]
+            K: Keys    [batch, seq_len, d_k]
+            V: Values  [batch, seq_len, d_v]
+            mask: Optional mask [batch, seq_len, seq_len]
+
+        Returns:
+            output: [batch, seq_len, d_v]
+            attention_weights: [batch, seq_len, seq_len]
+        """
+        # Step 1: Compute Q·K^T
+        scores = torch.matmul(Q, K.transpose(-2, -1))  # [batch, seq, seq]
+
+        # Step 2: Scale by √d_k
+        scores = scores / math.sqrt(self.d_k)
+
+        # Step 3: Apply mask (for causal/padding masks)
+        if mask is not None:
+            scores = scores.masked_fill(mask == 0, -1e9)
+
+        # Step 4: Softmax to get attention weights
+        attention_weights = F.softmax(scores, dim=-1)  # [batch, seq, seq]
+        attention_weights = self.dropout(attention_weights)
+
+        # Step 5: Weighted sum of values
+        output = torch.matmul(attention_weights, V)  # [batch, seq, d_v]
+
+        return output, attention_weights
+
+# Usage example
+batch_size, seq_len, d_model = 32, 50, 512
+d_k = 64
+
+# Create random Q, K, V (in practice, these come from linear projections)
+Q = torch.randn(batch_size, seq_len, d_k)
+K = torch.randn(batch_size, seq_len, d_k)
+V = torch.randn(batch_size, seq_len, d_k)
+
+attention = ScaledDotProductAttention(d_k)
+output, weights = attention(Q, K, V)
+
+print(f"Output shape: {output.shape}")  # [32, 50, 64]
+print(f"Attention weights shape: {weights.shape}")  # [32, 50, 50]
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Multi-Head Attention: Learning Multiple Relationships</h2>
+                        <p>Single attention head can only learn one type of relationship. <strong>Multi-Head Attention</strong> runs multiple attention mechanisms in parallel, each learning different patterns.</p>
+
+                        <div class="code-example" style="margin-top: 15px;">
+MultiHead(Q, K, V) = Concat(head_1, ..., head_h) W^O
+
+where head_i = Attention(Q W_i^Q, K W_i^K, V W_i^V)
+
+Parameters:
+- h: number of heads (typically 8, 12, or 16)
+- d_model: model dimension (512 for base, 1024 for large)
+- d_k = d_v = d_model / h (e.g., 512/8 = 64 per head)
                         </div>
 
-                        <div class="info-box success">
-                            <strong>The Power of Attention:</strong> By learning which words to focus on, models can understand complex relationships like pronouns referring to entities, or verbs relating to their subjects, even when they're far apart in the sentence.
+                        <h3>What Different Heads Learn</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Head</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Pattern Learned</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Example</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Head 1</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Syntactic relationships</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Verbs attend to subjects</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Head 2</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Positional (next word)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Each word attends to next word</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Head 3</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Rare words</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Technical terms attend to definitions</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Head 4</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Delimiter tokens</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Commas, periods, quotes</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Head 5-8</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Semantic relationships</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Pronouns to antecedents, entities to attributes</td>
+                            </tr>
+                        </table>
+
+                        <h3>Multi-Head Attention Implementation</h3>
+                        <div class="code-example">
+class MultiHeadAttention(nn.Module):
+    """
+    Multi-Head Attention from 'Attention Is All You Need'
+
+    Splits d_model into h heads, each of dimension d_k = d_model/h
+    """
+    def __init__(self, d_model=512, num_heads=8, dropout=0.1):
+        super().__init__()
+        assert d_model % num_heads == 0, "d_model must be divisible by num_heads"
+
+        self.d_model = d_model
+        self.num_heads = num_heads
+        self.d_k = d_model // num_heads  # 64 if d_model=512, h=8
+
+        # Linear projections for Q, K, V (for all heads at once)
+        self.W_Q = nn.Linear(d_model, d_model)
+        self.W_K = nn.Linear(d_model, d_model)
+        self.W_V = nn.Linear(d_model, d_model)
+
+        # Output projection
+        self.W_O = nn.Linear(d_model, d_model)
+
+        self.dropout = nn.Dropout(dropout)
+
+    def split_heads(self, x):
+        """Split last dimension into (num_heads, d_k)"""
+        batch_size, seq_len, d_model = x.size()
+        # Reshape and transpose to [batch, num_heads, seq_len, d_k]
+        return x.view(batch_size, seq_len, self.num_heads, self.d_k).transpose(1, 2)
+
+    def forward(self, Q, K, V, mask=None):
+        batch_size = Q.size(0)
+
+        # 1. Linear projections
+        Q = self.W_Q(Q)  # [batch, seq_len, d_model]
+        K = self.W_K(K)
+        V = self.W_V(V)
+
+        # 2. Split into multiple heads
+        Q = self.split_heads(Q)  # [batch, num_heads, seq_len, d_k]
+        K = self.split_heads(K)
+        V = self.split_heads(V)
+
+        # 3. Apply scaled dot-product attention
+        scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
+
+        if mask is not None:
+            scores = scores.masked_fill(mask == 0, -1e9)
+
+        attention_weights = F.softmax(scores, dim=-1)
+        attention_weights = self.dropout(attention_weights)
+
+        context = torch.matmul(attention_weights, V)  # [batch, h, seq, d_k]
+
+        # 4. Concatenate heads
+        context = context.transpose(1, 2).contiguous()  # [batch, seq, h, d_k]
+        context = context.view(batch_size, -1, self.d_model)  # [batch, seq, d_model]
+
+        # 5. Final linear projection
+        output = self.W_O(context)
+
+        return output, attention_weights
+
+# Usage
+mha = MultiHeadAttention(d_model=512, num_heads=8)
+x = torch.randn(32, 50, 512)  # [batch, seq_len, d_model]
+output, attn_weights = mha(x, x, x)  # Self-attention: Q=K=V=x
+print(f"Output: {output.shape}")  # [32, 50, 512]
+print(f"Attention: {attn_weights.shape}")  # [32, 8, 50, 50]
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Causal (Masked) Attention for Autoregressive Models</h2>
+                        <p>In decoder-only models (GPT, LLaMA), we need <strong>causal masking</strong> to prevent positions from attending to future positions during training.</p>
+
+                        <div class="code-example">
+# Create causal mask (lower triangular matrix)
+seq_len = 5
+mask = torch.tril(torch.ones(seq_len, seq_len))
+
+# Visualization:
+#     0  1  2  3  4  (positions)
+# 0 [ 1  0  0  0  0 ]  ← position 0 can only see itself
+# 1 [ 1  1  0  0  0 ]  ← position 1 sees 0,1
+# 2 [ 1  1  1  0  0 ]  ← position 2 sees 0,1,2
+# 3 [ 1  1  1  1  0 ]  ← position 3 sees 0,1,2,3
+# 4 [ 1  1  1  1  1 ]  ← position 4 sees all
+
+# Apply during attention computation
+scores = scores.masked_fill(mask == 0, -1e9)
+# -1e9 becomes ~0 after softmax, effectively blocking attention
+                        </div>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3>Why Causal Masking?</h3>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Training:</strong> When predicting token at position <em>i</em>, model can only use tokens 0 to <em>i-1</em></li>
+                                <li><strong>Inference:</strong> Ensures model behavior during training matches generation (no future information)</li>
+                                <li><strong>Efficiency:</strong> Allows parallel training (all positions trained simultaneously, but with appropriate masking)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Complexity Analysis</h2>
+
+                        <h3>Time and Space Complexity</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Operation</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Time Complexity</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Space Complexity</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Linear projections (Q, K, V)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n·d²)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(d²)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Q·K^T (attention scores)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n²·d)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n²)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Softmax</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n²)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n²)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Attn·V (weighted sum)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n²·d)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n²)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>Total</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>O(n²·d + n·d²)</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>O(n² + d²)</strong></td>
+                            </tr>
+                        </table>
+
+                        <p style="margin-top: 15px;"><strong>Where:</strong> n = sequence length, d = model dimension</p>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3>The O(n²) Bottleneck</h3>
+                            <p>The quadratic complexity in sequence length is the main limitation of standard attention:</p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>1K tokens:</strong> 1M attention scores to compute</li>
+                                <li><strong>10K tokens:</strong> 100M attention scores (100x more!)</li>
+                                <li><strong>100K tokens:</strong> 10B attention scores → OOM on most GPUs</li>
+                            </ul>
+                            <p><strong>This is why context length is expensive to scale!</strong></p>
+                        </div>
+
+                        <h3>Efficient Attention Variants</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Method</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Complexity</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Used In</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Standard Attention</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n²)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-3, GPT-4, Claude</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Flash Attention</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n²) but memory-efficient</td>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-4, LLaMA-2, Modern LLMs</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Sparse Attention</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n√n) or O(n log n)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Longformer, BigBird</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Linear Attention</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Linformer, Performer</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">State Space Models</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Mamba, RWKV</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Types of Attention Mechanisms</h2>
+
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #000;">
+                            <h3>1. Self-Attention (Intra-Attention)</h3>
+                            <p>Each position attends to all positions in the same sequence. Used in encoder and decoder.</p>
+                            <div class="code-example">
+output = SelfAttention(X, X, X)  # Q=K=V=X
+# Example: "The cat sat" → each word attends to all 3 words
+                            </div>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #000;">
+                            <h3>2. Cross-Attention (Encoder-Decoder Attention)</h3>
+                            <p>Decoder positions attend to encoder outputs. Used in seq2seq models (translation, summarization).</p>
+                            <div class="code-example">
+# Encoder output: source language representation
+encoder_output = Encoder("Hello world")  # English
+
+# Decoder uses cross-attention to source
+decoder_output = CrossAttention(
+    Q=decoder_hidden,      # "Bonjour ___" (French, being generated)
+    K=encoder_output,      # Keys from "Hello world"
+    V=encoder_output       # Values from "Hello world"
+)
+# Decoder can attend to relevant English words when generating French
+                            </div>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #000;">
+                            <h3>3. Masked Self-Attention (Causal Attention)</h3>
+                            <p>Prevents attention to future positions. Used in decoder-only models (GPT).</p>
+                            <div class="code-example">
+# Training on "The cat sat on the mat"
+# When predicting "sat", model can only see "The cat"
+# When predicting "mat", model can see "The cat sat on the"
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Common Pitfalls and Best Practices</h2>
+
+                        <h3>Implementation Details That Matter</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Issue</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Solution</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Why It Matters</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Numerical instability in softmax</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Use scaling (√d_k) and stable softmax</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Prevents vanishing/exploding gradients</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Memory explosion for long sequences</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Use Flash Attention or gradient checkpointing</td>
+                                <td style="padding: 12px; border: 1px solid #000;">O(n²) memory can OOM quickly</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Forgetting positional information</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Add positional encodings to input</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Attention is permutation-invariant</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Attention collapse (all weights uniform)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Use LayerNorm, dropout, proper init</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Model fails to learn useful patterns</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Information leakage in causal models</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Strictly enforce causal masking</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Training/inference mismatch</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Key Papers and Resources</h2>
+
+                        <h3>Foundational Papers</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"Attention Is All You Need"</strong> (Vaswani et al., 2017) - The original Transformer<br>
+                                <a href="https://arxiv.org/abs/1706.03762" style="color: #000; text-decoration: underline;">arxiv.org/abs/1706.03762</a></li>
+
+                            <li><strong>"Neural Machine Translation by Jointly Learning to Align and Translate"</strong> (Bahdanau et al., 2014) - First attention mechanism<br>
+                                <a href="https://arxiv.org/abs/1409.0473" style="color: #000; text-decoration: underline;">arxiv.org/abs/1409.0473</a></li>
+
+                            <li><strong>"Flash Attention: Fast and Memory-Efficient Exact Attention"</strong> (Dao et al., 2022)<br>
+                                <a href="https://arxiv.org/abs/2205.14135" style="color: #000; text-decoration: underline;">arxiv.org/abs/2205.14135</a></li>
+
+                            <li><strong>"Longformer: The Long-Document Transformer"</strong> (Beltagy et al., 2020) - Sparse attention<br>
+                                <a href="https://arxiv.org/abs/2004.05150" style="color: #000; text-decoration: underline;">arxiv.org/abs/2004.05150</a></li>
+                        </ul>
+
+                        <h3>Analysis and Interpretability</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"What Does BERT Look At?"</strong> (Clark et al., 2019) - Analyzing attention patterns<br>
+                                <a href="https://arxiv.org/abs/1906.04341" style="color: #000; text-decoration: underline;">arxiv.org/abs/1906.04341</a></li>
+
+                            <li><strong>"Analyzing Multi-Head Self-Attention"</strong> (Voita et al., 2019)<br>
+                                <a href="https://arxiv.org/abs/1905.09418" style="color: #000; text-decoration: underline;">arxiv.org/abs/1905.09418</a></li>
+                        </ul>
+
+                        <h3>Interactive Resources</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>The Illustrated Transformer</strong> by Jay Alammar<br>
+                                <a href="https://jalammar.github.io/illustrated-transformer/" style="color: #000; text-decoration: underline;">jalammar.github.io/illustrated-transformer</a></li>
+
+                            <li><strong>The Annotated Transformer</strong> by Harvard NLP<br>
+                                <a href="https://nlp.seas.harvard.edu/annotated-transformer/" style="color: #000; text-decoration: underline;">nlp.seas.harvard.edu/annotated-transformer</a></li>
+
+                            <li><strong>Attention? Attention!</strong> by Lil'Log<br>
+                                <a href="https://lilianweng.github.io/posts/2018-06-24-attention/" style="color: #000; text-decoration: underline;">lilianweng.github.io/posts/2018-06-24-attention</a></li>
+
+                            <li><strong>BertViz</strong> - Visualize attention in BERT, GPT-2, etc.<br>
+                                <a href="https://github.com/jessevig/bertviz" style="color: #000; text-decoration: underline;">github.com/jessevig/bertviz</a></li>
+                        </ul>
+
+                        <h3>Video Tutorials</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>Andrej Karpathy</strong> - "Let's build GPT: from scratch, in code, spelled out"</li>
+                            <li><strong>Stanford CS224N</strong> - Lecture on Attention Mechanisms</li>
+                            <li><strong>3Blue1Brown</strong> - "But what is a GPT?" (visual intuition)</li>
+                        </ul>
+
+                        <div class="info-box success" style="margin-top: 30px;">
+                            <h3>Recommended Learning Path</h3>
+                            <ol style="margin-left: 20px; margin-top: 10px; line-height: 2;">
+                                <li>Read "The Illustrated Transformer" for visual intuition</li>
+                                <li>Read sections 3.2-3.3 of "Attention Is All You Need" paper</li>
+                                <li>Implement scaled dot-product attention from scratch in NumPy</li>
+                                <li>Implement multi-head attention in PyTorch</li>
+                                <li>Use BertViz to visualize attention patterns in real models</li>
+                                <li>Read "What Does BERT Look At?" to understand what attention learns</li>
+                                <li>Experiment with Flash Attention for efficient implementation</li>
+                            </ol>
                         </div>
                     </div>
                 </div>
