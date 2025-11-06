@@ -683,6 +683,7 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">Practice</div>
+                    <div class="nav-item" data-page="projects">Projects & Practice</div>
                     <div class="nav-item" data-page="quiz">Knowledge Quiz</div>
                     <div class="nav-item" data-page="resources">Learning Resources</div>
                 </div>
@@ -2407,6 +2408,397 @@ the same two-pointer technique?"
                     </div>
                 </div>
 
+                <!-- Projects & Practice Page -->
+                <div class="page-section" id="page-projects">
+                    <h1 class="page-title">Projects & Practice Ideas</h1>
+                    <p class="page-description">Hands-on projects to practice pre-training, post-training, and RLHF techniques</p>
+
+                    <div class="content-card">
+                        <h2>Pre-training Projects</h2>
+                        <p>Learn how to train language models from scratch or continue pre-training existing models.</p>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Beginner: Train a Character-Level Language Model</h3>
+                            <p><strong>Goal:</strong> Understand the fundamentals of autoregressive language modeling</p>
+                            <p><strong>Technical Requirements:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Dataset:</strong> Small text corpus (Shakespeare, Wikipedia subset, ~1-10MB)</li>
+                                <li><strong>Model:</strong> Small transformer (2-4 layers, 128-256 dim, ~1M parameters)</li>
+                                <li><strong>Hardware:</strong> CPU or single GPU (Google Colab free tier)</li>
+                                <li><strong>Framework:</strong> PyTorch or TensorFlow, Hugging Face Transformers</li>
+                                <li><strong>Time:</strong> 1-2 weeks</li>
+                            </ul>
+                            <p><strong>Key Learning Objectives:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li>Implement tokenization (character or BPE)</li>
+                                <li>Build transformer architecture from scratch or adapt existing</li>
+                                <li>Implement cross-entropy loss and next-token prediction</li>
+                                <li>Track training metrics (loss, perplexity)</li>
+                                <li>Generate text samples during training</li>
+                                <li>Experiment with hyperparameters (learning rate, batch size, context length)</li>
+                            </ul>
+                            <p><strong>Deliverables:</strong> Trained model that generates coherent text in training domain style</p>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Intermediate: Continue Pre-training a Small LLM</h3>
+                            <p><strong>Goal:</strong> Adapt an existing pre-trained model to a specific domain</p>
+                            <p><strong>Technical Requirements:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Base Model:</strong> GPT-2 (124M), DistilGPT-2, or similar (~100M-350M params)</li>
+                                <li><strong>Dataset:</strong> Domain-specific corpus (medical papers, code, legal docs, 100MB-1GB)</li>
+                                <li><strong>Hardware:</strong> Single GPU (V100, A100, or T4 with gradient accumulation)</li>
+                                <li><strong>Framework:</strong> Hugging Face Transformers, DeepSpeed for optimization</li>
+                                <li><strong>Time:</strong> 2-4 weeks</li>
+                            </ul>
+                            <p><strong>Key Learning Objectives:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li>Load and freeze selective layers (optional)</li>
+                                <li>Prepare domain-specific training data pipeline</li>
+                                <li>Implement learning rate warmup and decay schedules</li>
+                                <li>Use gradient accumulation for larger effective batch sizes</li>
+                                <li>Evaluate on domain-specific benchmarks</li>
+                                <li>Compare performance before/after domain adaptation</li>
+                                <li>Implement checkpointing and resume training</li>
+                            </ul>
+                            <p><strong>Deliverables:</strong> Specialized model with measurably better domain performance</p>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Advanced: Train a Small LLM from Scratch with Custom Tokenizer</h3>
+                            <p><strong>Goal:</strong> Complete pre-training pipeline including data preprocessing and tokenizer training</p>
+                            <p><strong>Technical Requirements:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Dataset:</strong> Large diverse corpus (The Pile subset, C4, Common Crawl, 10GB+)</li>
+                                <li><strong>Model:</strong> Custom architecture (6-12 layers, 512-1024 dim, 100M-1B params)</li>
+                                <li><strong>Hardware:</strong> Multi-GPU setup or TPU (4-8 GPUs, distributed training)</li>
+                                <li><strong>Framework:</strong> PyTorch + DeepSpeed/FSDP, or JAX + Mesh TensorFlow</li>
+                                <li><strong>Time:</strong> 2-3 months</li>
+                            </ul>
+                            <p><strong>Key Learning Objectives:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li>Train custom BPE/WordPiece tokenizer on your corpus</li>
+                                <li>Implement distributed data loading and shuffling</li>
+                                <li>Use mixed precision training (FP16/BF16)</li>
+                                <li>Implement gradient checkpointing for memory efficiency</li>
+                                <li>Track scaling laws (loss vs compute)</li>
+                                <li>Implement evaluation on diverse benchmarks (LAMBADA, HellaSwag, etc.)</li>
+                                <li>Monitor training stability and implement interventions</li>
+                                <li>Optimize throughput (tokens/sec, MFU - Model FLOPS Utilization)</li>
+                            </ul>
+                            <p><strong>Deliverables:</strong> Fully pre-trained model with documented training run, loss curves, and benchmark results</p>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Post-training Projects (SFT, Instruction Tuning)</h2>
+                        <p>Take pre-trained models and fine-tune them to follow instructions and perform specific tasks.</p>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Beginner: Fine-tune for Single Task (Classification/Summarization)</h3>
+                            <p><strong>Goal:</strong> Understand supervised fine-tuning on a specific downstream task</p>
+                            <p><strong>Technical Requirements:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Base Model:</strong> FLAN-T5-small, GPT-2, or DistilGPT-2</li>
+                                <li><strong>Dataset:</strong> Single-task dataset (IMDB sentiment, CNN/DailyMail summarization, ~10K examples)</li>
+                                <li><strong>Hardware:</strong> Single GPU or Google Colab</li>
+                                <li><strong>Framework:</strong> Hugging Face Transformers + PEFT (LoRA)</li>
+                                <li><strong>Time:</strong> 1-2 weeks</li>
+                            </ul>
+                            <p><strong>Key Learning Objectives:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li>Format data as input-output pairs</li>
+                                <li>Implement LoRA (Low-Rank Adaptation) for parameter-efficient fine-tuning</li>
+                                <li>Use appropriate loss masking (only compute loss on outputs)</li>
+                                <li>Evaluate with task-specific metrics (accuracy, ROUGE, BLEU)</li>
+                                <li>Compare full fine-tuning vs LoRA</li>
+                                <li>Prevent overfitting with early stopping</li>
+                            </ul>
+                            <p><strong>Deliverables:</strong> Fine-tuned model that performs well on held-out test set</p>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Intermediate: Multi-Task Instruction Tuning</h3>
+                            <p><strong>Goal:</strong> Create a model that can follow diverse instructions across multiple task types</p>
+                            <p><strong>Technical Requirements:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Base Model:</strong> LLaMA-2-7B, Mistral-7B, or Falcon-7B</li>
+                                <li><strong>Dataset:</strong> Multi-task instruction dataset (FLAN, Dolly, OpenOrca, ~50K-500K examples)</li>
+                                <li><strong>Hardware:</strong> Single A100/H100 or multiple smaller GPUs</li>
+                                <li><strong>Framework:</strong> Axolotl, LLaMA-Factory, or custom training loop</li>
+                                <li><strong>Time:</strong> 3-6 weeks</li>
+                            </ul>
+                            <p><strong>Key Learning Objectives:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li>Curate and mix instruction datasets from multiple sources</li>
+                                <li>Implement proper instruction templates (chat format)</li>
+                                <li>Use QLoRA for memory-efficient training of larger models</li>
+                                <li>Balance dataset mixing ratios</li>
+                                <li>Evaluate across multiple tasks (reasoning, knowledge, coding)</li>
+                                <li>Implement generation sampling strategies (temperature, top-p, top-k)</li>
+                                <li>Measure instruction-following capability qualitatively</li>
+                            </ul>
+                            <p><strong>Deliverables:</strong> Instruction-tuned model that generalizes to unseen task types</p>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Advanced: Build a Domain Expert with Specialized SFT</h3>
+                            <p><strong>Goal:</strong> Create a highly capable domain-specific assistant (e.g., medical, legal, coding)</p>
+                            <p><strong>Technical Requirements:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Base Model:</strong> LLaMA-2-13B/70B, Mistral-7B, or Code Llama</li>
+                                <li><strong>Dataset:</strong> Custom domain dataset + synthetic data generation (50K-1M examples)</li>
+                                <li><strong>Hardware:</strong> Multi-GPU setup (4-8 A100s) or cloud compute</li>
+                                <li><strong>Framework:</strong> DeepSpeed, FSDP, or Megatron-LM for large models</li>
+                                <li><strong>Time:</strong> 2-3 months</li>
+                            </ul>
+                            <p><strong>Key Learning Objectives:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li>Use strong models (GPT-4) to generate synthetic training data</li>
+                                <li>Implement data quality filtering and deduplication</li>
+                                <li>Create domain-specific evaluation benchmarks</li>
+                                <li>Fine-tune with curriculum learning (easy → hard examples)</li>
+                                <li>Implement safety guardrails and refusal behavior</li>
+                                <li>Test for hallucinations and factual accuracy</li>
+                                <li>Compare against general-purpose baselines</li>
+                            </ul>
+                            <p><strong>Deliverables:</strong> Production-ready domain expert with comprehensive evaluation report</p>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>RLHF (Reinforcement Learning from Human Feedback) Projects</h2>
+                        <p>Implement the complete RLHF pipeline to align models with human preferences.</p>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Beginner: Implement Reward Modeling</h3>
+                            <p><strong>Goal:</strong> Build a reward model that predicts human preferences between responses</p>
+                            <p><strong>Technical Requirements:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Base Model:</strong> Same architecture as your SFT model (smaller variant)</li>
+                                <li><strong>Dataset:</strong> Comparison dataset (Anthropic HH-RLHF, OpenAssistant, ~10K-50K pairs)</li>
+                                <li><strong>Hardware:</strong> Single GPU (T4/V100)</li>
+                                <li><strong>Framework:</strong> Hugging Face Transformers + TRL (Transformer Reinforcement Learning)</li>
+                                <li><strong>Time:</strong> 2-3 weeks</li>
+                            </ul>
+                            <p><strong>Key Learning Objectives:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li>Understand pairwise comparison loss (Bradley-Terry model)</li>
+                                <li>Modify model head to output scalar reward score</li>
+                                <li>Implement training loop with paired examples</li>
+                                <li>Evaluate reward model accuracy on preference prediction</li>
+                                <li>Analyze what the reward model has learned (correlations with length, style, etc.)</li>
+                                <li>Test on out-of-distribution prompts</li>
+                            </ul>
+                            <p><strong>Deliverables:</strong> Trained reward model that accurately predicts human preferences (>60% accuracy)</p>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Intermediate: Full RLHF Pipeline (PPO)</h3>
+                            <p><strong>Goal:</strong> Implement complete RLHF with Proximal Policy Optimization</p>
+                            <p><strong>Technical Requirements:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Base Model:</strong> Instruction-tuned model (GPT-2, LLaMA-7B)</li>
+                                <li><strong>Reward Model:</strong> From previous step or pre-trained</li>
+                                <li><strong>Hardware:</strong> 2-4 GPUs (need separate GPUs for policy, value, and reward models)</li>
+                                <li><strong>Framework:</strong> TRL (trl library), or DeepSpeed-Chat</li>
+                                <li><strong>Time:</strong> 4-8 weeks</li>
+                            </ul>
+                            <p><strong>Key Learning Objectives:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li>Implement PPO algorithm for language models</li>
+                                <li>Manage four models: policy (actor), value (critic), reward, reference</li>
+                                <li>Compute advantages using Generalized Advantage Estimation (GAE)</li>
+                                <li>Add KL divergence penalty to prevent drift from reference model</li>
+                                <li>Sample generations and compute rewards in batches</li>
+                                <li>Monitor training stability (KL divergence, reward statistics, policy entropy)</li>
+                                <li>Evaluate qualitative improvements in response quality</li>
+                            </ul>
+                            <p><strong>Deliverables:</strong> RLHF-trained model with measurably improved preference ratings vs SFT baseline</p>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Advanced: Constitutional AI & DPO (Direct Preference Optimization)</h3>
+                            <p><strong>Goal:</strong> Implement modern RLHF alternatives without explicit reward models</p>
+                            <p><strong>Technical Requirements:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Base Model:</strong> Large instruction-tuned model (LLaMA-2-13B+, Mistral-7B)</li>
+                                <li><strong>Dataset:</strong> Generate synthetic preferences using AI feedback (self-critique)</li>
+                                <li><strong>Hardware:</strong> 4-8 GPUs for larger models</li>
+                                <li><strong>Framework:</strong> Custom implementation or TRL with DPO support</li>
+                                <li><strong>Time:</strong> 2-3 months</li>
+                            </ul>
+                            <p><strong>Key Learning Objectives:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li>Implement Constitutional AI: use model to critique and revise its own outputs</li>
+                                <li>Generate preference pairs through self-evaluation against principles</li>
+                                <li>Implement DPO algorithm (simpler than PPO, no reward model needed)</li>
+                                <li>Compare DPO vs PPO on same dataset</li>
+                                <li>Design constitution (set of principles for model behavior)</li>
+                                <li>Measure alignment on safety benchmarks (TruthfulQA, BBQ bias)</li>
+                                <li>Test robustness to adversarial prompts</li>
+                            </ul>
+                            <p><strong>Deliverables:</strong> Aligned model using modern techniques with comprehensive safety evaluation</p>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>End-to-End Application Projects</h2>
+                        <p>Build complete systems that combine pre-training, post-training, and RLHF concepts.</p>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Project Idea: Personal Code Assistant</h3>
+                            <p><strong>Pipeline:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Pre-training:</strong> Continue pre-train Code Llama on your company's codebase</li>
+                                <li><strong>SFT:</strong> Fine-tune on code completion and debugging examples</li>
+                                <li><strong>RLHF:</strong> Use developer feedback (thumbs up/down) to refine suggestions</li>
+                            </ul>
+                            <p><strong>Technologies:</strong> VS Code extension, local model serving (vLLM), feedback collection UI</p>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Project Idea: Custom Chatbot with Domain Expertise</h3>
+                            <p><strong>Pipeline:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Pre-training:</strong> Continue training on domain-specific documents (medical/legal/financial)</li>
+                                <li><strong>SFT:</strong> Train on QA pairs and instruction examples from domain</li>
+                                <li><strong>RLHF:</strong> Collect expert feedback on response quality and factuality</li>
+                            </ul>
+                            <p><strong>Technologies:</strong> RAG (Retrieval-Augmented Generation), vector database (Pinecone/Weaviate), web interface</p>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3 style="margin-bottom: 10px;">Project Idea: Creative Writing Assistant</h3>
+                            <p><strong>Pipeline:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Pre-training:</strong> Train on large corpus of books, stories, creative writing</li>
+                                <li><strong>SFT:</strong> Fine-tune on story completion, character development prompts</li>
+                                <li><strong>RLHF:</strong> Use writer feedback to align on style, creativity, coherence</li>
+                            </ul>
+                            <p><strong>Technologies:</strong> React web app, streaming responses, style transfer controls</p>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Learning Resources for Projects</h2>
+
+                        <h3>Essential Libraries & Tools</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Tool</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Purpose</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Best For</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Hugging Face Transformers</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Pre-trained models, tokenizers, training utilities</td>
+                                <td style="padding: 12px; border: 1px solid #000;">All projects, especially SFT</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">TRL (Transformer RL)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">RLHF, PPO, DPO implementations</td>
+                                <td style="padding: 12px; border: 1px solid #000;">RLHF projects</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">PEFT (LoRA, QLoRA)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Parameter-efficient fine-tuning</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Limited compute scenarios</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">DeepSpeed</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Distributed training, memory optimization</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Large model training</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Axolotl</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Simplified training configs for LLMs</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Quick experiments</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">vLLM / TGI</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Fast inference serving</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Production deployment</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Weights & Biases</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Experiment tracking, visualization</td>
+                                <td style="padding: 12px; border: 1px solid #000;">All projects</td>
+                            </tr>
+                        </table>
+
+                        <h3 style="margin-top: 30px;">Datasets for Practice</h3>
+                        <ul style="margin-left: 20px; line-height: 1.8;">
+                            <li><strong>Pre-training:</strong> The Pile, C4, RedPajama, mC4 (multilingual)</li>
+                            <li><strong>Instruction Tuning:</strong> FLAN, Dolly-15k, OpenOrca, WizardLM, Alpaca</li>
+                            <li><strong>Coding:</strong> The Stack, CodeSearchNet, APPS, HumanEval</li>
+                            <li><strong>RLHF:</strong> Anthropic HH-RLHF, OpenAssistant Conversations, SHP (StackOverflow preferences)</li>
+                            <li><strong>Alignment:</strong> TruthfulQA, BBQ (bias), RealToxicityPrompts</li>
+                        </ul>
+
+                        <h3 style="margin-top: 30px;">Compute Requirements</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Model Size</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Training (Full FT)</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Training (LoRA/QLoRA)</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Inference</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">1M params</td>
+                                <td style="padding: 12px; border: 1px solid #000;">CPU</td>
+                                <td style="padding: 12px; border: 1px solid #000;">CPU</td>
+                                <td style="padding: 12px; border: 1px solid #000;">CPU</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">100M-350M</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1x T4/V100 (16GB)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1x T4 (16GB)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">CPU or small GPU</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">1B-3B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1-2x A100 (40GB)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1x V100/T4</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1x T4 or CPU (slow)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">7B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">4-8x A100 (80GB)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1x A100 (40GB)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1x A100 or 2x T4</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">13B-30B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">8-16x A100</td>
+                                <td style="padding: 12px; border: 1px solid #000;">2x A100 (80GB)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">2-4x A100</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">70B+</td>
+                                <td style="padding: 12px; border: 1px solid #000;">16-32x A100/H100</td>
+                                <td style="padding: 12px; border: 1px solid #000;">4-8x A100</td>
+                                <td style="padding: 12px; border: 1px solid #000;">8x A100 or quantization</td>
+                            </tr>
+                        </table>
+
+                        <div class="info-box success" style="margin-top: 30px;">
+                            <h3>Getting Started Checklist</h3>
+                            <ol style="margin-left: 20px; margin-top: 10px; line-height: 2;">
+                                <li>Choose a project that matches your compute budget and timeline</li>
+                                <li>Set up development environment (PyTorch, Transformers, Weights & Biases)</li>
+                                <li>Start with smallest viable dataset to test pipeline end-to-end</li>
+                                <li>Establish baseline metrics before training</li>
+                                <li>Implement logging and checkpointing from day one</li>
+                                <li>Run small-scale experiments first (hyperparameter search on tiny model)</li>
+                                <li>Scale up only after validating pipeline works</li>
+                                <li>Document everything (model cards, training logs, evaluation results)</li>
+                                <li>Share your work (blog post, GitHub repo, Hugging Face model)</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Navigation Buttons -->
                 <div class="page-navigation">
                     <button class="nav-button prev" id="prevBtn" onclick="navigatePage(-1)">
@@ -2422,7 +2814,7 @@ the same two-pointer technique?"
 
     <script>
         // Page navigation system
-        const pages = ['intro', 'transformer', 'attention', 'pretraining', 'posttraining', 'concepts', 'models', 'coding', 'algorithms', 'prompting', 'quiz', 'resources'];
+        const pages = ['intro', 'transformer', 'attention', 'pretraining', 'posttraining', 'concepts', 'models', 'coding', 'algorithms', 'prompting', 'projects', 'quiz', 'resources'];
         let currentPageIndex = 0;
         const visitedPages = new Set(['intro']);
 
@@ -2437,6 +2829,7 @@ the same two-pointer technique?"
             'coding': 'How LLMs Code',
             'algorithms': 'Algorithmic Reasoning',
             'prompting': 'Prompting for Coding',
+            'projects': 'Projects & Practice',
             'quiz': 'Knowledge Quiz',
             'resources': 'Learning Resources'
         };
