@@ -2512,123 +2512,695 @@ training_data = pack_sequences(tokenized)
                 <!-- Post-training Page -->
                 <div class="page-section" id="page-posttraining">
                     <h1 class="page-title">Post-training: Alignment & Specialization</h1>
-                    <p class="page-description">Phase 2 - Making models helpful, harmless, and honest</p>
+                    <p class="page-description">Deep dive into SFT, RLHF, and alignment techniques</p>
 
                     <div class="content-card">
                         <h2>What is Post-training?</h2>
-                        <p>After pre-training, models undergo post-training to become helpful assistants, specialized tools, or domain experts. This phase makes models safe, aligned with human values, and optimized for following instructions.</p>
+                        <p>After pre-training, models undergo <strong>post-training</strong> (also called alignment) to become helpful assistants, specialized tools, or domain experts. This phase transforms raw language models into usable, safe AI systems aligned with human values and preferences.</p>
 
-                        <div class="info-box">
-                            <strong>Why It's Necessary:</strong> Pre-trained models can complete text but aren't optimized for following instructions, being helpful, or avoiding harmful outputs. Post-training aligns models with human preferences.
+                        <div class="info-box" style="border-left: 2px solid #000; margin-top: 20px;">
+                            <h3>Why Post-training is Critical</h3>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Pre-trained models complete text</strong> (next-token prediction) but don't follow instructions</li>
+                                <li><strong>No safety guardrails:</strong> Can generate harmful, biased, or toxic content</li>
+                                <li><strong>Poor task performance:</strong> Not optimized for specific applications</li>
+                                <li><strong>Lack of alignment:</strong> Don't understand human preferences or values</li>
+                            </ul>
+                            <p style="margin-top: 10px;"><strong>Post-training fixes all of these issues</strong>, transforming completion models into assistants.</p>
                         </div>
 
-                        <h3>The Post-training Pipeline</h3>
-                        <div class="timeline" style="margin-top: 30px;">
-                            <div class="timeline-item">
-                                <h3>1. Supervised Fine-Tuning (SFT)</h3>
-                                <p>The model is trained on high-quality human-written examples of desired behavior.</p>
-                                <div class="interactive-section" style="margin-top: 15px;">
-                                    <p><strong>Example Training Data:</strong></p>
-                                    <div class="code-example">
-User: "What is photosynthesis?"
-Assistant: "Photosynthesis is the process by which plants
-convert light energy into chemical energy stored in glucose.
-It occurs in chloroplasts and requires water, CO2, and
-sunlight, producing oxygen as a byproduct."
-                                    </div>
-                                    <p style="margin-top: 10px;">Thousands of such examples teach the model to be informative and helpful.</p>
-                                </div>
-                            </div>
+                        <h3>The Three-Stage Pipeline</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Stage</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Goal</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Data Needed</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Cost</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>1. SFT</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;">Teach instruction following</td>
+                                <td style="padding: 12px; border: 1px solid #000;">10K-100K prompt-response pairs</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Low (hours on single GPU)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>2. Reward Modeling</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;">Learn human preferences</td>
+                                <td style="padding: 12px; border: 1px solid #000;">10K-100K comparison pairs</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Low (hours on single GPU)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>3. RLHF</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;">Optimize for preferences</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Prompts only (RL generates responses)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Medium (days on multiple GPUs)</td>
+                            </tr>
+                        </table>
+                    </div>
 
-                            <div class="timeline-item">
-                                <h3>2. Reward Modeling</h3>
-                                <p>Human raters compare multiple model outputs to teach what "good" responses look like.</p>
-                                <div class="interactive-section" style="margin-top: 15px;">
-                                    <p><strong>How it works:</strong></p>
-                                    <ol style="margin-left: 20px; line-height: 1.8;">
-                                        <li>Model generates multiple responses to the same prompt</li>
-                                        <li>Human raters rank responses from best to worst</li>
-                                        <li>A reward model learns to predict human preferences</li>
-                                        <li>This reward model guides further training</li>
-                                    </ol>
-                                    <button onclick="showRewardModelingDemo()">See Interactive Example</button>
-                                    <div id="rewardModelDemo" style="margin-top: 15px;"></div>
-                                </div>
-                            </div>
+                    <div class="content-card">
+                        <h2>Stage 1: Supervised Fine-Tuning (SFT)</h2>
+                        <p>Train the model on high-quality instruction-response pairs to teach it how to follow instructions and behave as an assistant.</p>
 
-                            <div class="timeline-item">
-                                <h3>3. RLHF (Reinforcement Learning from Human Feedback)</h3>
-                                <p>The model is fine-tuned using the reward model through reinforcement learning, optimizing for outputs humans prefer.</p>
-                                <div class="interactive-section" style="margin-top: 15px;">
-                                    <p><strong>The RLHF Process:</strong></p>
-                                    <div class="transformer-diagram" style="margin-top: 20px;">
-                                        <div class="layer-box">
-                                            <strong>Generate</strong><br>
-                                            Response
-                                        </div>
-                                        <span class="arrow">→</span>
-                                        <div class="layer-box">
-                                            <strong>Reward</strong><br>
-                                            Model Scores
-                                        </div>
-                                        <span class="arrow">→</span>
-                                        <div class="layer-box">
-                                            <strong>Update</strong><br>
-                                            Model
-                                        </div>
-                                        <span class="arrow">→</span>
-                                        <div class="layer-box">
-                                            <strong>Repeat</strong><br>
-                                            Improve
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <h3>SFT Data Format</h3>
+                        <div class="code-example">
+# Training example format (chat/instruction format)
+{
+    "prompt": "Explain quantum computing to a 10-year-old.",
+    "response": "Imagine a regular computer is like flipping one coin
+                 at a time - heads or tails. A quantum computer is like
+                 flipping many magic coins at once, where each coin can be
+                 heads AND tails at the same time until you look at it!
+                 This lets quantum computers solve certain problems much
+                 faster than regular computers."
+}
 
-                            <div class="timeline-item">
-                                <h3>4. Additional Alignment Techniques</h3>
-                                <ul style="margin-top: 10px; margin-left: 20px;">
-                                    <li><strong>Constitutional AI (CAI):</strong> Models trained with explicit principles and self-critique</li>
-                                    <li><strong>Direct Preference Optimization (DPO):</strong> Simpler alternative to RLHF</li>
-                                    <li><strong>Red-teaming:</strong> Adversarial testing to find failure modes</li>
-                                </ul>
+# Can also use chat format with roles:
+{
+    "messages": [
+        {"role": "user", "content": "What causes rainbows?"},
+        {"role": "assistant", "content": "Rainbows are caused by..."}
+    ]
+}
+                        </div>
+
+                        <h3>SFT Training Objective</h3>
+                        <div class="code-example" style="font-size: 1.05em;">
+Loss = -Σ log P(y_t | x, y_<t; θ)
+        t
+
+Where:
+- x: instruction/prompt
+- y: desired response
+- y_t: token t in response
+- θ: model parameters
+
+Key difference from pre-training:
+- Loss computed ONLY on response tokens (not prompt)
+- Teaches model to generate specific responses to instructions
+- Much smaller dataset (10K-100K vs trillions of tokens)
+                        </div>
+
+                        <h3>Complete SFT Implementation</h3>
+                        <div class="code-example">
+import torch
+import torch.nn.functional as F
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from torch.utils.data import Dataset, DataLoader
+
+class InstructionDataset(Dataset):
+    """Dataset for instruction fine-tuning"""
+    def __init__(self, data, tokenizer, max_length=2048):
+        self.data = data
+        self.tokenizer = tokenizer
+        self.max_length = max_length
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        item = self.data[idx]
+
+        # Format as chat template
+        text = f"### Instruction:\n{item['prompt']}\n\n### Response:\n{item['response']}"
+
+        # Tokenize
+        tokens = self.tokenizer.encode(text, max_length=self.max_length,
+                                       truncation=True)
+
+        # Create labels: -100 for prompt tokens (ignored in loss)
+        prompt_text = f"### Instruction:\n{item['prompt']}\n\n### Response:\n"
+        prompt_tokens = self.tokenizer.encode(prompt_text)
+        prompt_len = len(prompt_tokens)
+
+        labels = [-100] * prompt_len + tokens[prompt_len:]
+
+        return {
+            'input_ids': torch.tensor(tokens),
+            'labels': torch.tensor(labels)
+        }
+
+def supervised_fine_tune(
+    model_name='gpt2',
+    train_data=None,
+    num_epochs=3,
+    batch_size=4,
+    learning_rate=2e-5,
+    output_dir='./sft_model'
+):
+    """
+    Supervised fine-tuning on instruction data
+
+    Args:
+        model_name: Base model to fine-tune
+        train_data: List of {"prompt": ..., "response": ...} dicts
+        num_epochs: Training epochs
+        batch_size: Batch size
+        learning_rate: Learning rate (lower than pre-training!)
+        output_dir: Where to save fine-tuned model
+    """
+    # Load model and tokenizer
+    model = AutoModelForCausalLM.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer.pad_token = tokenizer.eos_token
+
+    # Create dataset
+    dataset = InstructionDataset(train_data, tokenizer)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+    # Optimizer (lower LR than pre-training!)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+
+    # Training loop
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = model.to(device)
+    model.train()
+
+    for epoch in range(num_epochs):
+        total_loss = 0
+        for batch in dataloader:
+            input_ids = batch['input_ids'].to(device)
+            labels = batch['labels'].to(device)
+
+            # Forward pass
+            outputs = model(input_ids, labels=labels)
+            loss = outputs.loss
+
+            # Backward pass
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
+
+            total_loss += loss.item()
+
+        avg_loss = total_loss / len(dataloader)
+        print(f"Epoch {epoch+1}/{num_epochs} | Loss: {avg_loss:.4f}")
+
+    # Save model
+    model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
+    print(f"Model saved to {output_dir}")
+
+    return model
+
+# Usage
+# train_data = [
+#     {"prompt": "What is AI?", "response": "AI is..."},
+#     {"prompt": "Explain photosynthesis", "response": "Photosynthesis is..."},
+#     ...
+# ]
+# model = supervised_fine_tune(model_name='gpt2', train_data=train_data)
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Stage 2: Reward Modeling</h2>
+                        <p>Train a separate model to predict human preferences between different responses. This reward model will guide RLHF training.</p>
+
+                        <h3>Preference Data Collection</h3>
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #000;">
+                            <h4>How Comparison Data is Created</h4>
+                            <ol style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Sample prompts:</strong> Collect diverse user prompts</li>
+                                <li><strong>Generate responses:</strong> SFT model generates 2-4 responses per prompt</li>
+                                <li><strong>Human ranking:</strong> Raters rank responses (best to worst)</li>
+                                <li><strong>Create pairs:</strong> All pairwise comparisons extracted</li>
+                            </ol>
+                            <div class="code-example">
+# Example comparison data
+{
+    "prompt": "Explain black holes simply.",
+    "chosen": "Black holes are regions where gravity is so strong
+               that not even light can escape...",  # Ranked #1
+    "rejected": "Black holes are big space things." # Ranked #2 (worse)
+}
                             </div>
                         </div>
 
-                        <h3>Types of Fine-tuning</h3>
-                        <div class="key-concepts" style="margin-top: 20px;">
-                            <div class="concept-card">
-                                <h3>Full Fine-tuning</h3>
-                                <p>Update all parameters. Most flexible but expensive.</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>LoRA</h3>
-                                <p>Train small adapter layers. Much more efficient.</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>Prompt Tuning</h3>
-                                <p>Only optimize input prompts. Minimal updates.</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>Instruction Tuning</h3>
-                                <p>Teach models to follow diverse instructions.</p>
-                            </div>
+                        <h3>Reward Model Training (Bradley-Terry Model)</h3>
+                        <div class="code-example" style="font-size: 1.05em;">
+# Probability that response_a is preferred over response_b
+P(a ≻ b) = σ(r(x, a) - r(x, b))
+         = 1 / (1 + exp(-(r(x, a) - r(x, b))))
+
+Where:
+- r(x, y): reward score for response y to prompt x
+- σ: sigmoid function
+- ≻: preference relation
+
+Loss (cross-entropy):
+L = -log σ(r(x, y_chosen) - r(x, y_rejected))
+
+This teaches the reward model to assign higher scores to preferred responses.
                         </div>
 
-                        <div class="interactive-section" style="margin-top: 30px;">
-                            <h3>Compare: Pre-training vs Post-training</h3>
-                            <button onclick="showTrainingComparison()">See Detailed Comparison</button>
-                            <div id="trainingComparison" style="margin-top: 20px;"></div>
+                        <h3>Reward Model Implementation</h3>
+                        <div class="code-example">
+import torch
+import torch.nn as nn
+
+class RewardModel(nn.Module):
+    """
+    Reward model for predicting human preferences
+
+    Takes same architecture as language model but outputs scalar reward
+    """
+    def __init__(self, base_model):
+        super().__init__()
+        self.model = base_model
+        # Replace LM head with reward head (scalar output)
+        self.reward_head = nn.Linear(base_model.config.hidden_size, 1)
+
+    def forward(self, input_ids):
+        """
+        Args:
+            input_ids: [batch, seq_len]
+
+        Returns:
+            rewards: [batch] scalar reward for each sequence
+        """
+        # Get hidden states
+        outputs = self.model(input_ids, output_hidden_states=True)
+        hidden_states = outputs.hidden_states[-1]  # Last layer
+
+        # Use last token's hidden state (end of sequence)
+        last_hidden = hidden_states[:, -1, :]  # [batch, hidden_size]
+
+        # Project to scalar reward
+        rewards = self.reward_head(last_hidden).squeeze(-1)  # [batch]
+
+        return rewards
+
+def train_reward_model(
+    base_model,
+    comparison_data,
+    num_epochs=3,
+    batch_size=4,
+    learning_rate=1e-5
+):
+    """
+    Train reward model on comparison data
+
+    Args:
+        base_model: Pre-trained or SFT model
+        comparison_data: List of {prompt, chosen, rejected} dicts
+        num_epochs: Training epochs
+        batch_size: Batch size
+        learning_rate: Learning rate
+    """
+    reward_model = RewardModel(base_model)
+    tokenizer = AutoTokenizer.from_pretrained('gpt2')
+
+    optimizer = torch.optim.AdamW(reward_model.parameters(), lr=learning_rate)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    reward_model = reward_model.to(device)
+
+    for epoch in range(num_epochs):
+        total_loss = 0
+        correct = 0
+        total = 0
+
+        for item in comparison_data:
+            # Tokenize chosen and rejected responses
+            chosen_text = f"{item['prompt']}\n{item['chosen']}"
+            rejected_text = f"{item['prompt']}\n{item['rejected']}"
+
+            chosen_ids = tokenizer.encode(chosen_text, return_tensors='pt').to(device)
+            rejected_ids = tokenizer.encode(rejected_text, return_tensors='pt').to(device)
+
+            # Get rewards
+            reward_chosen = reward_model(chosen_ids)
+            reward_rejected = reward_model(rejected_ids)
+
+            # Bradley-Terry loss
+            loss = -torch.log(torch.sigmoid(reward_chosen - reward_rejected))
+
+            # Backward pass
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
+
+            total_loss += loss.item()
+
+            # Accuracy: chosen should have higher reward
+            if reward_chosen > reward_rejected:
+                correct += 1
+            total += 1
+
+        accuracy = correct / total
+        avg_loss = total_loss / total
+        print(f"Epoch {epoch+1} | Loss: {avg_loss:.4f} | Accuracy: {accuracy:.2%}")
+
+    return reward_model
+
+# Usage
+# comparison_data = [
+#     {"prompt": "...", "chosen": "...", "rejected": "..."},
+#     ...
+# ]
+# reward_model = train_reward_model(base_model, comparison_data)
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Stage 3: RLHF with PPO</h2>
+                        <p>Use reinforcement learning (specifically PPO - Proximal Policy Optimization) to optimize the model against the reward model while preventing it from deviating too far from the original.</p>
+
+                        <h3>RLHF Objective Function</h3>
+                        <div class="code-example" style="font-size: 1.05em;">
+Objective (PPO-clip + KL penalty):
+
+L_RLHF = E[ min(ratio * A, clip(ratio, 1-ε, 1+ε) * A) ]
+         - β * KL(π_θ || π_ref)
+
+Where:
+- ratio = π_θ(y|x) / π_old(y|x)  (probability ratio)
+- A: advantage (how much better than expected)
+- ε: clip parameter (typically 0.2)
+- β: KL penalty coefficient (typically 0.01-0.1)
+- π_θ: current policy (model being trained)
+- π_ref: reference policy (SFT model, frozen)
+
+Two terms balance:
+1. Maximize reward (via advantage A)
+2. Don't drift too far from reference (KL penalty)
                         </div>
 
-                        <div class="code-example" style="margin-top: 30px;">
-# RLHF Objective (simplified)
-objective = reward_model_score(response) - β * KL_divergence(policy, reference)
+                        <h3>The Complete RLHF Loop</h3>
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h4>Four Models Involved</h4>
+                            <ol style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Policy (Actor):</strong> The model being trained (generates responses)</li>
+                                <li><strong>Value Model (Critic):</strong> Estimates expected reward (helps compute advantages)</li>
+                                <li><strong>Reward Model:</strong> Scores responses (frozen, from Stage 2)</li>
+                                <li><strong>Reference Model:</strong> Original SFT model (frozen, prevents drift)</li>
+                            </ol>
+                        </div>
 
-# Balances:
-# - Maximizing reward (human preference)
-# - Staying close to the original model (KL penalty)
-# This prevents the model from "gaming" the reward model
+                        <h3>Simplified RLHF Training Loop</h3>
+                        <div class="code-example">
+def rlhf_training_step(
+    policy_model,      # Model being trained
+    value_model,       # Estimates expected reward
+    reward_model,      # Frozen reward model
+    reference_model,   # Frozen SFT model
+    prompts,           # Batch of prompts
+    tokenizer,
+    beta=0.1          # KL penalty coefficient
+):
+    """
+    Single RLHF training step using PPO
+
+    This is simplified for clarity - real implementations use
+    more sophisticated PPO with clipping, advantage estimation, etc.
+    """
+    device = policy_model.device
+
+    # 1. Generate responses using current policy
+    responses = []
+    log_probs_old = []
+
+    with torch.no_grad():
+        for prompt in prompts:
+            prompt_ids = tokenizer.encode(prompt, return_tensors='pt').to(device)
+
+            # Generate response
+            output = policy_model.generate(
+                prompt_ids,
+                max_length=512,
+                do_sample=True,
+                temperature=1.0,
+                return_dict_in_generate=True,
+                output_scores=True
+            )
+            response_ids = output.sequences
+
+            # Compute log probabilities under current policy
+            logits = torch.stack(output.scores, dim=1)  # [batch, seq, vocab]
+            log_probs = F.log_softmax(logits, dim=-1)
+
+            responses.append(response_ids)
+            log_probs_old.append(log_probs)
+
+    # 2. Compute rewards from reward model
+    rewards = []
+    for response_ids in responses:
+        reward = reward_model(response_ids)
+        rewards.append(reward)
+    rewards = torch.tensor(rewards).to(device)
+
+    # 3. Compute KL divergence from reference model
+    kl_penalties = []
+    for response_ids in responses:
+        # Policy log probs
+        policy_output = policy_model(response_ids, labels=response_ids)
+        policy_log_probs = policy_output.logits.log_softmax(dim=-1)
+
+        # Reference log probs
+        with torch.no_grad():
+            ref_output = reference_model(response_ids, labels=response_ids)
+            ref_log_probs = ref_output.logits.log_softmax(dim=-1)
+
+        # KL divergence: E[log(p) - log(q)]
+        kl = (policy_log_probs - ref_log_probs).sum(dim=-1).mean()
+        kl_penalties.append(kl)
+    kl_penalty = torch.stack(kl_penalties).mean()
+
+    # 4. Compute advantages using value model
+    values = []
+    for response_ids in responses:
+        value = value_model(response_ids)
+        values.append(value)
+    values = torch.tensor(values).to(device)
+
+    advantages = rewards - values  # How much better than expected
+
+    # 5. PPO policy update
+    ratio = torch.exp(log_probs_new - log_probs_old)  # π_new / π_old
+    clipped_ratio = torch.clamp(ratio, 1 - 0.2, 1 + 0.2)
+
+    policy_loss = -torch.min(
+        ratio * advantages,
+        clipped_ratio * advantages
+    ).mean()
+
+    # 6. Total loss with KL penalty
+    total_loss = policy_loss + beta * kl_penalty
+
+    return total_loss, {
+        'reward': rewards.mean().item(),
+        'kl': kl_penalty.item(),
+        'advantage': advantages.mean().item()
+    }
+
+# Full RLHF training would run this in a loop:
+# for epoch in range(num_epochs):
+#     for batch_prompts in dataloader:
+#         loss, metrics = rlhf_training_step(...)
+#         loss.backward()
+#         optimizer.step()
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Modern Alternative: Direct Preference Optimization (DPO)</h2>
+                        <p>DPO is a simpler alternative to RLHF that optimizes preferences directly without training a separate reward model or using RL.</p>
+
+                        <h3>DPO Objective</h3>
+                        <div class="code-example" style="font-size: 1.05em;">
+L_DPO = -E[log σ(β * log(π_θ(y_w|x) / π_ref(y_w|x))
+                   - β * log(π_θ(y_l|x) / π_ref(y_l|x)))]
+
+Where:
+- y_w: preferred (won) response
+- y_l: dis-preferred (lost) response
+- π_θ: policy being trained
+- π_ref: reference policy (frozen)
+- β: temperature parameter
+- σ: sigmoid
+
+Key insight: Can optimize preferences directly without reward model!
+Simpler, more stable than PPO-based RLHF.
+                        </div>
+
+                        <p><strong>Reference:</strong> <a href="https://arxiv.org/abs/2305.18290" style="color: #000; text-decoration: underline;">Direct Preference Optimization (arxiv.org/abs/2305.18290)</a></p>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Parameter-Efficient Fine-Tuning: LoRA</h2>
+                        <p><strong>LoRA (Low-Rank Adaptation)</strong> allows fine-tuning large models efficiently by training small adapter matrices instead of all parameters.</p>
+
+                        <h3>LoRA Mathematical Formulation</h3>
+                        <div class="code-example" style="font-size: 1.05em;">
+Instead of updating full weight matrix W ∈ R^(d×k):
+
+W_new = W + ΔW
+
+LoRA decomposes update as low-rank:
+
+W_new = W + BA
+
+Where:
+- W: frozen pre-trained weights (d×k)
+- B ∈ R^(d×r): trainable (down-projection)
+- A ∈ R^(r×k): trainable (up-projection)
+- r << min(d, k): rank (typically 8, 16, 32)
+
+Parameters to train: d*r + r*k << d*k
+Example: d=4096, k=4096, r=16
+- Full: 16M params
+- LoRA: 131K params (~100x reduction!)
+                        </div>
+
+                        <h3>LoRA Implementation</h3>
+                        <div class="code-example">
+import torch
+import torch.nn as nn
+
+class LoRALayer(nn.Module):
+    """
+    LoRA adapter for linear layer
+
+    Adds trainable low-rank decomposition to frozen weights
+    """
+    def __init__(self, in_features, out_features, rank=16, alpha=16):
+        super().__init__()
+        self.rank = rank
+        self.alpha = alpha
+
+        # Frozen pre-trained weight (not trained)
+        self.weight = nn.Parameter(torch.randn(out_features, in_features))
+        self.weight.requires_grad = False
+
+        # Trainable LoRA matrices
+        self.lora_A = nn.Parameter(torch.randn(rank, in_features))
+        self.lora_B = nn.Parameter(torch.zeros(out_features, rank))
+
+        # Scaling factor
+        self.scaling = alpha / rank
+
+    def forward(self, x):
+        """
+        Args:
+            x: [batch, ..., in_features]
+
+        Returns:
+            output: [batch, ..., out_features]
+        """
+        # Original forward pass (frozen)
+        result = F.linear(x, self.weight)
+
+        # Add LoRA adaptation: x @ A^T @ B^T
+        lora_out = F.linear(F.linear(x, self.lora_A), self.lora_B)
+        result += lora_out * self.scaling
+
+        return result
+
+# Apply LoRA to a transformer model
+def apply_lora_to_model(model, rank=16, target_modules=['q_proj', 'v_proj']):
+    """
+    Replace specified linear layers with LoRA versions
+
+    Args:
+        model: Transformer model
+        rank: LoRA rank
+        target_modules: Which layers to adapt (commonly Q, V projections)
+    """
+    for name, module in model.named_modules():
+        if any(target in name for target in target_modules):
+            if isinstance(module, nn.Linear):
+                # Replace with LoRA layer
+                lora_layer = LoRALayer(
+                    module.in_features,
+                    module.out_features,
+                    rank=rank
+                )
+                # Copy pre-trained weights
+                lora_layer.weight.data = module.weight.data.clone()
+
+                # Replace in model
+                parent_name = '.'.join(name.split('.')[:-1])
+                child_name = name.split('.')[-1]
+                parent = dict(model.named_modules())[parent_name]
+                setattr(parent, child_name, lora_layer)
+
+    # Freeze all non-LoRA parameters
+    for name, param in model.named_parameters():
+        if 'lora' not in name:
+            param.requires_grad = False
+
+    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    total = sum(p.numel() for p in model.parameters())
+    print(f"Trainable: {trainable:,} / {total:,} ({100*trainable/total:.2f}%)")
+
+    return model
+
+# Usage
+# model = AutoModelForCausalLM.from_pretrained('gpt2')
+# model = apply_lora_to_model(model, rank=16)
+# # Now train only LoRA parameters (much faster, less memory!)
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Key Papers and Resources</h2>
+
+                        <h3>Foundational RLHF Papers</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"Training language models to follow instructions with human feedback"</strong> (Ouyang et al., 2022) - InstructGPT<br>
+                                <a href="https://arxiv.org/abs/2203.02155" style="color: #000; text-decoration: underline;">arxiv.org/abs/2203.02155</a></li>
+
+                            <li><strong>"Learning to summarize from human feedback"</strong> (Stiennon et al., 2020) - Early RLHF<br>
+                                <a href="https://arxiv.org/abs/2009.01325" style="color: #000; text-decoration: underline;">arxiv.org/abs/2009.01325</a></li>
+
+                            <li><strong>"Fine-Tuning Language Models from Human Preferences"</strong> (Ziegler et al., 2019)<br>
+                                <a href="https://arxiv.org/abs/1909.08593" style="color: #000; text-decoration: underline;">arxiv.org/abs/1909.08593</a></li>
+                        </ul>
+
+                        <h3>DPO and Alternatives</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"Direct Preference Optimization"</strong> (Rafailov et al., 2023)<br>
+                                <a href="https://arxiv.org/abs/2305.18290" style="color: #000; text-decoration: underline;">arxiv.org/abs/2305.18290</a></li>
+
+                            <li><strong>"Constitutional AI: Harmlessness from AI Feedback"</strong> (Bai et al., 2022) - Anthropic<br>
+                                <a href="https://arxiv.org/abs/2212.08073" style="color: #000; text-decoration: underline;">arxiv.org/abs/2212.08073</a></li>
+
+                            <li><strong>"RLAIF: Scaling Reinforcement Learning from Human Feedback with AI Feedback"</strong> (Lee et al., 2023)<br>
+                                <a href="https://arxiv.org/abs/2309.00267" style="color: #000; text-decoration: underline;">arxiv.org/abs/2309.00267</a></li>
+                        </ul>
+
+                        <h3>Parameter-Efficient Fine-Tuning</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"LoRA: Low-Rank Adaptation of Large Language Models"</strong> (Hu et al., 2021)<br>
+                                <a href="https://arxiv.org/abs/2106.09685" style="color: #000; text-decoration: underline;">arxiv.org/abs/2106.09685</a></li>
+
+                            <li><strong>"QLoRA: Efficient Finetuning of Quantized LLMs"</strong> (Dettmers et al., 2023)<br>
+                                <a href="https://arxiv.org/abs/2305.14314" style="color: #000; text-decoration: underline;">arxiv.org/abs/2305.14314</a></li>
+                        </ul>
+
+                        <h3>Practical Libraries</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>TRL (Transformer Reinforcement Learning)</strong> - Hugging Face RLHF library<br>
+                                <a href="https://github.com/huggingface/trl" style="color: #000; text-decoration: underline;">github.com/huggingface/trl</a></li>
+
+                            <li><strong>PEFT</strong> - Parameter-Efficient Fine-Tuning (LoRA, etc.)<br>
+                                <a href="https://github.com/huggingface/peft" style="color: #000; text-decoration: underline;">github.com/huggingface/peft</a></li>
+
+                            <li><strong>DeepSpeed-Chat</strong> - Microsoft's RLHF implementation<br>
+                                <a href="https://github.com/microsoft/DeepSpeed/tree/master/blogs/deepspeed-chat" style="color: #000; text-decoration: underline;">github.com/microsoft/DeepSpeed</a></li>
+                        </ul>
+
+                        <div class="info-box success" style="margin-top: 30px;">
+                            <h3>Recommended Learning Path</h3>
+                            <ol style="margin-left: 20px; margin-top: 10px; line-height: 2;">
+                                <li>Read InstructGPT paper (Ouyang et al.) - foundational RLHF</li>
+                                <li>Implement simple SFT on small instruction dataset</li>
+                                <li>Study LoRA paper and implement low-rank adaptation</li>
+                                <li>Read DPO paper - simpler alternative to RLHF</li>
+                                <li>Experiment with TRL library for RLHF</li>
+                                <li>Read Constitutional AI for AI feedback approaches</li>
+                                <li>Implement full RLHF pipeline on toy problem</li>
+                            </ol>
                         </div>
                     </div>
                 </div>
