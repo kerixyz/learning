@@ -708,15 +708,85 @@
 
                     <div class="content-card">
                         <h2>What are Large Language Models?</h2>
-                        <p>Large Language Models (LLMs) are AI systems trained on vast amounts of text data to understand and generate human-like text. They're the technology behind tools like ChatGPT, Claude, and many other AI assistants.</p>
+                        <p>Large Language Models (LLMs) are neural networks trained on massive text datasets to predict, understand, and generate human language. They represent one of the most significant breakthroughs in artificial intelligence, powering applications from ChatGPT and Claude to code completion tools and research assistants.</p>
+
+                        <p>Unlike traditional software that follows explicit rules, LLMs learn statistical patterns from data. By training on trillions of words from books, websites, scientific papers, and code repositories, they develop an implicit understanding of language structure, world knowledge, and reasoning patterns.</p>
 
                         <h3>Key Characteristics</h3>
                         <ul>
-                            <li><strong>Scale:</strong> Billions or trillions of parameters that capture language patterns</li>
-                            <li><strong>Training Data:</strong> Massive text corpora from books, websites, code, and more</li>
-                            <li><strong>Capabilities:</strong> Text generation, translation, summarization, coding, and reasoning</li>
-                            <li><strong>Architecture:</strong> Based on the revolutionary Transformer model</li>
+                            <li><strong>Scale:</strong> From 7 billion to over 1 trillion parameters (weights) that encode knowledge and language patterns</li>
+                            <li><strong>Training Data:</strong> Hundreds of billions to trillions of tokens from diverse text sources</li>
+                            <li><strong>Architecture:</strong> Primarily based on the Transformer architecture (2017) with attention mechanisms</li>
+                            <li><strong>Training Cost:</strong> Millions to tens of millions of dollars in computational resources</li>
+                            <li><strong>Capabilities:</strong> Text generation, question answering, translation, summarization, code generation, mathematical reasoning, and more</li>
+                            <li><strong>Context Window:</strong> Ability to process from 2K to 200K+ tokens (approximately 1.5K to 150K+ words) at once</li>
                         </ul>
+
+                        <h3>The Evolution of Language Models</h3>
+                        <p>Language modeling has progressed through several distinct eras:</p>
+
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <h3>1950s-1990s: Statistical Language Models</h3>
+                                <p>N-gram models that predicted words based on previous N words. Simple but limited by memory and context constraints. Used in early speech recognition and machine translation.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>2003-2013: Neural Language Models</h3>
+                                <p>Introduction of neural networks for language modeling. Bengio et al. (2003) showed neural networks could learn word embeddings. Word2Vec (2013) popularized dense word representations.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>2013-2017: Sequence Models</h3>
+                                <p>LSTMs and GRUs enabled longer context understanding. Seq2Seq models (2014) revolutionized machine translation. But training was slow and sequential.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>2017: The Transformer Revolution</h3>
+                                <p>"Attention Is All You Need" paper introduced the Transformer architecture. Parallel processing and attention mechanisms solved the long-range dependency problem.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>2018-2019: Pre-training Era</h3>
+                                <p>BERT (110M-340M params), GPT-2 (1.5B params) demonstrated that pre-training on massive unlabeled data, then fine-tuning on specific tasks, dramatically improved performance.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>2020-2022: Scaling Up</h3>
+                                <p>GPT-3 (175B params) showed emergent abilities at scale: few-shot learning, in-context learning. Models became general-purpose tools. This era proved: <strong>scale is all you need</strong>.</p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <h3>2022-Present: Alignment & Specialization</h3>
+                                <p>InstructGPT, ChatGPT showed that aligning models with human preferences (RLHF) makes them far more useful. Multimodal models (GPT-4, Gemini) integrate vision. Open-source models (LLaMA, Mistral) democratize access.</p>
+                            </div>
+                        </div>
+
+                        <h3>Scaling Laws: Bigger is Better</h3>
+                        <p>Research by OpenAI, DeepMind, and others revealed predictable scaling laws: model performance improves as a power law with respect to three factors:</p>
+
+                        <div class="code-example">
+# Scaling Law (Kaplan et al., 2020)
+# Loss scales as a power law with compute budget
+
+L(C) = (C_c / C)^α_c
+
+Where:
+- L(C) is the cross-entropy loss
+- C is the compute budget (FLOPs)
+- C_c and α_c are constants
+- Typical α_c ≈ 0.05-0.10
+
+Key findings:
+1. Model size (N) - More parameters → better performance
+2. Dataset size (D) - More data → better performance
+3. Compute (C) - More training → better performance
+
+Optimal allocation: N^0.73 ∝ D ∝ C^0.27
+(Scale model size faster than dataset size)
+                        </div>
+
+                        <p>This means: <strong>doubling the compute budget reduces loss by approximately 10%</strong>. This predictability has driven the race to scale up models.</p>
 
                         <div class="interactive-section">
                             <h3>Try It: Understanding Scale</h3>
@@ -726,26 +796,109 @@
                         </div>
 
                         <h3>How Do LLMs Work?</h3>
-                        <p>At their core, LLMs are trained to predict the next word in a sequence. This simple task, when performed at massive scale, enables the model to learn:</p>
+                        <p>At their core, LLMs are trained with a simple objective: <strong>predict the next token</strong> given all previous tokens. This is called <em>autoregressive language modeling</em> or <em>causal language modeling</em>.</p>
+
+                        <div class="code-example">
+# Training Objective (simplified)
+
+Given text: "The quick brown fox jumps over the lazy dog"
+
+Training samples:
+Input: "The"              → Predict: "quick"
+Input: "The quick"        → Predict: "brown"
+Input: "The quick brown"  → Predict: "fox"
+...and so on
+
+The model learns:
+P(word_t | word_1, word_2, ..., word_{t-1})
+
+After training on trillions of such examples,
+the model learns language patterns, facts, reasoning, and more.
+                        </div>
+
+                        <p>This simple task, when performed at massive scale with billions of parameters, leads to <strong>emergent abilities</strong> - capabilities that appear suddenly at certain scale thresholds.</p>
+
+                        <h3>What LLMs Learn</h3>
+                        <p>Through next-token prediction on diverse data, LLMs develop:</p>
 
                         <div class="key-concepts">
                             <div class="concept-card">
                                 <h3>Grammar & Syntax</h3>
-                                <p>Language structure and rules</p>
+                                <p>Correct sentence structure, verb conjugation, agreement</p>
                             </div>
                             <div class="concept-card">
                                 <h3>World Knowledge</h3>
-                                <p>Facts, entities, relationships</p>
+                                <p>Facts, entities, events, relationships, common sense</p>
                             </div>
                             <div class="concept-card">
                                 <h3>Reasoning</h3>
-                                <p>Logic and inference patterns</p>
+                                <p>Logical inference, mathematical reasoning, analogies</p>
                             </div>
                             <div class="concept-card">
-                                <h3>Context</h3>
-                                <p>Understanding meaning from context</p>
+                                <h3>Context Understanding</h3>
+                                <p>Discourse, pronouns, implicit meaning, pragmatics</p>
+                            </div>
+                            <div class="concept-card">
+                                <h3>Task Patterns</h3>
+                                <p>Translation, summarization, question answering formats</p>
+                            </div>
+                            <div class="concept-card">
+                                <h3>Code & Formulas</h3>
+                                <p>Programming syntax, algorithms, mathematical notation</p>
                             </div>
                         </div>
+
+                        <h3>Emergent Abilities at Scale</h3>
+                        <p>Larger models develop abilities that smaller ones don't have. These capabilities "emerge" suddenly at certain parameter counts:</p>
+
+                        <table style="width: 100%; margin-top: 20px;">
+                            <thead>
+                                <tr style="background: #f5f5f5;">
+                                    <th style="padding: 12px; text-align: left;">Ability</th>
+                                    <th style="padding: 12px; text-align: left;">Emerges At</th>
+                                    <th style="padding: 12px; text-align: left;">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>Few-shot Learning</strong></td>
+                                    <td style="padding: 10px;">~13B params</td>
+                                    <td style="padding: 10px;">Learn from just a few examples in the prompt</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 10px;"><strong>In-context Learning</strong></td>
+                                    <td style="padding: 10px;">~13B params</td>
+                                    <td style="padding: 10px;">Adapt behavior based on context without fine-tuning</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>Chain-of-Thought</strong></td>
+                                    <td style="padding: 10px;">~100B params</td>
+                                    <td style="padding: 10px;">Break down complex reasoning into steps</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 10px;"><strong>Multi-step Reasoning</strong></td>
+                                    <td style="padding: 10px;">~100B params</td>
+                                    <td style="padding: 10px;">Solve problems requiring multiple inference steps</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px;"><strong>Code Generation</strong></td>
+                                    <td style="padding: 10px;">~10B params</td>
+                                    <td style="padding: 10px;">Write functional code from natural language</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Key Limitations</h3>
+                        <p>Despite their impressive capabilities, LLMs have fundamental limitations:</p>
+                        <ul>
+                            <li><strong>No True Understanding:</strong> LLMs are statistical pattern matchers, not conscious entities. They don't "understand" in a human sense.</li>
+                            <li><strong>Hallucinations:</strong> Can generate plausible-sounding but factually incorrect information with high confidence.</li>
+                            <li><strong>Knowledge Cutoff:</strong> Only know what was in their training data, with a specific cutoff date.</li>
+                            <li><strong>Reasoning Limitations:</strong> Struggle with tasks requiring precise logic, counting, or mathematical operations.</li>
+                            <li><strong>Context Length:</strong> Limited by maximum context window (though improving rapidly).</li>
+                            <li><strong>Bias & Toxicity:</strong> Can reflect and amplify biases present in training data.</li>
+                            <li><strong>No Memory:</strong> Each conversation starts fresh (unless explicitly provided context).</li>
+                        </ul>
                     </div>
                 </div>
 
