@@ -913,56 +913,508 @@ the model learns language patterns, facts, reasoning, and more.
                 <!-- Transformer Architecture Page -->
                 <div class="page-section" id="page-transformer">
                     <h1 class="page-title">The Transformer Architecture</h1>
-                    <p class="page-description">The revolutionary architecture that changed natural language processing</p>
+                    <p class="page-description">Deep dive into the revolutionary architecture that changed NLP</p>
 
                     <div class="content-card">
                         <h2>Understanding Transformers</h2>
-                        <p>The Transformer, introduced in the 2017 paper "Attention Is All You Need," revolutionized natural language processing. It's the foundation of all modern LLMs including GPT, BERT, and Claude.</p>
+                        <p>The Transformer, introduced in the 2017 paper <strong>"Attention Is All You Need"</strong> by Vaswani et al., revolutionized natural language processing by replacing recurrence with pure attention mechanisms. It's the foundation of all modern LLMs including GPT, BERT, Claude, and LLaMA.</p>
 
-                        <div class="info-box">
-                            <strong>Key Innovation:</strong> Unlike previous models that processed text sequentially, Transformers can process entire sequences in parallel, making them much faster and more effective at capturing long-range dependencies.
+                        <div class="info-box" style="border-left: 2px solid #000; margin-top: 20px;">
+                            <h3>Key Innovation: Parallelization Through Attention</h3>
+                            <p>Previous architectures (RNNs, LSTMs) processed sequences sequentially: word 1 → word 2 → word 3. This was slow and struggled with long-range dependencies.</p>
+                            <p><strong>Transformers</strong> process entire sequences in parallel using attention, enabling:</p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li>100x faster training on modern GPUs</li>
+                                <li>Better long-range dependency modeling</li>
+                                <li>Scalability to billions of parameters</li>
+                            </ul>
+                            <p><strong>Paper:</strong> <a href="https://arxiv.org/abs/1706.03762" style="color: #000; text-decoration: underline;">arxiv.org/abs/1706.03762</a></p>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Three Types of Transformer Architectures</h2>
+
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Type</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Structure</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Use Cases</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Examples</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>Encoder-Only</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;">Bidirectional attention (sees entire input)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Classification, NER, Q&A</td>
+                                <td style="padding: 12px; border: 1px solid #000;">BERT, RoBERTa, DeBERTa</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>Decoder-Only</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;">Causal attention (only sees past)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Text generation, chat, code</td>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-3/4, LLaMA, Claude</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;"><strong>Encoder-Decoder</strong></td>
+                                <td style="padding: 12px; border: 1px solid #000;">Encoder (bidirectional) + Decoder (causal)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Translation, summarization</td>
+                                <td style="padding: 12px; border: 1px solid #000;">T5, BART, mT5</td>
+                            </tr>
+                        </table>
+
+                        <p style="margin-top: 15px;"><strong>Modern LLMs</strong> are almost all <strong>decoder-only</strong> (GPT-style) because they're more flexible and scale better.</p>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Decoder-Only Transformer: Component Breakdown</h2>
+                        <p>Let's examine a GPT-style decoder-only model, the most common architecture for modern LLMs.</p>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3>1. Token + Positional Embeddings</h3>
+                            <p><strong>Token Embedding:</strong> Maps each token ID to a dense vector</p>
+                            <div class="code-example">
+# Vocabulary size: 50,000 tokens, embedding dim: 512
+token_embedding = nn.Embedding(50000, 512)
+
+# Input: "The cat sat" → token IDs: [2, 145, 892]
+token_ids = torch.tensor([[2, 145, 892]])
+token_embeds = token_embedding(token_ids)  # [1, 3, 512]
+                            </div>
+
+                            <p style="margin-top: 15px;"><strong>Positional Encoding:</strong> Adds position information (attention is permutation-invariant)</p>
+                            <div class="code-example">
+# Two approaches:
+
+# 1. Learned Positional Embeddings (GPT, BERT)
+pos_embedding = nn.Embedding(max_seq_len, d_model)
+pos_ids = torch.arange(seq_len)
+pos_embeds = pos_embedding(pos_ids)  # [seq_len, d_model]
+
+# 2. Sinusoidal Positional Encoding (Original Transformer)
+def sinusoidal_encoding(seq_len, d_model):
+    """Fixed positional encoding using sin/cos functions"""
+    position = torch.arange(seq_len).unsqueeze(1)  # [seq_len, 1]
+    div_term = torch.exp(torch.arange(0, d_model, 2) *
+                         -(math.log(10000.0) / d_model))
+
+    encoding = torch.zeros(seq_len, d_model)
+    encoding[:, 0::2] = torch.sin(position * div_term)  # even indices
+    encoding[:, 1::2] = torch.cos(position * div_term)  # odd indices
+    return encoding
+
+# Combine token + position embeddings
+final_embedding = token_embeds + pos_embeds  # [batch, seq_len, d_model]
+                            </div>
+
+                            <p><strong>Why positional encoding matters:</strong> Without it, "cat sat" and "sat cat" would be identical to the model. Position info is crucial for understanding order, syntax, and semantics.</p>
                         </div>
 
-                        <h3>How Information Flows Through a Transformer</h3>
-                        <div class="transformer-diagram">
-                            <div class="layer-box" onclick="explainLayer('input')">
-                                <strong>Input</strong><br>
-                                Text Tokens
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3>2. Transformer Block (Repeated N times)</h3>
+                            <p>Each block contains two sub-layers: multi-head attention + feed-forward network, each with residual connections and layer normalization.</p>
+
+                            <div class="code-example">
+class TransformerBlock(nn.Module):
+    """Single Transformer decoder block"""
+    def __init__(self, d_model=512, num_heads=8, d_ff=2048, dropout=0.1):
+        super().__init__()
+
+        # Sub-layer 1: Multi-head self-attention
+        self.attention = MultiHeadAttention(d_model, num_heads, dropout)
+        self.norm1 = nn.LayerNorm(d_model)
+        self.dropout1 = nn.Dropout(dropout)
+
+        # Sub-layer 2: Position-wise feed-forward network
+        self.ffn = nn.Sequential(
+            nn.Linear(d_model, d_ff),      # Expand: 512 → 2048
+            nn.GELU(),                      # Activation (ReLU in original)
+            nn.Dropout(dropout),
+            nn.Linear(d_ff, d_model)        # Project back: 2048 → 512
+        )
+        self.norm2 = nn.LayerNorm(d_model)
+        self.dropout2 = nn.Dropout(dropout)
+
+    def forward(self, x, mask=None):
+        # Sub-layer 1: Self-attention with residual connection
+        # Pre-norm (modern): norm before attention
+        attn_out, _ = self.attention(
+            self.norm1(x), self.norm1(x), self.norm1(x), mask
+        )
+        x = x + self.dropout1(attn_out)  # Residual connection
+
+        # Sub-layer 2: FFN with residual connection
+        ffn_out = self.ffn(self.norm2(x))
+        x = x + self.dropout2(ffn_out)  # Residual connection
+
+        return x
                             </div>
-                            <span class="arrow">→</span>
-                            <div class="layer-box" onclick="explainLayer('embedding')">
-                                <strong>Embedding</strong><br>
-                                Vectors
-                            </div>
-                            <span class="arrow">→</span>
-                            <div class="layer-box" onclick="explainLayer('attention')">
-                                <strong>Attention</strong><br>
-                                Context
-                            </div>
-                            <span class="arrow">→</span>
-                            <div class="layer-box" onclick="explainLayer('ffn')">
-                                <strong>Feed Forward</strong><br>
-                                Processing
-                            </div>
-                            <span class="arrow">→</span>
-                            <div class="layer-box" onclick="explainLayer('output')">
-                                <strong>Output</strong><br>
-                                Predictions
-                            </div>
+
+                            <p><strong>Key components:</strong></p>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Residual connections (x + f(x)):</strong> Enable gradient flow in deep networks, prevent degradation</li>
+                                <li><strong>Layer normalization:</strong> Stabilize training, allow higher learning rates</li>
+                                <li><strong>FFN:</strong> Processes each position independently, adds non-linearity and capacity</li>
+                                <li><strong>Pre-norm vs Post-norm:</strong> Modern models use pre-norm (norm before sublayer) for training stability</li>
+                            </ul>
                         </div>
 
-                        <div class="interactive-section">
-                            <h3 id="layerTitle">Click on any layer above to learn more!</h3>
-                            <p id="layerExplanation"></p>
-                        </div>
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3>3. Output Head (Language Modeling)</h3>
+                            <p>Final layer projects hidden states to vocabulary logits for next-token prediction.</p>
+                            <div class="code-example">
+# After N transformer blocks, we have: [batch, seq_len, d_model]
 
-                        <h3>Why Transformers are Powerful</h3>
-                        <ul>
-                            <li><strong>Parallelization:</strong> Process entire sequences at once, not word-by-word</li>
-                            <li><strong>Long-range dependencies:</strong> Capture relationships between distant words</li>
-                            <li><strong>Scalability:</strong> Performance improves with more data and parameters</li>
-                            <li><strong>Transfer learning:</strong> Pre-trained models can be fine-tuned for specific tasks</li>
+# Project to vocabulary size
+lm_head = nn.Linear(d_model, vocab_size)  # [512 → 50000]
+logits = lm_head(final_hidden_states)  # [batch, seq_len, 50000]
+
+# Compute probability distribution over tokens
+probs = F.softmax(logits, dim=-1)  # [batch, seq_len, 50000]
+
+# During training: compute cross-entropy loss with target tokens
+# During inference: sample from distribution (greedy, top-k, nucleus)
+                            </div>
+
+                            <p><strong>Weight tying:</strong> Often, the output projection weights are tied to input embedding weights (same parameters). This reduces parameters and improves performance.</p>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Complete Decoder-Only Transformer Implementation</h2>
+                        <div class="code-example">
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import math
+
+class GPTModel(nn.Module):
+    """
+    Decoder-only Transformer (GPT-style)
+
+    Args:
+        vocab_size: Size of vocabulary
+        d_model: Model dimension (embedding size)
+        num_layers: Number of transformer blocks
+        num_heads: Number of attention heads
+        d_ff: Feed-forward hidden dimension (typically 4*d_model)
+        max_seq_len: Maximum sequence length
+        dropout: Dropout probability
+    """
+    def __init__(
+        self,
+        vocab_size=50257,
+        d_model=768,
+        num_layers=12,
+        num_heads=12,
+        d_ff=3072,
+        max_seq_len=1024,
+        dropout=0.1
+    ):
+        super().__init__()
+
+        # Input embeddings
+        self.token_embedding = nn.Embedding(vocab_size, d_model)
+        self.pos_embedding = nn.Embedding(max_seq_len, d_model)
+        self.dropout = nn.Dropout(dropout)
+
+        # Transformer blocks
+        self.blocks = nn.ModuleList([
+            TransformerBlock(d_model, num_heads, d_ff, dropout)
+            for _ in range(num_layers)
+        ])
+
+        # Final layer norm
+        self.ln_f = nn.LayerNorm(d_model)
+
+        # Output head (language modeling)
+        self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
+
+        # Weight tying: share weights between embedding and output
+        self.lm_head.weight = self.token_embedding.weight
+
+        # Initialize weights
+        self.apply(self._init_weights)
+
+    def _init_weights(self, module):
+        """Initialize weights with normal distribution"""
+        if isinstance(module, (nn.Linear, nn.Embedding)):
+            module.weight.data.normal_(mean=0.0, std=0.02)
+            if isinstance(module, nn.Linear) and module.bias is not None:
+                module.bias.data.zero_()
+        elif isinstance(module, nn.LayerNorm):
+            module.bias.data.zero_()
+            module.weight.data.fill_(1.0)
+
+    def forward(self, input_ids, targets=None):
+        """
+        Args:
+            input_ids: [batch, seq_len] token indices
+            targets: [batch, seq_len] target tokens (for training)
+
+        Returns:
+            logits: [batch, seq_len, vocab_size]
+            loss: scalar (if targets provided)
+        """
+        batch_size, seq_len = input_ids.shape
+
+        # Create position IDs
+        pos_ids = torch.arange(seq_len, device=input_ids.device).unsqueeze(0)
+
+        # Embed tokens and positions
+        token_embeds = self.token_embedding(input_ids)  # [batch, seq, d_model]
+        pos_embeds = self.pos_embedding(pos_ids)        # [1, seq, d_model]
+        x = self.dropout(token_embeds + pos_embeds)
+
+        # Create causal mask (lower triangular)
+        mask = torch.tril(torch.ones(seq_len, seq_len, device=x.device))
+        mask = mask.view(1, 1, seq_len, seq_len)  # [1, 1, seq, seq]
+
+        # Pass through transformer blocks
+        for block in self.blocks:
+            x = block(x, mask)
+
+        # Final layer norm
+        x = self.ln_f(x)
+
+        # Project to vocabulary
+        logits = self.lm_head(x)  # [batch, seq, vocab_size]
+
+        # Compute loss if targets provided
+        loss = None
+        if targets is not None:
+            # Flatten for cross-entropy
+            loss = F.cross_entropy(
+                logits.view(-1, logits.size(-1)),  # [batch*seq, vocab]
+                targets.view(-1),                   # [batch*seq]
+                ignore_index=-1  # Ignore padding tokens
+            )
+
+        return logits, loss
+
+# Usage example
+model = GPTModel(
+    vocab_size=50257,  # GPT-2 tokenizer
+    d_model=768,       # GPT-2 small
+    num_layers=12,
+    num_heads=12,
+    d_ff=3072,
+    max_seq_len=1024
+)
+
+print(f"Total parameters: {sum(p.numel() for p in model.parameters()):,}")
+# Output: ~117M parameters (GPT-2 small)
+
+# Forward pass
+input_ids = torch.randint(0, 50257, (4, 128))  # Batch of 4, seq len 128
+logits, loss = model(input_ids, targets=input_ids)
+print(f"Logits shape: {logits.shape}")  # [4, 128, 50257]
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Model Sizes and Configurations</h2>
+
+                        <h3>GPT-2 Variants</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Model</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Layers</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">d_model</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Heads</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Parameters</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-2 Small</td>
+                                <td style="padding: 12px; border: 1px solid #000;">12</td>
+                                <td style="padding: 12px; border: 1px solid #000;">768</td>
+                                <td style="padding: 12px; border: 1px solid #000;">12</td>
+                                <td style="padding: 12px; border: 1px solid #000;">117M</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-2 Medium</td>
+                                <td style="padding: 12px; border: 1px solid #000;">24</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1024</td>
+                                <td style="padding: 12px; border: 1px solid #000;">16</td>
+                                <td style="padding: 12px; border: 1px solid #000;">345M</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-2 Large</td>
+                                <td style="padding: 12px; border: 1px solid #000;">36</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1280</td>
+                                <td style="padding: 12px; border: 1px solid #000;">20</td>
+                                <td style="padding: 12px; border: 1px solid #000;">774M</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-2 XL</td>
+                                <td style="padding: 12px; border: 1px solid #000;">48</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1600</td>
+                                <td style="padding: 12px; border: 1px solid #000;">25</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1.5B</td>
+                            </tr>
+                        </table>
+
+                        <h3 style="margin-top: 30px;">Modern LLMs (2023-2024)</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Model</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Layers</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">d_model</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Heads</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Parameters</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Context</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">LLaMA-2 7B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">32</td>
+                                <td style="padding: 12px; border: 1px solid #000;">4096</td>
+                                <td style="padding: 12px; border: 1px solid #000;">32</td>
+                                <td style="padding: 12px; border: 1px solid #000;">7B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">4K</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">LLaMA-2 13B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">40</td>
+                                <td style="padding: 12px; border: 1px solid #000;">5120</td>
+                                <td style="padding: 12px; border: 1px solid #000;">40</td>
+                                <td style="padding: 12px; border: 1px solid #000;">13B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">4K</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">LLaMA-2 70B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">80</td>
+                                <td style="padding: 12px; border: 1px solid #000;">8192</td>
+                                <td style="padding: 12px; border: 1px solid #000;">64</td>
+                                <td style="padding: 12px; border: 1px solid #000;">70B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">4K</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-3</td>
+                                <td style="padding: 12px; border: 1px solid #000;">96</td>
+                                <td style="padding: 12px; border: 1px solid #000;">12288</td>
+                                <td style="padding: 12px; border: 1px solid #000;">96</td>
+                                <td style="padding: 12px; border: 1px solid #000;">175B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">2K-4K</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-4 (rumored)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">120+</td>
+                                <td style="padding: 12px; border: 1px solid #000;">?</td>
+                                <td style="padding: 12px; border: 1px solid #000;">?</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~1.7T (MoE)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">8K-32K-128K</td>
+                            </tr>
+                        </table>
+
+                        <p style="margin-top: 15px;"><strong>Scaling pattern:</strong> Larger models generally have more layers, wider hidden dimensions, and more attention heads. The ratio d_model/num_heads is typically kept constant (64-128 per head).</p>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Key Architectural Innovations Over Time</h2>
+
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Innovation</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Description</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Used In</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Pre-LayerNorm</td>
+                                <td style="padding: 12px; border: 1px solid #000;">LayerNorm before sublayers (not after)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-2, modern LLMs</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GELU Activation</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Smooth activation (instead of ReLU)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">BERT, GPT-2+</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">RoPE (Rotary Position Embedding)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Encodes relative positions via rotation</td>
+                                <td style="padding: 12px; border: 1px solid #000;">LLaMA, GPT-Neo</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">ALiBi (Attention with Linear Biases)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Adds linear bias to attention scores</td>
+                                <td style="padding: 12px; border: 1px solid #000;">BLOOM, MPT</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">SwiGLU</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Gated FFN activation</td>
+                                <td style="padding: 12px; border: 1px solid #000;">PaLM, LLaMA</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Grouped Query Attention (GQA)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Share K/V across query heads</td>
+                                <td style="padding: 12px; border: 1px solid #000;">LLaMA-2, Mistral</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">RMSNorm</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Simplified LayerNorm (no bias/mean)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">LLaMA, T5</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Key Papers and Resources</h2>
+
+                        <h3>Foundational Papers</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"Attention Is All You Need"</strong> (Vaswani et al., 2017) - The original Transformer<br>
+                                <a href="https://arxiv.org/abs/1706.03762" style="color: #000; text-decoration: underline;">arxiv.org/abs/1706.03762</a></li>
+
+                            <li><strong>"Improving Language Understanding by Generative Pre-Training"</strong> (Radford et al., 2018) - GPT-1<br>
+                                <a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf" style="color: #000; text-decoration: underline;">OpenAI GPT-1 Paper</a></li>
+
+                            <li><strong>"Language Models are Unsupervised Multitask Learners"</strong> (Radford et al., 2019) - GPT-2<br>
+                                <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" style="color: #000; text-decoration: underline;">OpenAI GPT-2 Paper</a></li>
+
+                            <li><strong>"BERT: Pre-training of Deep Bidirectional Transformers"</strong> (Devlin et al., 2018)<br>
+                                <a href="https://arxiv.org/abs/1810.04805" style="color: #000; text-decoration: underline;">arxiv.org/abs/1810.04805</a></li>
+
+                            <li><strong>"LLaMA: Open and Efficient Foundation Language Models"</strong> (Touvron et al., 2023)<br>
+                                <a href="https://arxiv.org/abs/2302.13971" style="color: #000; text-decoration: underline;">arxiv.org/abs/2302.13971</a></li>
                         </ul>
+
+                        <h3>Architectural Improvements</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"RoFormer: Enhanced Transformer with Rotary Position Embedding"</strong> (Su et al., 2021)<br>
+                                <a href="https://arxiv.org/abs/2104.09864" style="color: #000; text-decoration: underline;">arxiv.org/abs/2104.09864</a></li>
+
+                            <li><strong>"GLU Variants Improve Transformer"</strong> (Shazeer, 2020) - SwiGLU<br>
+                                <a href="https://arxiv.org/abs/2002.05202" style="color: #000; text-decoration: underline;">arxiv.org/abs/2002.05202</a></li>
+
+                            <li><strong>"Train Short, Test Long: Attention with Linear Biases"</strong> (Press et al., 2021) - ALiBi<br>
+                                <a href="https://arxiv.org/abs/2108.12409" style="color: #000; text-decoration: underline;">arxiv.org/abs/2108.12409</a></li>
+                        </ul>
+
+                        <h3>Interactive Resources</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>The Illustrated Transformer</strong> by Jay Alammar<br>
+                                <a href="https://jalammar.github.io/illustrated-transformer/" style="color: #000; text-decoration: underline;">jalammar.github.io/illustrated-transformer</a></li>
+
+                            <li><strong>The Annotated Transformer</strong> by Harvard NLP - Line-by-line implementation<br>
+                                <a href="https://nlp.seas.harvard.edu/annotated-transformer/" style="color: #000; text-decoration: underline;">nlp.seas.harvard.edu/annotated-transformer</a></li>
+
+                            <li><strong>nanoGPT</strong> by Andrej Karpathy - Minimal GPT implementation<br>
+                                <a href="https://github.com/karpathy/nanoGPT" style="color: #000; text-decoration: underline;">github.com/karpathy/nanoGPT</a></li>
+
+                            <li><strong>minGPT</strong> by Andrej Karpathy - Educational GPT implementation<br>
+                                <a href="https://github.com/karpathy/minGPT" style="color: #000; text-decoration: underline;">github.com/karpathy/minGPT</a></li>
+                        </ul>
+
+                        <div class="info-box success" style="margin-top: 30px;">
+                            <h3>Recommended Learning Path</h3>
+                            <ol style="margin-left: 20px; margin-top: 10px; line-height: 2;">
+                                <li>Read "The Illustrated Transformer" for visual understanding</li>
+                                <li>Study original "Attention Is All You Need" paper (focus on architecture)</li>
+                                <li>Work through "The Annotated Transformer" tutorial</li>
+                                <li>Implement a tiny Transformer (2-4 layers) from scratch in PyTorch</li>
+                                <li>Train on a small dataset (character-level language modeling)</li>
+                                <li>Study nanoGPT to see production-quality implementation</li>
+                                <li>Experiment with architectural variations (RoPE, SwiGLU, etc.)</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
 
