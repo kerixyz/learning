@@ -2002,97 +2002,509 @@ decoder_output = CrossAttention(
                 <!-- Pre-training Page -->
                 <div class="page-section" id="page-pretraining">
                     <h1 class="page-title">Pre-training: Foundation Learning</h1>
-                    <p class="page-description">Phase 1 - Where LLMs learn the fundamentals of language</p>
+                    <p class="page-description">Deep dive into how LLMs learn language from massive text corpora</p>
 
                     <div class="content-card">
                         <h2>What is Pre-training?</h2>
-                        <p>Pre-training is an <span class="highlight">unsupervised learning</span> process where the model learns patterns, structures, and knowledge from vast amounts of text data without explicit labels. This is where the model builds its foundational understanding of language.</p>
+                        <p>Pre-training is an <strong>unsupervised learning</strong> process where models learn patterns, structures, and knowledge from vast amounts of raw text without explicit labels. This phase teaches the model fundamental language understanding before any task-specific fine-tuning.</p>
 
-                        <div class="interactive-section">
-                            <h3>The Pre-training Objective</h3>
-                            <p>Most modern LLMs use <strong>next-token prediction</strong> (also called autoregressive or causal language modeling):</p>
-                            <div class="code-example" style="margin-top: 15px;">
-Given: "The cat sat on the"
-Predict: "mat"
+                        <div class="info-box" style="border-left: 2px solid #000; margin-top: 20px;">
+                            <h3>Key Characteristics</h3>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Self-supervised:</strong> Labels are created from the data itself (next token)</li>
+                                <li><strong>Massive scale:</strong> Trillions of tokens, petabytes of data</li>
+                                <li><strong>Expensive:</strong> Millions of dollars, months of GPU time</li>
+                                <li><strong>One-time cost:</strong> Pre-trained models can be reused and fine-tuned</li>
+                            </ul>
+                        </div>
+                    </div>
 
-Given: "Machine learning is a subset of"
-Predict: "artificial" (then "intelligence")
-                            </div>
-                            <p style="margin-top: 15px;">The model learns to predict the probability distribution over all possible next tokens, given the preceding context.</p>
+                    <div class="content-card">
+                        <h2>The Pre-training Objective: Next-Token Prediction</h2>
+                        <p>Modern decoder-only LLMs use <strong>causal language modeling</strong>: predict the next token given all previous tokens.</p>
+
+                        <h3>Mathematical Formulation</h3>
+                        <div class="code-example" style="font-size: 1.05em; padding: 20px;">
+Given sequence: x = [x_1, x_2, ..., x_T]
+
+Objective: Maximize the log-likelihood
+L(θ) = Σ log P(x_t | x_1, ..., x_{t-1}; θ)
+       t=1 to T
+
+Where:
+- θ: model parameters
+- x_t: token at position t
+- P(x_t | context): probability distribution over vocabulary
+
+In practice, we minimize negative log-likelihood (cross-entropy loss):
+Loss = -1/T Σ log P(x_t | x_<t)
+            t=1 to T
                         </div>
 
-                        <h3>Training Data Scale</h3>
-                        <div class="key-concepts">
-                            <div class="concept-card">
-                                <h3>GPT-3</h3>
-                                <p>300B tokens<br>~500GB of text</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>LLaMA</h3>
-                                <p>1-1.4T tokens<br>Multiple languages</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>Modern LLMs</h3>
-                                <p>Trillions of tokens<br>Diverse sources</p>
+                        <h3>Concrete Example Walkthrough</h3>
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #000;">
+                            <h4>Training on: "The cat sat on the mat"</h4>
+                            <div class="code-example">
+# Tokenized: [2, 145, 892, 319, 2, 2000]
+# Vocabulary size: 50,000 tokens
+
+Training examples created:
+1. [] → predict "The" (token 2)
+2. ["The"] → predict "cat" (token 145)
+3. ["The", "cat"] → predict "sat" (token 892)
+4. ["The", "cat", "sat"] → predict "on" (token 319)
+5. ["The", "cat", "sat", "on"] → predict "the" (token 2)
+6. ["The", "cat", "sat", "on", "the"] → predict "mat" (token 2000)
+
+# For each example:
+# 1. Model outputs logits: [batch, seq_len, vocab_size]
+# 2. Apply softmax to get probabilities
+# 3. Compute cross-entropy with target token
+# 4. Backpropagate to update weights
                             </div>
                         </div>
 
-                        <h3>Data Sources</h3>
-                        <ul>
-                            <li><strong>Web Crawls:</strong> Common Crawl, filtered web pages (largest source)</li>
-                            <li><strong>Books:</strong> Project Gutenberg, book corpora for long-form content</li>
-                            <li><strong>Wikipedia:</strong> High-quality encyclopedic knowledge</li>
-                            <li><strong>Code:</strong> GitHub repositories, programming resources</li>
-                            <li><strong>Scientific Papers:</strong> ArXiv, academic publications</li>
-                            <li><strong>Social Media:</strong> Reddit, filtered for quality discussions</li>
+                        <h3>Complete Training Loop Implementation</h3>
+                        <div class="code-example">
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.utils.data import DataLoader
+
+def pretrain_language_model(
+    model,
+    train_dataset,
+    num_epochs=1,
+    batch_size=32,
+    learning_rate=3e-4,
+    grad_accum_steps=1,
+    max_grad_norm=1.0
+):
+    """
+    Pre-training loop for causal language model
+
+    Args:
+        model: GPT-style decoder-only transformer
+        train_dataset: Dataset yielding token sequences
+        num_epochs: Number of passes through data
+        batch_size: Batch size
+        learning_rate: Peak learning rate (with warmup/decay)
+        grad_accum_steps: Gradient accumulation for larger effective batch
+        max_grad_norm: Clip gradients to prevent explosion
+    """
+    # Setup
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = model.to(device)
+    optimizer = torch.optim.AdamW(
+        model.parameters(),
+        lr=learning_rate,
+        betas=(0.9, 0.95),  # Common for LLMs
+        weight_decay=0.1
+    )
+
+    # Learning rate schedule
+    total_steps = len(train_dataset) // batch_size * num_epochs
+    warmup_steps = total_steps // 10  # 10% warmup
+
+    def get_lr(step):
+        """Learning rate schedule with warmup + cosine decay"""
+        if step < warmup_steps:
+            # Linear warmup
+            return learning_rate * step / warmup_steps
+        else:
+            # Cosine decay
+            progress = (step - warmup_steps) / (total_steps - warmup_steps)
+            return learning_rate * 0.5 * (1 + math.cos(math.pi * progress))
+
+    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, get_lr)
+
+    # Training loop
+    model.train()
+    global_step = 0
+
+    for epoch in range(num_epochs):
+        dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+        for batch_idx, batch in enumerate(dataloader):
+            # batch: [batch_size, seq_len] token indices
+            input_ids = batch.to(device)
+
+            # Create targets (shifted by 1)
+            # Input:  [The, cat, sat, on]
+            # Target: [cat, sat, on, the]
+            targets = input_ids[:, 1:]  # Shift left
+            input_ids = input_ids[:, :-1]  # Remove last token
+
+            # Forward pass
+            logits, loss = model(input_ids, targets=targets)
+
+            # Scale loss for gradient accumulation
+            loss = loss / grad_accum_steps
+            loss.backward()
+
+            # Update weights every grad_accum_steps
+            if (batch_idx + 1) % grad_accum_steps == 0:
+                # Clip gradients
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
+
+                # Update parameters
+                optimizer.step()
+                scheduler.step()
+                optimizer.zero_grad()
+
+                global_step += 1
+
+                # Logging
+                if global_step % 100 == 0:
+                    perplexity = torch.exp(loss * grad_accum_steps)
+                    lr = scheduler.get_last_lr()[0]
+                    print(f"Step {global_step} | "
+                          f"Loss: {loss.item():.4f} | "
+                          f"Perplexity: {perplexity:.2f} | "
+                          f"LR: {lr:.6f}")
+
+    return model
+
+# Usage
+# model = GPTModel(vocab_size=50257, d_model=768, num_layers=12)
+# trained_model = pretrain_language_model(model, dataset, num_epochs=1)
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Scaling Laws: How Performance Scales</h2>
+                        <p>Research shows that LLM performance follows predictable <strong>power laws</strong> with respect to model size, dataset size, and compute.</p>
+
+                        <h3>The Scaling Law Equations (Kaplan et al., 2020)</h3>
+                        <div class="code-example" style="font-size: 1.05em;">
+Loss L scales with:
+
+1. Model Parameters (N):
+   L(N) ∝ (N_c / N)^α_N
+   where N_c ≈ 8.8 × 10^13, α_N ≈ 0.076
+
+2. Dataset Size (D):
+   L(D) ∝ (D_c / D)^α_D
+   where D_c ≈ 5.4 × 10^13, α_D ≈ 0.095
+
+3. Compute Budget (C):
+   L(C) ∝ (C_c / C)^α_C
+   where C_c ≈ 3.1 × 10^8, α_C ≈ 0.050
+
+Key insight: Performance improves smoothly and predictably!
+Doubling compute → ~X% loss reduction (consistent)
+                        </div>
+
+                        <h3>Optimal Allocation (Chinchilla Scaling)</h3>
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <p><strong>Chinchilla paper finding (Hoffmann et al., 2022):</strong> For optimal performance, model size and training tokens should scale equally.</p>
+
+                            <p style="margin-top: 10px;"><strong>Chinchilla Optimal Rule:</strong></p>
+                            <div class="code-example">
+For compute budget C:
+- Model parameters: N_opt ∝ C^0.5
+- Training tokens: D_opt ∝ C^0.5
+
+Example:
+- 10x more compute → √10 ≈ 3x larger model, 3x more data
+- Not: 10x larger model on same data (GPT-3 approach)
+
+Chinchilla: 70B params, 1.4T tokens (optimal)
+GPT-3: 175B params, 300B tokens (over-parameterized, under-trained)
+                            </div>
+                            <p><strong>Reference:</strong> <a href="https://arxiv.org/abs/2203.15556" style="color: #000; text-decoration: underline;">Training Compute-Optimal Large Language Models (arxiv.org/abs/2203.15556)</a></p>
+                        </div>
+
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Compute Budget</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Optimal Model Size</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Optimal Training Tokens</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">1e20 FLOPs</td>
+                                <td style="padding: 12px; border: 1px solid #000;">400M params</td>
+                                <td style="padding: 12px; border: 1px solid #000;">8B tokens</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">1e21 FLOPs</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1B params</td>
+                                <td style="padding: 12px; border: 1px solid #000;">20B tokens</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">1e22 FLOPs</td>
+                                <td style="padding: 12px; border: 1px solid #000;">3B params</td>
+                                <td style="padding: 12px; border: 1px solid #000;">60B tokens</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">1e23 FLOPs</td>
+                                <td style="padding: 12px; border: 1px solid #000;">10B params</td>
+                                <td style="padding: 12px; border: 1px solid #000;">200B tokens</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">1e24 FLOPs</td>
+                                <td style="padding: 12px; border: 1px solid #000;">30B params</td>
+                                <td style="padding: 12px; border: 1px solid #000;">600B tokens</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">1e25 FLOPs</td>
+                                <td style="padding: 12px; border: 1px solid #000;">100B params</td>
+                                <td style="padding: 12px; border: 1px solid #000;">2T tokens</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Training Data: Sources and Processing</h2>
+
+                        <h3>Data Composition (Common Patterns)</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Source</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Proportion</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Purpose</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Quality</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Web Crawl (Common Crawl)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">60-70%</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Diverse language, broad knowledge</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Variable (needs filtering)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Books</td>
+                                <td style="padding: 12px; border: 1px solid #000;">10-15%</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Long-form reasoning, narrative</td>
+                                <td style="padding: 12px; border: 1px solid #000;">High</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Wikipedia</td>
+                                <td style="padding: 12px; border: 1px solid #000;">3-5%</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Factual knowledge, encyclopedic</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Very High</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Code (GitHub)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">5-10%</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Programming, structured reasoning</td>
+                                <td style="padding: 12px; border: 1px solid #000;">High</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">ArXiv (Scientific Papers)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">2-3%</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Technical knowledge, math</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Very High</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">Reddit (filtered)</td>
+                                <td style="padding: 12px; border: 1px solid #000;">5-10%</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Conversational, Q&A format</td>
+                                <td style="padding: 12px; border: 1px solid #000;">Medium (filtered)</td>
+                            </tr>
+                        </table>
+
+                        <h3>Data Processing Pipeline</h3>
+                        <div class="code-example">
+# 1. Collection
+raw_text = download_common_crawl(shard_id)
+
+# 2. Filtering (remove low-quality)
+def quality_filter(text):
+    """Filter out low-quality documents"""
+    # Language detection
+    if detect_language(text) != 'en':
+        return False
+
+    # Remove too short/long documents
+    if len(text) < 100 or len(text) > 1_000_000:
+        return False
+
+    # Content quality heuristics
+    if perplexity(text, model=kenlm) > 500:  # Too random
+        return False
+    if repetition_ratio(text) > 0.3:  # Too repetitive
+        return False
+    if symbol_to_word_ratio(text) > 0.5:  # Too much noise
+        return False
+
+    return True
+
+filtered = [doc for doc in raw_text if quality_filter(doc)]
+
+# 3. Deduplication (critical for performance!)
+def deduplicate(documents):
+    """Remove exact and near-duplicate documents"""
+    # Exact dedup using hashes
+    seen_hashes = set()
+    exact_deduped = []
+    for doc in documents:
+        doc_hash = hash(doc)
+        if doc_hash not in seen_hashes:
+            seen_hashes.add(doc_hash)
+            exact_deduped.append(doc)
+
+    # Near-dedup using MinHash + LSH
+    from datasketch import MinHash, MinHashLSH
+    lsh = MinHashLSH(threshold=0.8, num_perm=128)
+
+    near_deduped = []
+    for idx, doc in enumerate(exact_deduped):
+        m = MinHash(num_perm=128)
+        for word in doc.split():
+            m.update(word.encode('utf8'))
+
+        # Check for near-duplicates
+        if not lsh.query(m):  # No similar docs found
+            lsh.insert(f"doc_{idx}", m)
+            near_deduped.append(doc)
+
+    return near_deduped
+
+clean_data = deduplicate(filtered)
+
+# 4. Tokenization
+from transformers import GPT2Tokenizer
+tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+tokenized = [tokenizer.encode(doc) for doc in clean_data]
+
+# 5. Shuffling (critical for training diversity!)
+import random
+random.shuffle(tokenized)
+
+# 6. Pack into sequences of fixed length (e.g., 2048 tokens)
+def pack_sequences(tokenized_docs, seq_len=2048):
+    """Pack variable-length documents into fixed-length sequences"""
+    buffer = []
+    sequences = []
+
+    for doc_tokens in tokenized_docs:
+        buffer.extend(doc_tokens)
+        buffer.append(tokenizer.eos_token_id)  # Separate documents
+
+        # Extract full sequences
+        while len(buffer) >= seq_len:
+            sequences.append(buffer[:seq_len])
+            buffer = buffer[seq_len:]
+
+    return sequences
+
+training_data = pack_sequences(tokenized)
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Computational Cost Breakdown</h2>
+
+                        <h3>Training Cost Estimates</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Model</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Parameters</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Training Tokens</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Compute (FLOPs)</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">GPU-Hours (A100)</th>
+                                <th style="text-align: left; padding: 12px; border: 1px solid #000; font-weight: 500;">Est. Cost</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-2</td>
+                                <td style="padding: 12px; border: 1px solid #000;">1.5B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">10B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~3e19</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~1K</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~$2K</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">GPT-3</td>
+                                <td style="padding: 12px; border: 1px solid #000;">175B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">300B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~3.1e23</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~1M</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~$4-5M</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">LLaMA-2 7B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">7B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">2T</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~2.8e22</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~180K</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~$300K</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #000;">LLaMA-2 70B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">70B</td>
+                                <td style="padding: 12px; border: 1px solid #000;">2T</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~2.8e23</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~1.7M</td>
+                                <td style="padding: 12px; border: 1px solid #000;">~$3M</td>
+                            </tr>
+                        </table>
+
+                        <p style="margin-top: 15px;"><strong>FLOP calculation:</strong> ~6ND FLOPs, where N = parameters, D = tokens (forward + backward pass)</p>
+
+                        <div class="info-box" style="margin-top: 20px; border-left: 2px solid #000;">
+                            <h3>Why So Expensive?</h3>
+                            <ul style="margin-left: 20px; line-height: 1.8;">
+                                <li><strong>Matrix multiplications:</strong> Billions of parameters × billions of tokens</li>
+                                <li><strong>Parallel training:</strong> Requires thousands of GPUs for reasonable time</li>
+                                <li><strong>Memory bandwidth:</strong> Moving parameters and activations is costly</li>
+                                <li><strong>Redundancy:</strong> Must train to convergence, can't stop early</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h2>Key Papers and Resources</h2>
+
+                        <h3>Foundational Papers</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"Language Models are Few-Shot Learners"</strong> (Brown et al., 2020) - GPT-3<br>
+                                <a href="https://arxiv.org/abs/2005.14165" style="color: #000; text-decoration: underline;">arxiv.org/abs/2005.14165</a></li>
+
+                            <li><strong>"Scaling Laws for Neural Language Models"</strong> (Kaplan et al., 2020)<br>
+                                <a href="https://arxiv.org/abs/2001.08361" style="color: #000; text-decoration: underline;">arxiv.org/abs/2001.08361</a></li>
+
+                            <li><strong>"Training Compute-Optimal Large Language Models"</strong> (Hoffmann et al., 2022) - Chinchilla<br>
+                                <a href="https://arxiv.org/abs/2203.15556" style="color: #000; text-decoration: underline;">arxiv.org/abs/2203.15556</a></li>
+
+                            <li><strong>"LLaMA: Open and Efficient Foundation Language Models"</strong> (Touvron et al., 2023)<br>
+                                <a href="https://arxiv.org/abs/2302.13971" style="color: #000; text-decoration: underline;">arxiv.org/abs/2302.13971</a></li>
+
+                            <li><strong>"The Pile: An 800GB Dataset of Diverse Text"</strong> (Gao et al., 2020)<br>
+                                <a href="https://arxiv.org/abs/2101.00027" style="color: #000; text-decoration: underline;">arxiv.org/abs/2101.00027</a></li>
                         </ul>
 
-                        <div class="interactive-section" style="margin-top: 30px;">
-                            <h3>Interactive: Simulate Pre-training</h3>
-                            <p>Watch how a model learns to predict the next word through training iterations:</p>
-                            <button onclick="simulatePretraining()">Start Pre-training Simulation</button>
-                            <div id="pretrainingDemo" style="margin-top: 20px;"></div>
-                        </div>
+                        <h3>Data Processing</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>"Deduplicating Training Data Makes Language Models Better"</strong> (Lee et al., 2021)<br>
+                                <a href="https://arxiv.org/abs/2107.06499" style="color: #000; text-decoration: underline;">arxiv.org/abs/2107.06499</a></li>
 
-                        <h3>The Cost of Pre-training</h3>
-                        <div class="info-box warning">
-                            <p><strong>Computational Requirements:</strong></p>
-                            <ul style="margin-left: 20px; line-height: 1.8; margin-top: 10px;">
-                                <li>GPT-3: ~$4-5 million in compute costs</li>
-                                <li>Thousands of GPUs/TPUs running for weeks or months</li>
-                                <li>Petaflops-days of computation</li>
-                                <li>Massive energy consumption</li>
-                            </ul>
-                            <button onclick="showPretrainingCost()" style="margin-top: 15px;">Calculate Detailed Cost Breakdown</button>
-                            <div id="costBreakdown" style="margin-top: 10px;"></div>
-                        </div>
+                            <li><strong>"Quality at a Glance: An Audit of Web-Crawled Multilingual Datasets"</strong> (Kreutzer et al., 2021)<br>
+                                <a href="https://arxiv.org/abs/2103.12028" style="color: #000; text-decoration: underline;">arxiv.org/abs/2103.12028</a></li>
+                        </ul>
 
-                        <h3>What Models Learn During Pre-training</h3>
-                        <div class="key-concepts">
-                            <div class="concept-card">
-                                <h3>Grammar & Syntax</h3>
-                                <p>Language structure and rules</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>World Knowledge</h3>
-                                <p>Facts, entities, relationships</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>Reasoning Patterns</h3>
-                                <p>Logic, inference, analogies</p>
-                            </div>
-                            <div class="concept-card">
-                                <h3>Common Sense</h3>
-                                <p>Everyday understanding</p>
-                            </div>
-                        </div>
+                        <h3>Practical Resources</h3>
+                        <ul style="margin-left: 20px; line-height: 2;">
+                            <li><strong>nanoGPT</strong> by Andrej Karpathy - Minimal training code<br>
+                                <a href="https://github.com/karpathy/nanoGPT" style="color: #000; text-decoration: underline;">github.com/karpathy/nanoGPT</a></li>
 
-                        <div class="code-example" style="margin-top: 20px;">
-# Simplified Pre-training Loss Function
-loss = -log P(token_t | token_1, token_2, ..., token_{t-1})
+                            <li><strong>Scaling Laws Calculator</strong> - Estimate compute needs<br>
+                                <a href="https://github.com/Alignment-Lab-AI/scaling-laws" style="color: #000; text-decoration: underline;">github.com/Alignment-Lab-AI/scaling-laws</a></li>
 
-# The model minimizes the negative log-likelihood
-# of predicting the correct next token given all previous tokens
+                            <li><strong>RedPajama</strong> - Open dataset for LLM training<br>
+                                <a href="https://github.com/togethercomputer/RedPajama-Data" style="color: #000; text-decoration: underline;">github.com/togethercomputer/RedPajama-Data</a></li>
+                        </ul>
+
+                        <div class="info-box success" style="margin-top: 30px;">
+                            <h3>Recommended Learning Path</h3>
+                            <ol style="margin-left: 20px; margin-top: 10px; line-height: 2;">
+                                <li>Read GPT-3 paper to understand scale and capabilities</li>
+                                <li>Study Scaling Laws paper (Kaplan) - fundamental insights</li>
+                                <li>Read Chinchilla paper for compute-optimal training</li>
+                                <li>Implement character-level LM on tiny dataset (Shakespeare)</li>
+                                <li>Study nanoGPT training code</li>
+                                <li>Experiment with data processing (filtering, deduplication)</li>
+                                <li>Train GPT-2 scale model using Hugging Face</li>
+                            </ol>
                         </div>
                     </div>
                 </div>
