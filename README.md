@@ -9,11 +9,23 @@ An interactive educational web page to learn about Large Language Models, Genera
 1. **Introduction to LLMs** - Understand what large language models are and their key characteristics
 2. **Transformer Architecture** - Explore the revolutionary architecture with an interactive flow diagram
 3. **Attention Mechanism** - Interactive demo showing how attention works in transformers
-4. **Training Process** - Timeline of how LLMs learn (pre-training, fine-tuning, RLHF)
-5. **Key Concepts** - Essential concepts like tokens, embeddings, context windows, and sampling
-6. **Popular Models** - Overview of major LLM families (GPT, Claude, LLaMA, BERT, etc.)
-7. **Knowledge Quiz** - Test your understanding with interactive quizzes
-8. **Resources** - Curated list of papers, courses, and tools to continue learning
+4. **Pre-training (Phase 1)** - Deep dive into foundation learning:
+   - Next-token prediction objective
+   - Training data sources and scale
+   - Interactive pre-training simulation
+   - Cost breakdown calculator
+   - What models learn during pre-training
+5. **Post-training (Phase 2)** - Comprehensive guide to alignment:
+   - Supervised Fine-Tuning (SFT)
+   - Reward modeling with interactive examples
+   - RLHF (Reinforcement Learning from Human Feedback)
+   - Constitutional AI and DPO
+   - Fine-tuning techniques (LoRA, prompt tuning, etc.)
+   - Pre-training vs Post-training comparison
+6. **Key Concepts** - Essential concepts like tokens, embeddings, context windows, and sampling
+7. **Popular Models** - Overview of major LLM families (GPT, Claude, LLaMA, BERT, etc.)
+8. **Knowledge Quiz** - Test your understanding with interactive quizzes
+9. **Resources** - Curated list of papers, courses, and tools to continue learning
 
 ### Interactive Elements
 
@@ -22,11 +34,42 @@ An interactive educational web page to learn about Large Language Models, Genera
 - **Transformer Layer Explorer**: Click each layer to learn how data flows through transformers
 - **Attention Visualizer**: Click words to see attention patterns
 - **Tokenization Demo**: Enter your own text to see how it gets tokenized
+- **Pre-training Simulator**: Watch a model learn to predict tokens through training iterations
+- **Cost Breakdown Calculator**: See the real computational costs of training GPT-3
+- **Reward Modeling Demo**: Interactive example showing how human feedback guides training
+- **Training Comparison Table**: Side-by-side comparison of pre-training vs post-training
 - **Interactive Quiz**: Test your knowledge with immediate feedback
 
 ## How to Use
 
-### Option 1: Open Locally
+### Option 1: Deploy to Vercel (Recommended)
+
+The easiest way to share this learning page is to deploy it on Vercel for free:
+
+#### Using Vercel CLI:
+
+```bash
+# Install Vercel CLI (first time only)
+npm install -g vercel
+
+# Deploy from the project directory
+vercel
+
+# Follow the prompts - just press Enter to accept defaults
+# Vercel will provide you with a live URL
+```
+
+#### Using Vercel Dashboard:
+
+1. Visit [vercel.com](https://vercel.com) and sign up/login
+2. Click "Add New Project"
+3. Import your Git repository
+4. Vercel will auto-detect the static site and deploy it
+5. Get your live URL instantly!
+
+**No configuration needed!** The `vercel.json` file is already set up.
+
+### Option 2: Open Locally
 
 Simply open `index.html` in any modern web browser:
 
@@ -34,12 +77,15 @@ Simply open `index.html` in any modern web browser:
 # On Linux/Mac
 open index.html
 
+# On Windows
+start index.html
+
 # Or just double-click the file in your file explorer
 ```
 
-### Option 2: Serve with a Local Server
+### Option 3: Serve with a Local Server
 
-For the best experience, serve the page with a local web server:
+For the best local experience, serve the page with a local web server:
 
 ```bash
 # Python 3
@@ -75,16 +121,30 @@ Then visit `http://localhost:8000` in your browser.
 - Attention mechanism (self-attention, multi-head attention, cross-attention)
 - Embeddings and vector representations
 
-### Training & Optimization
-- Pre-training with self-supervised learning
-- Fine-tuning for specific tasks
+### Pre-training (Phase 1)
+- Next-token prediction and autoregressive modeling
+- Unsupervised learning from massive datasets
+- Training data sources (web crawls, books, code, papers)
+- Scale: billions to trillions of tokens
+- Computational requirements and costs
+- What models learn: grammar, knowledge, reasoning, common sense
+- Pre-training loss functions
+
+### Post-training (Phase 2)
+- Supervised Fine-Tuning (SFT)
+- Reward modeling and human preference learning
 - Reinforcement Learning from Human Feedback (RLHF)
-- Temperature and sampling strategies
+- Constitutional AI (CAI)
+- Direct Preference Optimization (DPO)
+- Fine-tuning techniques: Full, LoRA, Prompt Tuning, Instruction Tuning
+- Safety and alignment challenges
+- Value alignment and bias mitigation
 
 ### Practical Concepts
 - Tokenization and token limits
 - Context windows
 - Parameters and model scale
+- Temperature and sampling strategies
 - Generation strategies
 
 ## Technologies Used

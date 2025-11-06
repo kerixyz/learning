@@ -419,31 +419,226 @@
             </div>
         </div>
 
-        <!-- Training Process -->
-        <div class="card" data-section="training">
-            <h2>How LLMs Learn: The Training Process</h2>
+        <!-- Pre-training Section -->
+        <div class="card" data-section="pretraining">
+            <h2>Phase 1: Pre-training - Foundation Learning</h2>
+            <p>Pre-training is where LLMs develop their foundational understanding of language. This phase requires enormous computational resources and massive datasets.</p>
 
-            <div class="timeline">
-                <div class="timeline-item">
-                    <h3>1. Pre-training</h3>
-                    <p>The model learns from massive amounts of text by predicting the next word in sentences. This is called <span class="highlight">self-supervised learning</span>.</p>
+            <h3>What is Pre-training?</h3>
+            <p>Pre-training is an <span class="highlight">unsupervised learning</span> process where the model learns patterns, structures, and knowledge from vast amounts of text data without explicit labels.</p>
+
+            <div class="interactive-section">
+                <h3>The Pre-training Objective</h3>
+                <p>Most modern LLMs use <strong>next-token prediction</strong> (also called autoregressive or causal language modeling):</p>
+                <div class="code-example" style="margin-top: 15px;">
+Given: "The cat sat on the"
+Predict: "mat"
+
+Given: "Machine learning is a subset of"
+Predict: "artificial" (then "intelligence")
                 </div>
-                <div class="timeline-item">
-                    <h3>2. Fine-tuning</h3>
-                    <p>The model is trained on specific tasks or domains to improve performance on targeted applications.</p>
+                <p style="margin-top: 15px;">The model learns to predict the probability distribution over all possible next tokens, given the preceding context.</p>
+            </div>
+
+            <h3>Training Data Scale</h3>
+            <div class="key-concepts">
+                <div class="concept-card">
+                    <h3>GPT-3</h3>
+                    <p>300B tokens<br>~500GB of text</p>
                 </div>
-                <div class="timeline-item">
-                    <h3>3. Reinforcement Learning from Human Feedback (RLHF)</h3>
-                    <p>Human raters provide feedback on model outputs, helping it learn to produce more helpful and aligned responses.</p>
+                <div class="concept-card">
+                    <h3>LLaMA</h3>
+                    <p>1-1.4T tokens<br>Multiple languages</p>
+                </div>
+                <div class="concept-card">
+                    <h3>Modern LLMs</h3>
+                    <p>Trillions of tokens<br>Diverse sources</p>
                 </div>
             </div>
 
-            <h3>Training Objective Example:</h3>
-            <div class="code-example">
-Input:  "The quick brown fox jumps over the ____"
-Target: "lazy"
+            <h3>Data Sources</h3>
+            <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                <li><strong>Web Crawls:</strong> Common Crawl, filtered web pages</li>
+                <li><strong>Books:</strong> Project Gutenberg, book corpora</li>
+                <li><strong>Wikipedia:</strong> Encyclopedic knowledge</li>
+                <li><strong>Code:</strong> GitHub repositories, programming resources</li>
+                <li><strong>Scientific Papers:</strong> ArXiv, academic publications</li>
+                <li><strong>Social Media:</strong> Reddit, Twitter (filtered)</li>
+            </ul>
 
-The model learns to predict the next word based on context.
+            <div class="interactive-section" style="margin-top: 30px;">
+                <h3>Interactive: Simulate Pre-training</h3>
+                <p>Watch how a model learns to predict the next word through training iterations:</p>
+                <button onclick="simulatePretraining()">Start Pre-training Simulation</button>
+                <div id="pretrainingDemo" style="margin-top: 20px;"></div>
+            </div>
+
+            <h3>The Cost of Pre-training</h3>
+            <div class="interactive-section">
+                <p><strong>Computational Requirements:</strong></p>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                    <li>GPT-3: ~$4-5 million in compute costs</li>
+                    <li>Thousands of GPUs/TPUs running for weeks or months</li>
+                    <li>Petaflops-days of computation</li>
+                    <li>Massive energy consumption (equivalent to multiple households for a year)</li>
+                </ul>
+                <button onclick="showPretrainingCost()">Calculate Cost Breakdown</button>
+                <div id="costBreakdown" style="margin-top: 10px;"></div>
+            </div>
+
+            <h3>What Models Learn During Pre-training</h3>
+            <div class="key-concepts">
+                <div class="concept-card">
+                    <h3>Grammar & Syntax</h3>
+                    <p>Language structure and rules</p>
+                </div>
+                <div class="concept-card">
+                    <h3>World Knowledge</h3>
+                    <p>Facts, entities, relationships</p>
+                </div>
+                <div class="concept-card">
+                    <h3>Reasoning Patterns</h3>
+                    <p>Logic, inference, analogies</p>
+                </div>
+                <div class="concept-card">
+                    <h3>Common Sense</h3>
+                    <p>Everyday understanding</p>
+                </div>
+            </div>
+
+            <div class="code-example" style="margin-top: 20px;">
+# Simplified Pre-training Loss Function
+loss = -log P(token_t | token_1, token_2, ..., token_{t-1})
+
+# The model minimizes the negative log-likelihood
+# of predicting the correct next token given all previous tokens
+            </div>
+        </div>
+
+        <!-- Post-training Section -->
+        <div class="card" data-section="posttraining">
+            <h2>Phase 2: Post-training - Specialization & Alignment</h2>
+            <p>After pre-training, models undergo post-training to become helpful assistants, specialized tools, or domain experts. This phase makes models safe and useful.</p>
+
+            <h3>Why Post-training is Necessary</h3>
+            <p>Pre-trained models can complete text but aren't optimized for following instructions, being helpful, or avoiding harmful outputs. Post-training aligns models with human preferences.</p>
+
+            <div class="timeline" style="margin-top: 30px;">
+                <div class="timeline-item">
+                    <h3>1. Supervised Fine-Tuning (SFT)</h3>
+                    <p>The model is trained on high-quality human-written examples of desired behavior.</p>
+                    <div class="interactive-section" style="margin-top: 15px;">
+                        <p><strong>Example Training Data:</strong></p>
+                        <div class="code-example">
+User: "What is photosynthesis?"
+Assistant: "Photosynthesis is the process by which plants
+convert light energy into chemical energy stored in glucose.
+It occurs in chloroplasts and requires water, CO2, and
+sunlight, producing oxygen as a byproduct."
+                        </div>
+                        <p style="margin-top: 10px;">Thousands of such examples teach the model to be informative and helpful.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <h3>2. Reward Modeling</h3>
+                    <p>Human raters compare multiple model outputs to teach what "good" responses look like.</p>
+                    <div class="interactive-section" style="margin-top: 15px;">
+                        <p><strong>How it works:</strong></p>
+                        <ol style="margin-left: 20px; line-height: 1.8;">
+                            <li>Model generates multiple responses to the same prompt</li>
+                            <li>Human raters rank responses from best to worst</li>
+                            <li>A reward model learns to predict human preferences</li>
+                            <li>This reward model guides further training</li>
+                        </ol>
+                        <button onclick="showRewardModelingDemo()">See Interactive Example</button>
+                        <div id="rewardModelDemo" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <h3>3. Reinforcement Learning from Human Feedback (RLHF)</h3>
+                    <p>The model is fine-tuned using the reward model through reinforcement learning, optimizing for outputs humans prefer.</p>
+                    <div class="interactive-section" style="margin-top: 15px;">
+                        <p><strong>The RLHF Process:</strong></p>
+                        <div class="transformer-diagram" style="margin-top: 20px;">
+                            <div class="layer-box">
+                                <strong>Generate</strong><br>
+                                Response
+                            </div>
+                            <span class="arrow">→</span>
+                            <div class="layer-box">
+                                <strong>Reward</strong><br>
+                                Model Scores
+                            </div>
+                            <span class="arrow">→</span>
+                            <div class="layer-box">
+                                <strong>Update</strong><br>
+                                Model
+                            </div>
+                            <span class="arrow">→</span>
+                            <div class="layer-box">
+                                <strong>Repeat</strong><br>
+                                Improve
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px;">This iterative process helps the model generate responses that better align with human values and preferences.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <h3>4. Additional Alignment Techniques</h3>
+                    <div style="margin-top: 15px;">
+                        <p><strong>Constitutional AI (CAI):</strong> Models are trained with explicit principles and can self-critique</p>
+                        <p style="margin-top: 10px;"><strong>Direct Preference Optimization (DPO):</strong> Simpler alternative to RLHF, directly optimizing preferences</p>
+                        <p style="margin-top: 10px;"><strong>Red-teaming:</strong> Adversarial testing to find and fix failure modes</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Types of Fine-tuning</h3>
+            <div class="key-concepts" style="margin-top: 20px;">
+                <div class="concept-card">
+                    <h3>Full Fine-tuning</h3>
+                    <p>Update all model parameters. Expensive but most flexible.</p>
+                </div>
+                <div class="concept-card">
+                    <h3>LoRA (Low-Rank Adaptation)</h3>
+                    <p>Train small adapter layers. Much more efficient.</p>
+                </div>
+                <div class="concept-card">
+                    <h3>Prompt Tuning</h3>
+                    <p>Only optimize input prompts. Minimal parameter updates.</p>
+                </div>
+                <div class="concept-card">
+                    <h3>Instruction Tuning</h3>
+                    <p>Teach models to follow diverse instructions.</p>
+                </div>
+            </div>
+
+            <div class="interactive-section" style="margin-top: 30px;">
+                <h3>Compare: Pre-training vs Post-training</h3>
+                <button onclick="showTrainingComparison()">See Detailed Comparison</button>
+                <div id="trainingComparison" style="margin-top: 20px;"></div>
+            </div>
+
+            <h3>Safety and Alignment Challenges</h3>
+            <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                <li><strong>Truthfulness:</strong> Ensuring models provide accurate information</li>
+                <li><strong>Harmlessness:</strong> Preventing generation of harmful content</li>
+                <li><strong>Bias Mitigation:</strong> Reducing unfair biases in outputs</li>
+                <li><strong>Robustness:</strong> Handling adversarial inputs and edge cases</li>
+                <li><strong>Value Alignment:</strong> Aligning AI behavior with human values</li>
+            </ul>
+
+            <div class="code-example" style="margin-top: 20px;">
+# RLHF Objective (simplified)
+objective = reward_model_score(response) - β * KL_divergence(policy, reference)
+
+# Balances:
+# - Maximizing reward (human preference)
+# - Staying close to the original model (KL penalty)
+# This prevents the model from "gaming" the reward model
             </div>
         </div>
 
@@ -720,6 +915,163 @@ The model learns to predict the next word based on context.
                 });
             }
         });
+
+        // Pre-training simulation
+        function simulatePretraining() {
+            const demo = document.getElementById('pretrainingDemo');
+            const sentence = "The cat sat on the mat";
+            const words = sentence.split(' ');
+            let currentIteration = 0;
+            const maxIterations = 5;
+
+            demo.innerHTML = '<h4>Training Progress:</h4>';
+
+            const interval = setInterval(() => {
+                if (currentIteration >= maxIterations) {
+                    clearInterval(interval);
+                    demo.innerHTML += '<p style="color: #28a745; font-weight: bold; margin-top: 15px;">✓ Training complete! The model has learned to predict tokens.</p>';
+                    return;
+                }
+
+                const predictIndex = Math.min(currentIteration + 1, words.length - 1);
+                const context = words.slice(0, predictIndex).join(' ');
+                const target = words[predictIndex];
+                const confidence = Math.min(20 + currentIteration * 16, 95);
+
+                demo.innerHTML += `
+                    <div style="background: white; padding: 15px; margin: 10px 0; border-left: 4px solid #667eea; border-radius: 5px;">
+                        <strong>Iteration ${currentIteration + 1}:</strong><br>
+                        Context: "${context}"<br>
+                        Predicting: "<span style="color: #667eea;">${target}</span>"<br>
+                        Confidence: ${confidence}%<br>
+                        <div style="background: #e0e0e0; height: 10px; border-radius: 5px; margin-top: 5px;">
+                            <div style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); height: 100%; width: ${confidence}%; border-radius: 5px;"></div>
+                        </div>
+                    </div>
+                `;
+
+                currentIteration++;
+            }, 1500);
+        }
+
+        // Show pre-training cost breakdown
+        function showPretrainingCost() {
+            const costDiv = document.getElementById('costBreakdown');
+            costDiv.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 15px;">
+                    <h4 style="color: #667eea; margin-bottom: 15px;">GPT-3 Pre-training Cost Breakdown:</h4>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="border-bottom: 2px solid #ddd;">
+                            <td style="padding: 10px;"><strong>Resource</strong></td>
+                            <td style="padding: 10px;"><strong>Details</strong></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 10px;">Hardware</td>
+                            <td style="padding: 10px;">~10,000 V100 GPUs</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 10px;">Duration</td>
+                            <td style="padding: 10px;">Several weeks</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 10px;">Compute Cost</td>
+                            <td style="padding: 10px;">$4-5 million USD</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 10px;">Energy</td>
+                            <td style="padding: 10px;">~1,287 MWh</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">Carbon Footprint</td>
+                            <td style="padding: 10px;">~552 tons of CO2</td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
+                        Note: Modern models like GPT-4 likely cost significantly more due to increased scale.
+                    </p>
+                </div>
+            `;
+        }
+
+        // Show reward modeling demo
+        function showRewardModelingDemo() {
+            const demo = document.getElementById('rewardModelDemo');
+            demo.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 8px;">
+                    <h4 style="color: #667eea; margin-bottom: 15px;">User Question: "How do I bake a cake?"</h4>
+
+                    <div style="margin: 15px 0; padding: 15px; border: 2px solid #28a745; border-radius: 8px; background: #d4edda;">
+                        <strong style="color: #28a745;">Response A (Ranked #1 by humans):</strong>
+                        <p style="margin-top: 10px;">To bake a basic cake: Preheat oven to 350°F. Mix 2 cups flour, 1.5 cups sugar, 1/2 cup butter, 2 eggs, 1 cup milk, and 2 tsp baking powder. Pour into greased pan. Bake for 30-35 minutes until golden. Let cool before serving.</p>
+                        <span style="color: #28a745; font-weight: bold;">Reward Score: +1.5</span>
+                    </div>
+
+                    <div style="margin: 15px 0; padding: 15px; border: 2px solid #ffc107; border-radius: 8px; background: #fff3cd;">
+                        <strong style="color: #856404;">Response B (Ranked #2 by humans):</strong>
+                        <p style="margin-top: 10px;">Mix ingredients and bake in oven.</p>
+                        <span style="color: #856404; font-weight: bold;">Reward Score: -0.5</span>
+                    </div>
+
+                    <div style="margin: 15px 0; padding: 15px; border: 2px solid #dc3545; border-radius: 8px; background: #f8d7da;">
+                        <strong style="color: #dc3545;">Response C (Ranked #3 by humans):</strong>
+                        <p style="margin-top: 10px;">I don't know.</p>
+                        <span style="color: #dc3545; font-weight: bold;">Reward Score: -1.2</span>
+                    </div>
+
+                    <p style="margin-top: 20px; padding: 15px; background: #f0f4ff; border-radius: 8px;">
+                        <strong>Result:</strong> The reward model learns that detailed, helpful responses receive higher scores. During RLHF, the LLM will be optimized to generate responses similar to Response A.
+                    </p>
+                </div>
+            `;
+        }
+
+        // Show training comparison
+        function showTrainingComparison() {
+            const comparison = document.getElementById('trainingComparison');
+            comparison.innerHTML = `
+                <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <th style="padding: 15px; text-align: left;">Aspect</th>
+                            <th style="padding: 15px; text-align: left;">Pre-training</th>
+                            <th style="padding: 15px; text-align: left;">Post-training</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 15px;"><strong>Goal</strong></td>
+                            <td style="padding: 15px;">Learn language patterns and world knowledge</td>
+                            <td style="padding: 15px;">Align with human preferences and follow instructions</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 15px;"><strong>Data</strong></td>
+                            <td style="padding: 15px;">Massive unlabeled text (billions of tokens)</td>
+                            <td style="padding: 15px;">Curated human feedback (thousands of examples)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 15px;"><strong>Method</strong></td>
+                            <td style="padding: 15px;">Next-token prediction (unsupervised)</td>
+                            <td style="padding: 15px;">SFT, reward modeling, RLHF (supervised/RL)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 15px;"><strong>Cost</strong></td>
+                            <td style="padding: 15px;">Millions of dollars, weeks/months</td>
+                            <td style="padding: 15px;">Much cheaper, days to weeks</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 15px;"><strong>Output</strong></td>
+                            <td style="padding: 15px;">Base model that completes text</td>
+                            <td style="padding: 15px;">Assistant that follows instructions safely</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 15px;"><strong>Example</strong></td>
+                            <td style="padding: 15px;">Input: "The capital of France is" → "Paris"</td>
+                            <td style="padding: 15px;">Input: "What is the capital of France?" → "The capital of France is Paris. It's known for..."</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        }
     </script>
 </body>
 </html>
