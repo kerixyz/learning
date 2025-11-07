@@ -3046,9 +3046,9 @@ Where:
 - W: frozen pre-trained weights (d×k)
 - B ∈ R^(d×r): trainable (down-projection)
 - A ∈ R^(r×k): trainable (up-projection)
-- r << min(d, k): rank (typically 8, 16, 32)
+- r &lt;&lt; min(d, k): rank (typically 8, 16, 32)
 
-Parameters to train: d*r + r*k << d*k
+Parameters to train: d*r + r*k &lt;&lt; d*k
 Example: d=4096, k=4096, r=16
 - Full: 16M params
 - LoRA: 131K params (~100x reduction!)
