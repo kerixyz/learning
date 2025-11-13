@@ -58,6 +58,44 @@
             font-weight: 300;
         }
 
+        .version-switcher {
+            padding: 15px 20px;
+            border-bottom: 1px solid #333;
+            background: #0a0a0a;
+        }
+
+        .version-switcher-title {
+            font-size: 0.7em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.5;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .version-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .version-link {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85em;
+            transition: color 0.2s;
+            font-weight: 300;
+        }
+
+        .version-link:hover {
+            color: #fff;
+        }
+
+        .version-link.current {
+            color: #fff;
+            font-weight: 400;
+        }
+
         .sidebar-nav {
             padding: 20px 0;
         }
@@ -654,6 +692,15 @@
             <div class="sidebar-header">
                 <h1>LLM Learning Guide</h1>
                 <p>Interactive Documentation</p>
+            </div>
+
+            <div class="version-switcher">
+                <div class="version-switcher-title">Other Versions</div>
+                <div class="version-links">
+                    <a href="index.html" class="version-link current">📚 LLM & Transformers</a>
+                    <a href="mcp.html" class="version-link">🔌 MCP & Agentkits</a>
+                    <a href="slides.html" class="version-link">🎯 Presentation Mode</a>
+                </div>
             </div>
 
             <div class="sidebar-nav">

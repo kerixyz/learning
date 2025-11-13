@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Guide - Presentation Mode</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #7c3aed;
+            --secondary-color: #a78bfa;
+            --accent-color: #06b6d4;
+            --text-color: #1f2937;
+            --bg-color: #0f172a;
+            --slide-bg: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Slide container */
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            position: absolute;
+            width: 90%;
+            max-width: 1200px;
+            height: 85%;
+            max-height: 800px;
+            background: var(--slide-bg);
+            border-radius: 20px;
+            padding: 4rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: none;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s ease;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .slide.previous {
+            transform: translateX(-100%) scale(0.9);
+        }
+
+        .slide.next {
+            transform: translateX(100%) scale(0.9);
+        }
+
+        /* Slide content */
+        .slide h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+        }
+
+        .slide h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 2rem 0 1rem;
+        }
+
+        .slide h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 1.5rem 0 1rem;
+        }
+
+        .slide p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+
+        .slide ul, .slide ol {
+            font-size: 1.3rem;
+            line-height: 2;
+            margin: 1rem 0 1rem 3rem;
+        }
+
+        .slide li {
+            margin: 0.8rem 0;
+            color: #374151;
+        }
+
+        .slide code {
+            background: #f3f4f6;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+
+        .slide pre {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 1.5rem;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-size: 1rem;
+        }
+
+        .slide pre code {
+            background: none;
+            color: #e5e7eb;
+            padding: 0;
+        }
+
+        /* Slide types */
+        .slide.title-slide {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .slide.title-slide h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .slide.title-slide .subtitle {
+            font-size: 2rem;
+            color: #6b7280;
+            margin-bottom: 3rem;
+        }
+
+        /* Highlight boxes */
+        .highlight-box {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            border-left: 6px solid var(--primary-color);
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            border-radius: 12px;
+            font-size: 1.2rem;
+        }
+
+        .info-box {
+            background: #dbeafe;
+            border-left: 6px solid var(--accent-color);
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            border-radius: 12px;
+            font-size: 1.2rem;
+        }
+
+        /* Grid layouts */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .feature-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Navigation controls */
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Progress indicator */
+        .progress-indicator {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            color: var(--primary-color);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Topic selector */
+        .topic-selector {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .topic-selector select {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Version selector */
+        .version-selector {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .version-link {
+            display: block;
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 0.5rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .version-link:hover {
+            color: var(--primary-color);
+        }
+
+        /* Keyboard hints */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        kbd {
+            background: #e5e7eb;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes slideInFromRight {
+            from {
+                transform: translateX(100%) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInFromLeft {
+            from {
+                transform: translateX(-100%) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 2rem;
+                width: 95%;
+                height: 90%;
+            }
+
+            .slide h1 {
+                font-size: 2.5rem;
+            }
+
+            .slide h2 {
+                font-size: 1.8rem;
+            }
+
+            .slide p, .slide ul, .slide ol {
+                font-size: 1.1rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .keyboard-hint {
+                display: none;
+            }
+
+            .topic-selector, .version-selector {
+                position: relative;
+                top: auto;
+                left: auto;
+                right: auto;
+                bottom: auto;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Topic Selector -->
+    <div class="topic-selector">
+        <select id="topicSelect" onchange="switchTopic(this.value)">
+            <option value="llm">LLM & Transformers</option>
+            <option value="mcp">MCP & Agentkits</option>
+        </select>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="progress-indicator">
+        <span id="slideCounter">1 / 1</span>
+    </div>
+
+    <!-- Version Links -->
+    <div class="version-selector">
+        <a href="index.html" class="version-link">📚 Docs Mode</a>
+        <a href="mcp.html" class="version-link">🔌 MCP Docs</a>
+        <a href="slides.html" class="version-link">🎯 Slides (Current)</a>
+    </div>
+
+    <!-- Presentation Container -->
+    <div class="presentation" id="presentation">
+        <!-- Slides will be dynamically loaded here -->
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="control-btn" id="prevBtn" onclick="previousSlide()">← Previous</button>
+        <button class="control-btn" id="nextBtn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <!-- Keyboard Hint -->
+    <div class="keyboard-hint">
+        Use <kbd>←</kbd> <kbd>→</kbd> arrow keys or click to navigate
+    </div>
+
+    <script>
+        // Slide content for different topics
+        const slidesData = {
+            llm: [
+                {
+                    type: 'title',
+                    content: `
+                        <h1>Large Language Models<br>& Transformers</h1>
+                        <p class="subtitle">An Interactive Learning Guide</p>
+                        <p style="font-size: 1.2rem; color: #6b7280;">Press → to begin</p>
+                    `
+                },
+                {
+                    content: `
+                        <h1>What are LLMs?</h1>
+                        <div class="highlight-box">
+                            <p><strong>Large Language Models</strong> are AI systems trained on massive amounts of text data to understand and generate human-like text.</p>
+                        </div>
+                        <h3>Key Characteristics:</h3>
+                        <ul>
+                            <li><strong>Scale:</strong> Billions to trillions of parameters</li>
+                            <li><strong>Pre-training:</strong> Learn from vast internet-scale datasets</li>
+                            <li><strong>Transfer Learning:</strong> Apply knowledge to new tasks</li>
+                            <li><strong>Few-Shot Learning:</strong> Learn from minimal examples</li>
+                        </ul>
+                    `
+                },
+                {
+                    content: `
+                        <h1>The Transformer Architecture</h1>
+                        <h2>Revolutionary Design</h2>
+                        <p>Introduced in "Attention Is All You Need" (2017), transformers replaced recurrent networks with parallel processing.</p>
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <h4>Self-Attention</h4>
+                                <p>Each word attends to all other words in context</p>
+                            </div>
+                            <div class="feature-card">
+                                <h4>Parallel Processing</h4>
+                                <p>Process entire sequences simultaneously</p>
+                            </div>
+                            <div class="feature-card">
+                                <h4>Positional Encoding</h4>
+                                <p>Maintain word order information</p>
+                            </div>
+                            <div class="feature-card">
+                                <h4>Layer Stacking</h4>
+                                <p>Deep networks learn hierarchical patterns</p>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Pre-training Phase</h1>
+                        <h2>Foundation Learning</h2>
+                        <div class="info-box">
+                            <p><strong>Objective:</strong> Next-token prediction on massive text corpora</p>
+                        </div>
+                        <h3>Training Data:</h3>
+                        <ul>
+                            <li>Web pages (Common Crawl, filtered internet)</li>
+                            <li>Books and publications</li>
+                            <li>Code repositories</li>
+                            <li>Academic papers</li>
+                            <li>Wikipedia and curated sources</li>
+                        </ul>
+                        <h3>Scale Example (GPT-3):</h3>
+                        <ul>
+                            <li>300 billion tokens of training data</li>
+                            <li>175 billion parameters</li>
+                            <li>$4.6 million in compute costs</li>
+                        </ul>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Post-training Phase</h1>
+                        <h2>Alignment & Fine-tuning</h2>
+                        <div class="two-column">
+                            <div>
+                                <h3>Supervised Fine-Tuning (SFT)</h3>
+                                <ul>
+                                    <li>High-quality demonstrations</li>
+                                    <li>Instruction-following examples</li>
+                                    <li>Desired behavior patterns</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3>RLHF</h3>
+                                <ul>
+                                    <li>Human preference feedback</li>
+                                    <li>Reward model training</li>
+                                    <li>Policy optimization</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="highlight-box">
+                            <p><strong>Goal:</strong> Transform base models into helpful, harmless, and honest assistants</p>
+                        </div>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Key Concepts</h1>
+                        <h2>Tokens</h2>
+                        <p>Text is broken into tokens (words, subwords, or characters)</p>
+                        <pre><code>"Hello, world!" → ["Hello", ",", " world", "!"]</code></pre>
+                        <h2>Context Window</h2>
+                        <p>Maximum number of tokens the model can process at once</p>
+                        <ul>
+                            <li>GPT-3: 4,096 tokens</li>
+                            <li>GPT-4: 128,000 tokens</li>
+                            <li>Claude 3: 200,000 tokens</li>
+                        </ul>
+                        <h2>Temperature</h2>
+                        <p>Controls randomness in generation (0 = deterministic, 1+ = creative)</p>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Popular Model Families</h1>
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">🤖</div>
+                                <h4>GPT (OpenAI)</h4>
+                                <p>Generative Pre-trained Transformers</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">🧠</div>
+                                <h4>Claude (Anthropic)</h4>
+                                <p>Constitutional AI approach</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">🦙</div>
+                                <h4>LLaMA (Meta)</h4>
+                                <p>Open source foundation models</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">💎</div>
+                                <h4>Gemini (Google)</h4>
+                                <p>Multimodal AI models</p>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    type: 'title',
+                    content: `
+                        <h1>Thank You!</h1>
+                        <p class="subtitle">Continue learning with the full documentation</p>
+                        <div style="margin-top: 2rem;">
+                            <a href="index.html" class="control-btn" style="display: inline-block; text-decoration: none;">📚 Full LLM Guide</a>
+                            <a href="mcp.html" class="control-btn" style="display: inline-block; text-decoration: none; margin-left: 1rem;">🔌 Learn MCP</a>
+                        </div>
+                    `
+                }
+            ],
+            mcp: [
+                {
+                    type: 'title',
+                    content: `
+                        <h1>Model Context Protocol<br>& Agentkits</h1>
+                        <p class="subtitle">Building AI Agents That Actually Work</p>
+                        <p style="font-size: 1.2rem; color: #6b7280;">Press → to begin</p>
+                    `
+                },
+                {
+                    content: `
+                        <h1>What is MCP?</h1>
+                        <div class="highlight-box">
+                            <p><strong>MCP</strong> is a standardized protocol that allows AI models to connect to and interact with external data sources, tools, and services.</p>
+                        </div>
+                        <h3>Think of it as...</h3>
+                        <p style="font-size: 1.4rem; margin: 2rem 0;">
+                            <strong>HTTP for AI agents</strong> – a universal way for LLMs to communicate with tools
+                        </p>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Why MCP Matters</h1>
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">🔌</div>
+                                <h4>Connect to Tools</h4>
+                                <p>Integrate with APIs, databases, and services</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">📊</div>
+                                <h4>Access Data</h4>
+                                <p>Retrieve information from various sources</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">⚡</div>
+                                <h4>Take Actions</h4>
+                                <p>Execute tasks in external systems</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">🔄</div>
+                                <h4>Maintain Context</h4>
+                                <p>Keep state across interactions</p>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Core Components</h1>
+                        <h2>The Building Blocks</h2>
+                        <div style="margin: 2rem 0;">
+                            <h3 style="color: var(--primary-color);">🔌 Resources</h3>
+                            <p>Data or content AI can access (files, databases, web pages)</p>
+
+                            <h3 style="color: var(--primary-color); margin-top: 1.5rem;">🛠️ Tools</h3>
+                            <p>Functions AI can invoke to perform actions</p>
+
+                            <h3 style="color: var(--primary-color); margin-top: 1.5rem;">💬 Prompts</h3>
+                            <p>Reusable templates providing context and structure</p>
+                        </div>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Architecture</h1>
+                        <div style="background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); padding: 2rem; border-radius: 12px; margin: 2rem 0;">
+                            <div style="text-align: center; font-size: 1.3rem; line-height: 2.5;">
+                                <div style="background: white; padding: 1rem; border-radius: 8px; margin: 0.5rem;">🖥️ <strong>Client Application</strong></div>
+                                <div style="font-size: 2rem;">↕️</div>
+                                <div style="background: white; padding: 1rem; border-radius: 8px; margin: 0.5rem;">🤖 <strong>LLM</strong></div>
+                                <div style="font-size: 2rem;">↕️</div>
+                                <div style="background: white; padding: 1rem; border-radius: 8px; margin: 0.5rem;">🔌 <strong>MCP Client</strong></div>
+                                <div style="font-size: 2rem;">↕️</div>
+                                <div style="background: white; padding: 1rem; border-radius: 8px; margin: 0.5rem;">🌐 <strong>MCP Server(s)</strong></div>
+                                <div style="font-size: 2rem;">↕️</div>
+                                <div style="background: white; padding: 1rem; border-radius: 8px; margin: 0.5rem;">💾 <strong>Data Sources</strong></div>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Protocol Basics</h1>
+                        <h2>Built on JSON-RPC 2.0</h2>
+                        <pre><code>// Tool call example
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "method": "tools/call",
+  "params": {
+    "name": "search_database",
+    "arguments": {
+      "query": "AI papers",
+      "limit": 10
+    }
+  }
+}</code></pre>
+                        <p style="margin-top: 2rem;">Simple, debuggable, language-agnostic</p>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Popular Agentkits</h1>
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <h4>🔷 Claude Agent SDK</h4>
+                                <p>Official SDK with native MCP integration</p>
+                            </div>
+                            <div class="feature-card">
+                                <h4>🦜 LangChain</h4>
+                                <p>Popular framework with extensive tools</p>
+                            </div>
+                            <div class="feature-card">
+                                <h4>🧠 AutoGen</h4>
+                                <p>Microsoft's multi-agent system framework</p>
+                            </div>
+                            <div class="feature-card">
+                                <h4>🌊 CrewAI</h4>
+                                <p>Role-playing AI agent orchestration</p>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Building Your First Server</h1>
+                        <pre><code>import { Server } from "@modelcontextprotocol/sdk";
+
+const server = new Server({
+  name: "my-server",
+  version: "1.0.0"
+});
+
+// Define a tool
+server.setRequestHandler("tools/list", async () => ({
+  tools: [{
+    name: "echo",
+    description: "Echoes input",
+    inputSchema: {
+      type: "object",
+      properties: {
+        message: { type: "string" }
+      }
+    }
+  }]
+}));
+
+// Start server
+await server.connect(transport);</code></pre>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Popular MCP Servers</h1>
+                        <ul style="font-size: 1.4rem; line-height: 2.5;">
+                            <li><strong>📁 Filesystem</strong> - File and directory access</li>
+                            <li><strong>🐙 GitHub</strong> - Repository and issue management</li>
+                            <li><strong>🗄️ PostgreSQL</strong> - Database queries</li>
+                            <li><strong>🌐 Fetch</strong> - HTTP requests</li>
+                            <li><strong>📧 Gmail</strong> - Email management</li>
+                            <li><strong>📊 Google Sheets</strong> - Spreadsheet data</li>
+                        </ul>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Real-World Examples</h1>
+                        <h3>🔍 Research Assistant</h3>
+                        <p>Search web → Fetch content → Save notes → Organize citations</p>
+                        <h3>💻 Code Review Bot</h3>
+                        <p>Read files → Get diff → Run tests → Provide feedback</p>
+                        <h3>🎯 DevOps Automation</h3>
+                        <p>Monitor logs → Check containers → Create issues → Notify team</p>
+                    `
+                },
+                {
+                    content: `
+                        <h1>Getting Started</h1>
+                        <div class="highlight-box">
+                            <h3>📖 Learning Path</h3>
+                            <ol style="font-size: 1.2rem; line-height: 2;">
+                                <li>Install Claude Desktop</li>
+                                <li>Try official MCP servers</li>
+                                <li>Build a simple custom server</li>
+                                <li>Combine multiple servers</li>
+                                <li>Create your own agent workflow</li>
+                            </ol>
+                        </div>
+                        <pre><code>npm install @modelcontextprotocol/sdk</code></pre>
+                    `
+                },
+                {
+                    type: 'title',
+                    content: `
+                        <h1>Start Building!</h1>
+                        <p class="subtitle">The future of AI agents is here</p>
+                        <div style="margin-top: 2rem;">
+                            <a href="mcp.html" class="control-btn" style="display: inline-block; text-decoration: none;">📚 Full MCP Guide</a>
+                            <a href="index.html" class="control-btn" style="display: inline-block; text-decoration: none; margin-left: 1rem;">🤖 Learn LLMs</a>
+                        </div>
+                    `
+                }
+            ]
+        };
+
+        // State
+        let currentTopic = 'llm';
+        let currentSlideIndex = 0;
+        let slides = [];
+
+        // Initialize
+        function init() {
+            loadSlides(currentTopic);
+            updateControls();
+            setupKeyboardNavigation();
+        }
+
+        // Load slides for a topic
+        function loadSlides(topic) {
+            const presentation = document.getElementById('presentation');
+            presentation.innerHTML = '';
+
+            slides = slidesData[topic];
+
+            slides.forEach((slideData, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                if (slideData.type === 'title') {
+                    slide.classList.add('title-slide');
+                }
+                if (index === 0) {
+                    slide.classList.add('active');
+                }
+                slide.innerHTML = slideData.content;
+                presentation.appendChild(slide);
+            });
+
+            updateSlideCounter();
+        }
+
+        // Switch topic
+        function switchTopic(topic) {
+            currentTopic = topic;
+            currentSlideIndex = 0;
+            loadSlides(topic);
+            updateControls();
+        }
+
+        // Navigation
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                goToSlide(currentSlideIndex + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlideIndex > 0) {
+                goToSlide(currentSlideIndex - 1);
+            }
+        }
+
+        function goToSlide(index) {
+            const allSlides = document.querySelectorAll('.slide');
+
+            allSlides[currentSlideIndex].classList.remove('active');
+            allSlides[index].classList.add('active');
+
+            currentSlideIndex = index;
+            updateControls();
+            updateSlideCounter();
+        }
+
+        // Update controls
+        function updateControls() {
+            document.getElementById('prevBtn').disabled = currentSlideIndex === 0;
+            document.getElementById('nextBtn').disabled = currentSlideIndex === slides.length - 1;
+        }
+
+        // Update counter
+        function updateSlideCounter() {
+            document.getElementById('slideCounter').textContent =
+                `${currentSlideIndex + 1} / ${slides.length}`;
+        }
+
+        // Keyboard navigation
+        function setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    previousSlide();
+                } else if (e.key === 'Home') {
+                    goToSlide(0);
+                } else if (e.key === 'End') {
+                    goToSlide(slides.length - 1);
+                }
+            });
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Make functions globally available
+        window.nextSlide = nextSlide;
+        window.previousSlide = previousSlide;
+        window.switchTopic = switchTopic;
+    </script>
+</body>
+</html>
