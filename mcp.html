@@ -1,0 +1,2226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP & Agentkits Primer - Interactive Learning Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #7c3aed;
+            --secondary-color: #a78bfa;
+            --accent-color: #06b6d4;
+            --text-color: #1f2937;
+            --bg-color: #f9fafb;
+            --sidebar-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --code-bg: #f3f4f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: var(--bg-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9375rem;
+            color: #4b5563;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #f3f4f6;
+            color: var(--primary-color);
+        }
+
+        .nav-item.active {
+            background: #ede9fe;
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .progress-section {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        /* Main content area */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+        }
+
+        .breadcrumb {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            color: var(--text-color);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem;
+            color: var(--primary-color);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+            color: #374151;
+        }
+
+        code {
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: var(--primary-color);
+        }
+
+        pre {
+            background: var(--code-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .info-box {
+            background: #dbeafe;
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid var(--warning-color);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-button {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            background: #6d28d9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(124, 58, 237, 0.3);
+        }
+
+        .nav-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .interactive-demo {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .demo-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .architecture-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .arch-layer {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .arch-layer:hover {
+            transform: translateX(10px);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+        }
+
+        .arch-layer h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--primary-color);
+        }
+
+        .arch-layer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .example-code {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .example-code code {
+            color: #e5e7eb;
+            background: none;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 101;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Version switcher */
+        .version-switcher {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: #f9fafb;
+        }
+
+        .version-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .version-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+        }
+
+        .version-link:hover {
+            color: var(--primary-color);
+        }
+
+        .version-link.current {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">MCP & Agentkits</div>
+            <div class="sidebar-subtitle">Interactive Primer</div>
+        </div>
+
+        <div class="version-switcher">
+            <div class="version-links">
+                <a href="index.html" class="version-link">📚 LLM & Transformers Guide</a>
+                <a href="mcp.html" class="version-link current">🔌 MCP & Agentkits Primer</a>
+                <a href="slides.html" class="version-link">🎯 Presentation Mode</a>
+            </div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item active" data-page="intro">Introduction to MCP</li>
+            <li class="nav-item" data-page="what-is-mcp">What is MCP?</li>
+            <li class="nav-item" data-page="architecture">Architecture</li>
+            <li class="nav-item" data-page="protocol">Protocol Basics</li>
+            <li class="nav-item" data-page="components">Core Components</li>
+            <li class="nav-item" data-page="agentkits">Agentkits & Frameworks</li>
+            <li class="nav-item" data-page="building">Building with MCP</li>
+            <li class="nav-item" data-page="tools">Popular Tools</li>
+            <li class="nav-item" data-page="examples">Example Implementations</li>
+            <li class="nav-item" data-page="resources">Resources</li>
+        </ul>
+
+        <div class="progress-section">
+            <div class="progress-label">Learning Progress</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+    </aside>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="menuToggle">☰</button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Introduction -->
+        <section class="page-section active" id="intro">
+            <div class="breadcrumb">
+                <a href="#intro">Home</a> / Introduction
+            </div>
+
+            <h1>Model Context Protocol & Agentkits</h1>
+            <p class="subtitle" style="font-size: 1.25rem; color: #6b7280; margin-bottom: 2rem;">
+                A comprehensive primer on building AI agents with the Model Context Protocol
+            </p>
+
+            <div class="highlight-box">
+                <h3>What You'll Learn</h3>
+                <ul>
+                    <li>Understanding the Model Context Protocol (MCP)</li>
+                    <li>How MCP enables AI agents to interact with external systems</li>
+                    <li>Architecture and core components of MCP</li>
+                    <li>Popular agentkits and frameworks</li>
+                    <li>Building your own MCP servers and clients</li>
+                    <li>Real-world examples and implementations</li>
+                </ul>
+            </div>
+
+            <h2>Why MCP Matters</h2>
+            <p>
+                The Model Context Protocol represents a paradigm shift in how AI systems interact with the world.
+                Instead of being limited to text-based conversations, MCP enables AI agents to:
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔌</div>
+                    <div class="feature-title">Connect to Tools</div>
+                    <p>Integrate with external APIs, databases, and services seamlessly</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Access Data</div>
+                    <p>Retrieve and process information from various data sources</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-title">Take Actions</div>
+                    <p>Execute tasks and workflows in external systems</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <div class="feature-title">Maintain Context</div>
+                    <p>Keep track of state across interactions and sessions</p>
+                </div>
+            </div>
+
+            <h2>The Evolution of AI Agents</h2>
+            <div class="card">
+                <h3>From Chatbots to Agentic Systems</h3>
+                <ol>
+                    <li><strong>Simple Chatbots (2020-2022)</strong> - Basic text responses, no external integrations</li>
+                    <li><strong>Function Calling (2023)</strong> - LLMs could request specific function calls, but implementations were custom</li>
+                    <li><strong>MCP Era (2024+)</strong> - Standardized protocol for tool use, context sharing, and agent coordination</li>
+                </ol>
+            </div>
+
+            <div class="info-box">
+                <strong>💡 Key Insight:</strong> MCP provides a standardized way for AI models to interact with tools and data sources,
+                similar to how HTTP standardized web communication. This standardization enables building complex, multi-agent systems.
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-button" disabled>← Previous</button>
+                <button class="nav-button" onclick="navigatePage('what-is-mcp')">Next: What is MCP? →</button>
+            </div>
+        </section>
+
+        <!-- What is MCP -->
+        <section class="page-section" id="what-is-mcp">
+            <div class="breadcrumb">
+                <a href="#intro">Home</a> / What is MCP?
+            </div>
+
+            <h1>What is the Model Context Protocol?</h1>
+
+            <p>
+                The <strong>Model Context Protocol (MCP)</strong> is an open protocol that standardizes how AI applications
+                provide context to Large Language Models (LLMs). Think of it as a universal "plugin system" for AI.
+            </p>
+
+            <div class="highlight-box">
+                <h3>MCP in One Sentence</h3>
+                <p style="font-size: 1.1rem; font-weight: 500;">
+                    MCP is a standardized protocol that allows AI models to securely connect to and interact with
+                    external data sources, tools, and services in a consistent way.
+                </p>
+            </div>
+
+            <h2>Core Concepts</h2>
+
+            <div class="card">
+                <h3>🔌 Resources</h3>
+                <p>
+                    <strong>Resources</strong> represent data or content that AI models can access. These can be:
+                </p>
+                <ul>
+                    <li>Files and documents</li>
+                    <li>Database records</li>
+                    <li>API responses</li>
+                    <li>Web pages</li>
+                    <li>Real-time data streams</li>
+                </ul>
+                <pre><code>// Example resource
+{
+  "uri": "file:///docs/guide.md",
+  "name": "User Guide",
+  "mimeType": "text/markdown",
+  "description": "Product user guide"
+}</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>🛠️ Tools</h3>
+                <p>
+                    <strong>Tools</strong> are functions that AI models can invoke to perform actions:
+                </p>
+                <ul>
+                    <li>Query databases</li>
+                    <li>Call APIs</li>
+                    <li>Execute code</li>
+                    <li>Modify files</li>
+                    <li>Send notifications</li>
+                </ul>
+                <pre><code>// Example tool definition
+{
+  "name": "search_database",
+  "description": "Search the product database",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "query": { "type": "string" },
+      "limit": { "type": "number" }
+    }
+  }
+}</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>💬 Prompts</h3>
+                <p>
+                    <strong>Prompts</strong> are reusable templates that provide context and structure:
+                </p>
+                <ul>
+                    <li>Pre-configured conversation starters</li>
+                    <li>System prompts with embedded context</li>
+                    <li>Workflow templates</li>
+                    <li>Role definitions</li>
+                </ul>
+            </div>
+
+            <h2>Why MCP Was Created</h2>
+
+            <div class="info-box">
+                <h4>The Problem Before MCP</h4>
+                <ul>
+                    <li>Every AI application had custom integrations</li>
+                    <li>No standard way to share context between tools</li>
+                    <li>Difficult to build multi-agent systems</li>
+                    <li>Security and permission models varied wildly</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <h4>The MCP Solution</h4>
+                <ul>
+                    <li>✅ Standardized protocol for all integrations</li>
+                    <li>✅ Consistent context sharing mechanism</li>
+                    <li>✅ Built-in security and permission model</li>
+                    <li>✅ Easy to build composable agent systems</li>
+                </ul>
+            </div>
+
+            <h2>MCP vs Other Approaches</h2>
+
+            <table style="width: 100%; border-collapse: collapse; margin: 2rem 0;">
+                <tr style="background: #f3f4f6;">
+                    <th style="padding: 1rem; text-align: left; border: 1px solid var(--border-color);">Approach</th>
+                    <th style="padding: 1rem; text-align: left; border: 1px solid var(--border-color);">Pros</th>
+                    <th style="padding: 1rem; text-align: left; border: 1px solid var(--border-color);">Cons</th>
+                </tr>
+                <tr>
+                    <td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Custom Integration</strong></td>
+                    <td style="padding: 1rem; border: 1px solid var(--border-color);">Flexible, tailored</td>
+                    <td style="padding: 1rem; border: 1px solid var(--border-color);">Not reusable, time-consuming</td>
+                </tr>
+                <tr>
+                    <td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Function Calling</strong></td>
+                    <td style="padding: 1rem; border: 1px solid var(--border-color);">Simple, model-native</td>
+                    <td style="padding: 1rem; border: 1px solid var(--border-color);">No standard format, limited</td>
+                </tr>
+                <tr>
+                    <td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>MCP</strong></td>
+                    <td style="padding: 1rem; border: 1px solid var(--border-color);">Standardized, reusable, secure</td>
+                    <td style="padding: 1rem; border: 1px solid var(--border-color);">Requires protocol understanding</td>
+                </tr>
+            </table>
+
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="navigatePage('intro')">← Previous: Introduction</button>
+                <button class="nav-button" onclick="navigatePage('architecture')">Next: Architecture →</button>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="page-section" id="architecture">
+            <div class="breadcrumb">
+                <a href="#intro">Home</a> / Architecture
+            </div>
+
+            <h1>MCP Architecture</h1>
+
+            <p>
+                MCP uses a client-server architecture where AI applications (clients) connect to MCP servers
+                that provide resources, tools, and prompts.
+            </p>
+
+            <h2>System Architecture</h2>
+
+            <div class="architecture-diagram">
+                <div class="arch-layer">
+                    <h4>🖥️ Client Application (Host)</h4>
+                    <p>AI applications like Claude Desktop, IDEs, or custom apps that use LLMs and need access to external context</p>
+                </div>
+                <div class="arch-layer">
+                    <h4>🤖 LLM (AI Model)</h4>
+                    <p>The language model that processes requests and decides when to use tools or access resources</p>
+                </div>
+                <div class="arch-layer">
+                    <h4>🔌 MCP Client</h4>
+                    <p>Protocol client embedded in the host application that manages connections to MCP servers</p>
+                </div>
+                <div class="arch-layer">
+                    <h4>🌐 MCP Server(s)</h4>
+                    <p>Services that expose resources, tools, and prompts through the MCP protocol</p>
+                </div>
+                <div class="arch-layer">
+                    <h4>💾 Data Sources / APIs</h4>
+                    <p>Underlying systems like databases, file systems, web APIs that servers connect to</p>
+                </div>
+            </div>
+
+            <h2>Communication Flow</h2>
+
+            <div class="interactive-demo">
+                <div class="demo-title">How MCP Communication Works</div>
+                <ol style="line-height: 2;">
+                    <li>👤 User sends a request to the AI application</li>
+                    <li>🤖 LLM determines it needs external data/tools</li>
+                    <li>📤 Client sends MCP request to appropriate server</li>
+                    <li>⚙️ Server processes request and accesses data source</li>
+                    <li>📥 Server returns response via MCP protocol</li>
+                    <li>🧠 LLM incorporates context into its response</li>
+                    <li>✨ User receives enriched, contextual answer</li>
+                </ol>
+            </div>
+
+            <h2>Connection Types</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Standard I/O (stdio)</h4>
+                    <p>Server runs as subprocess, communicates via stdin/stdout. Best for local tools.</p>
+                    <pre style="margin-top: 1rem; font-size: 0.8rem;"><code>stdio://server-command</code></pre>
+                </div>
+                <div class="feature-card">
+                    <h4>HTTP with SSE</h4>
+                    <p>Server runs as HTTP service with Server-Sent Events for streaming.</p>
+                    <pre style="margin-top: 1rem; font-size: 0.8rem;"><code>http://localhost:3000/mcp</code></pre>
+                </div>
+            </div>
+
+            <h2>Protocol Stack</h2>
+
+            <div class="card">
+                <h3>Layer Model</h3>
+                <div class="example-code">
+<code>┌─────────────────────────────────┐
+│   Application Layer             │  ← User interactions
+├─────────────────────────────────┤
+│   MCP Protocol Layer            │  ← Resources, Tools, Prompts
+├─────────────────────────────────┤
+│   JSON-RPC 2.0                  │  ← Message format
+├─────────────────────────────────┤
+│   Transport (stdio/HTTP+SSE)    │  ← Communication channel
+└─────────────────────────────────┘</code>
+                </div>
+            </div>
+
+            <h2>Security Model</h2>
+
+            <div class="warning-box">
+                <h4>⚠️ Security Considerations</h4>
+                <ul>
+                    <li><strong>Authentication:</strong> Servers can require authentication tokens</li>
+                    <li><strong>Authorization:</strong> Fine-grained permissions for resources and tools</li>
+                    <li><strong>Sandboxing:</strong> Servers run in isolated environments</li>
+                    <li><strong>Validation:</strong> All inputs are validated against schemas</li>
+                    <li><strong>Audit Logging:</strong> All actions can be logged for security review</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="navigatePage('what-is-mcp')">← Previous: What is MCP?</button>
+                <button class="nav-button" onclick="navigatePage('protocol')">Next: Protocol Basics →</button>
+            </div>
+        </section>
+
+        <!-- Protocol Basics -->
+        <section class="page-section" id="protocol">
+            <div class="breadcrumb">
+                <a href="#intro">Home</a> / Protocol Basics
+            </div>
+
+            <h1>Protocol Basics</h1>
+
+            <p>
+                MCP is built on top of <strong>JSON-RPC 2.0</strong>, a lightweight remote procedure call protocol.
+                This makes it easy to implement and debug.
+            </p>
+
+            <h2>Core Message Types</h2>
+
+            <div class="card">
+                <h3>1. Requests</h3>
+                <p>Client initiates an action and expects a response:</p>
+                <pre><code>{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "method": "tools/call",
+  "params": {
+    "name": "search_database",
+    "arguments": {
+      "query": "artificial intelligence",
+      "limit": 10
+    }
+  }
+}</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>2. Responses</h3>
+                <p>Server sends back the result:</p>
+                <pre><code>{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Found 10 results..."
+      }
+    ]
+  }
+}</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>3. Notifications</h3>
+                <p>One-way messages that don't expect responses:</p>
+                <pre><code>{
+  "jsonrpc": "2.0",
+  "method": "notifications/progress",
+  "params": {
+    "progressToken": "abc123",
+    "progress": 50,
+    "total": 100
+  }
+}</code></pre>
+            </div>
+
+            <h2>Common Methods</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>initialize</h4>
+                    <p>Establish connection and exchange capabilities</p>
+                </div>
+                <div class="feature-card">
+                    <h4>resources/list</h4>
+                    <p>Get available resources from server</p>
+                </div>
+                <div class="feature-card">
+                    <h4>resources/read</h4>
+                    <p>Read content of a specific resource</p>
+                </div>
+                <div class="feature-card">
+                    <h4>tools/list</h4>
+                    <p>Get available tools from server</p>
+                </div>
+                <div class="feature-card">
+                    <h4>tools/call</h4>
+                    <p>Execute a tool with given arguments</p>
+                </div>
+                <div class="feature-card">
+                    <h4>prompts/list</h4>
+                    <p>Get available prompt templates</p>
+                </div>
+            </div>
+
+            <h2>Lifecycle</h2>
+
+            <div class="interactive-demo">
+                <div class="demo-title">Connection Lifecycle</div>
+                <div class="example-code">
+<code>Client                          Server
+  |                               |
+  |------- initialize --------→  |
+  |←----- capabilities -------   |
+  |                               |
+  |------- tools/list --------→  |
+  |←----- tool definitions ---   |
+  |                               |
+  |------- tools/call --------→  |
+  |←----- result -------------   |
+  |                               |
+  |  (multiple operations...)     |
+  |                               |
+  |------- shutdown ----------→  |
+  |                               |
+  ✓ Connection closed             ✓</code>
+                </div>
+            </div>
+
+            <h2>Example: Complete Tool Call</h2>
+
+            <div class="card">
+                <h3>Step 1: List Available Tools</h3>
+                <pre><code>// Request
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "method": "tools/list"
+}
+
+// Response
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": {
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Get current weather for a location",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "City name"
+            }
+          },
+          "required": ["location"]
+        }
+      }
+    ]
+  }
+}</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>Step 2: Call the Tool</h3>
+                <pre><code>// Request
+{
+  "jsonrpc": "2.0",
+  "id": "2",
+  "method": "tools/call",
+  "params": {
+    "name": "get_weather",
+    "arguments": {
+      "location": "San Francisco"
+    }
+  }
+}
+
+// Response
+{
+  "jsonrpc": "2.0",
+  "id": "2",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Weather in San Francisco: 18°C, Partly Cloudy"
+      }
+    ]
+  }
+}</code></pre>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="navigatePage('architecture')">← Previous: Architecture</button>
+                <button class="nav-button" onclick="navigatePage('components')">Next: Core Components →</button>
+            </div>
+        </section>
+
+        <!-- Core Components -->
+        <section class="page-section" id="components">
+            <div class="breadcrumb">
+                <a href="#intro">Home</a> / Core Components
+            </div>
+
+            <h1>Core Components</h1>
+
+            <p>
+                Let's explore the main building blocks you'll work with when building MCP applications.
+            </p>
+
+            <h2>MCP Server</h2>
+
+            <div class="card">
+                <h3>What is an MCP Server?</h3>
+                <p>
+                    An MCP server is a program that exposes resources, tools, and prompts to AI applications.
+                    Servers can be written in any language that supports JSON-RPC.
+                </p>
+
+                <h4 style="margin-top: 1.5rem;">Server Responsibilities:</h4>
+                <ul>
+                    <li>Implement the MCP protocol (JSON-RPC handlers)</li>
+                    <li>Define and expose resources, tools, and prompts</li>
+                    <li>Handle authentication and authorization</li>
+                    <li>Manage connections to underlying data sources</li>
+                    <li>Validate inputs and sanitize outputs</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Example: Simple MCP Server (TypeScript)</h3>
+                <pre><code>import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+
+const server = new Server({
+  name: "example-server",
+  version: "1.0.0"
+}, {
+  capabilities: {
+    tools: {}
+  }
+});
+
+// Define a tool
+server.setRequestHandler("tools/list", async () => ({
+  tools: [{
+    name: "echo",
+    description: "Echoes back the input",
+    inputSchema: {
+      type: "object",
+      properties: {
+        message: { type: "string" }
+      }
+    }
+  }]
+}));
+
+// Handle tool calls
+server.setRequestHandler("tools/call", async (request) => {
+  if (request.params.name === "echo") {
+    return {
+      content: [{
+        type: "text",
+        text: request.params.arguments.message
+      }]
+    };
+  }
+});
+
+// Start server
+const transport = new StdioServerTransport();
+await server.connect(transport);</code></pre>
+            </div>
+
+            <h2>MCP Client</h2>
+
+            <div class="card">
+                <h3>What is an MCP Client?</h3>
+                <p>
+                    An MCP client is embedded in AI applications (like Claude Desktop, IDEs) and manages
+                    connections to MCP servers. Most developers won't need to build clients from scratch.
+                </p>
+
+                <h4 style="margin-top: 1.5rem;">Client Responsibilities:</h4>
+                <ul>
+                    <li>Discover and connect to MCP servers</li>
+                    <li>Send requests on behalf of the LLM</li>
+                    <li>Handle responses and errors</li>
+                    <li>Manage multiple server connections</li>
+                    <li>Provide context to the LLM</li>
+                </ul>
+            </div>
+
+            <h2>Resources</h2>
+
+            <div class="card">
+                <h3>Resource Types</h3>
+                <p>Resources represent any data or content the AI can access:</p>
+
+                <div style="margin-top: 1rem;">
+                    <h4>📄 Files</h4>
+                    <pre><code>{
+  "uri": "file:///home/user/document.pdf",
+  "name": "Project Plan",
+  "mimeType": "application/pdf"
+}</code></pre>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <h4>🗄️ Database Records</h4>
+                    <pre><code>{
+  "uri": "database://users/12345",
+  "name": "User Profile",
+  "mimeType": "application/json"
+}</code></pre>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <h4>🌐 Web Content</h4>
+                    <pre><code>{
+  "uri": "https://example.com/api/data",
+  "name": "API Data",
+  "mimeType": "application/json"
+}</code></pre>
+                </div>
+            </div>
+
+            <h2>Tools</h2>
+
+            <div class="card">
+                <h3>Tool Schema</h3>
+                <p>Tools must be defined with a JSON Schema for their inputs:</p>
+                <pre><code>{
+  "name": "create_file",
+  "description": "Creates a new file with content",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "path": {
+        "type": "string",
+        "description": "File path"
+      },
+      "content": {
+        "type": "string",
+        "description": "File content"
+      },
+      "overwrite": {
+        "type": "boolean",
+        "description": "Overwrite if exists",
+        "default": false
+      }
+    },
+    "required": ["path", "content"]
+  }
+}</code></pre>
+            </div>
+
+            <div class="info-box">
+                <strong>💡 Best Practice:</strong> Tool names should be descriptive verbs (e.g., <code>search_documents</code>,
+                <code>create_task</code>, <code>send_email</code>) and descriptions should explain what the tool does and when to use it.
+            </div>
+
+            <h2>Prompts</h2>
+
+            <div class="card">
+                <h3>Prompt Templates</h3>
+                <p>Prompts provide reusable conversation templates:</p>
+                <pre><code>{
+  "name": "code_review",
+  "description": "Review code for issues",
+  "arguments": [
+    {
+      "name": "language",
+      "description": "Programming language",
+      "required": true
+    },
+    {
+      "name": "code",
+      "description": "Code to review",
+      "required": true
+    }
+  ]
+}
+
+// When called, generates:
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": {
+        "type": "text",
+        "text": "Review this {{language}} code for issues:\n\n{{code}}"
+      }
+    }
+  ]
+}</code></pre>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="navigatePage('protocol')">← Previous: Protocol Basics</button>
+                <button class="nav-button" onclick="navigatePage('agentkits')">Next: Agentkits →</button>
+            </div>
+        </section>
+
+        <!-- Agentkits & Frameworks -->
+        <section class="page-section" id="agentkits">
+            <div class="breadcrumb">
+                <a href="#intro">Home</a> / Agentkits & Frameworks
+            </div>
+
+            <h1>Agentkits & Frameworks</h1>
+
+            <p>
+                While MCP provides the protocol, <strong>agentkits</strong> and frameworks make it easier to build
+                sophisticated AI agents by providing higher-level abstractions.
+            </p>
+
+            <h2>Popular Agent Frameworks</h2>
+
+            <div class="card">
+                <h3>🔷 Claude Agent SDK</h3>
+                <p>Official SDK from Anthropic for building agents with Claude and MCP.</p>
+                <ul>
+                    <li>Native MCP integration</li>
+                    <li>TypeScript and Python support</li>
+                    <li>Built-in error handling and retry logic</li>
+                    <li>Streaming responses</li>
+                    <li>Multi-turn conversations</li>
+                </ul>
+                <pre><code>npm install @anthropic-ai/sdk
+npm install @modelcontextprotocol/sdk</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>🦜 LangChain</h3>
+                <p>Popular framework for building LLM applications with extensive tool ecosystem.</p>
+                <ul>
+                    <li>Chain multiple operations together</li>
+                    <li>Large ecosystem of integrations</li>
+                    <li>Memory management</li>
+                    <li>Can integrate with MCP servers</li>
+                </ul>
+                <pre><code>from langchain.agents import initialize_agent
+from langchain.tools import Tool
+
+agent = initialize_agent(
+    tools=[...],
+    llm=llm,
+    agent="zero-shot-react-description"
+)</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>🧠 AutoGen</h3>
+                <p>Microsoft's framework for building multi-agent systems.</p>
+                <ul>
+                    <li>Multiple agents that can communicate</li>
+                    <li>Built-in conversation patterns</li>
+                    <li>Code execution capabilities</li>
+                    <li>Human-in-the-loop support</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>🌊 CrewAI</h3>
+                <p>Framework for orchestrating role-playing AI agents.</p>
+                <ul>
+                    <li>Role-based agent definition</li>
+                    <li>Task delegation</li>
+                    <li>Process orchestration</li>
+                    <li>Built-in tools and integrations</li>
+                </ul>
+            </div>
+
+            <h2>MCP-Native Tools</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>MCP Inspector</h4>
+                    <p>Debug and test MCP servers interactively</p>
+                    <pre style="font-size: 0.75rem;"><code>npx @modelcontextprotocol/inspector</code></pre>
+                </div>
+                <div class="feature-card">
+                    <h4>MCP Server Templates</h4>
+                    <p>Quickstart templates for common server types</p>
+                    <pre style="font-size: 0.75rem;"><code>npx create-mcp-server</code></pre>
+                </div>
+                <div class="feature-card">
+                    <h4>Claude Desktop</h4>
+                    <p>Built-in MCP client with GUI configuration</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Continue (IDE Plugin)</h4>
+                    <p>VS Code extension with MCP support</p>
+                </div>
+            </div>
+
+            <h2>Building Blocks for Agents</h2>
+
+            <div class="highlight-box">
+                <h3>Common Agent Patterns</h3>
+                <ol>
+                    <li><strong>ReAct (Reasoning + Acting)</strong> - Agent reasons about what to do, then acts</li>
+                    <li><strong>Plan-and-Execute</strong> - Create a plan, then execute steps</li>
+                    <li><strong>Reflection</strong> - Agent reviews its own outputs and improves</li>
+                    <li><strong>Multi-Agent</strong> - Multiple specialized agents collaborate</li>
+                    <li><strong>Tool-Using</strong> - Agent selects and uses appropriate tools</li>
+                </ol>
+            </div>
+
+            <h2>Example: Simple Agent with MCP</h2>
+
+            <div class="card">
+                <pre><code>import Anthropic from "@anthropic-ai/sdk";
+import { MCPClient } from "@modelcontextprotocol/sdk/client/index.js";
+
+// Connect to MCP server
+const mcpClient = new MCPClient();
+await mcpClient.connect(/* ... */);
+
+// Get available tools
+const { tools } = await mcpClient.request("tools/list");
+
+// Create Claude client
+const anthropic = new Anthropic();
+
+// Agent loop
+async function runAgent(userMessage) {
+  let messages = [{ role: "user", content: userMessage }];
+
+  while (true) {
+    // Ask Claude what to do
+    const response = await anthropic.messages.create({
+      model: "claude-3-5-sonnet-20241022",
+      messages,
+      tools, // Pass MCP tools
+      max_tokens: 4096
+    });
+
+    // Check if Claude wants to use a tool
+    const toolUse = response.content.find(
+      block => block.type === "tool_use"
+    );
+
+    if (!toolUse) {
+      // No more tools needed, return response
+      return response.content[0].text;
+    }
+
+    // Call the tool via MCP
+    const toolResult = await mcpClient.request("tools/call", {
+      name: toolUse.name,
+      arguments: toolUse.input
+    });
+
+    // Add tool result to conversation
+    messages.push({
+      role: "assistant",
+      content: response.content
+    });
+    messages.push({
+      role: "user",
+      content: [{
+        type: "tool_result",
+        tool_use_id: toolUse.id,
+        content: toolResult.content
+      }]
+    });
+
+    // Loop continues...
+  }
+}
+
+// Use the agent
+const result = await runAgent(
+  "Search for recent AI papers and summarize the top 3"
+);</code></pre>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="navigatePage('components')">← Previous: Core Components</button>
+                <button class="nav-button" onclick="navigatePage('building')">Next: Building with MCP →</button>
+            </div>
+        </section>
+
+        <!-- Building with MCP -->
+        <section class="page-section" id="building">
+            <div class="breadcrumb">
+                <a href="#intro">Home</a> / Building with MCP
+            </div>
+
+            <h1>Building with MCP</h1>
+
+            <p>
+                Ready to build your own MCP server? Let's walk through creating a practical example.
+            </p>
+
+            <h2>Getting Started</h2>
+
+            <div class="card">
+                <h3>Prerequisites</h3>
+                <ul>
+                    <li>Node.js 18+ or Python 3.10+</li>
+                    <li>Basic understanding of JSON and APIs</li>
+                    <li>Familiarity with async/await programming</li>
+                </ul>
+
+                <h3 style="margin-top: 1.5rem;">Installation</h3>
+                <pre><code># TypeScript/JavaScript
+npm install @modelcontextprotocol/sdk
+
+# Python
+pip install mcp</code></pre>
+            </div>
+
+            <h2>Project: File System Server</h2>
+
+            <p>Let's build an MCP server that provides file system access to AI agents.</p>
+
+            <div class="card">
+                <h3>Step 1: Server Setup</h3>
+                <pre><code>import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import fs from "fs/promises";
+import path from "path";
+
+const server = new Server({
+  name: "filesystem-server",
+  version: "1.0.0"
+}, {
+  capabilities: {
+    resources: {},
+    tools: {}
+  }
+});
+
+const ALLOWED_DIR = process.env.ALLOWED_DIR || process.cwd();</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>Step 2: Implement Resources</h3>
+                <pre><code>// List available files as resources
+server.setRequestHandler("resources/list", async () => {
+  const files = await fs.readdir(ALLOWED_DIR);
+
+  return {
+    resources: files.map(file => ({
+      uri: `file:///${path.join(ALLOWED_DIR, file)}`,
+      name: file,
+      mimeType: getMimeType(file),
+      description: `File: ${file}`
+    }))
+  };
+});
+
+// Read file content
+server.setRequestHandler("resources/read", async (request) => {
+  const filePath = request.params.uri.replace("file:///", "");
+
+  // Security check
+  if (!filePath.startsWith(ALLOWED_DIR)) {
+    throw new Error("Access denied");
+  }
+
+  const content = await fs.readFile(filePath, "utf-8");
+
+  return {
+    contents: [{
+      uri: request.params.uri,
+      mimeType: getMimeType(filePath),
+      text: content
+    }]
+  };
+});</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>Step 3: Implement Tools</h3>
+                <pre><code>// Define available tools
+server.setRequestHandler("tools/list", async () => ({
+  tools: [
+    {
+      name: "read_file",
+      description: "Read contents of a file",
+      inputSchema: {
+        type: "object",
+        properties: {
+          path: {
+            type: "string",
+            description: "Path to file"
+          }
+        },
+        required: ["path"]
+      }
+    },
+    {
+      name: "write_file",
+      description: "Write content to a file",
+      inputSchema: {
+        type: "object",
+        properties: {
+          path: { type: "string" },
+          content: { type: "string" }
+        },
+        required: ["path", "content"]
+      }
+    },
+    {
+      name: "list_directory",
+      description: "List files in a directory",
+      inputSchema: {
+        type: "object",
+        properties: {
+          path: { type: "string" }
+        }
+      }
+    }
+  ]
+}));
+
+// Handle tool calls
+server.setRequestHandler("tools/call", async (request) => {
+  const { name, arguments: args } = request.params;
+
+  switch (name) {
+    case "read_file": {
+      const fullPath = path.join(ALLOWED_DIR, args.path);
+      const content = await fs.readFile(fullPath, "utf-8");
+      return {
+        content: [{
+          type: "text",
+          text: content
+        }]
+      };
+    }
+
+    case "write_file": {
+      const fullPath = path.join(ALLOWED_DIR, args.path);
+      await fs.writeFile(fullPath, args.content);
+      return {
+        content: [{
+          type: "text",
+          text: `File written: ${args.path}`
+        }]
+      };
+    }
+
+    case "list_directory": {
+      const dirPath = args.path
+        ? path.join(ALLOWED_DIR, args.path)
+        : ALLOWED_DIR;
+      const files = await fs.readdir(dirPath);
+      return {
+        content: [{
+          type: "text",
+          text: files.join("\n")
+        }]
+      };
+    }
+
+    default:
+      throw new Error(`Unknown tool: ${name}`);
+  }
+});</code></pre>
+            </div>
+
+            <div class="card">
+                <h3>Step 4: Start the Server</h3>
+                <pre><code>async function main() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error("Filesystem MCP server running");
+}
+
+main().catch(console.error);</code></pre>
+            </div>
+
+            <h2>Testing Your Server</h2>
+
+            <div class="info-box">
+                <h4>Using MCP Inspector</h4>
+                <p>The easiest way to test your server:</p>
+                <pre><code>npx @modelcontextprotocol/inspector node dist/index.js</code></pre>
+                <p>This opens a web interface where you can:</p>
+                <ul>
+                    <li>List all tools and resources</li>
+                    <li>Call tools with test inputs</li>
+                    <li>View responses and errors</li>
+                    <li>Debug the protocol messages</li>
+                </ul>
+            </div>
+
+            <h2>Connecting to Claude Desktop</h2>
+
+            <div class="card">
+                <h3>Configuration</h3>
+                <p>Add your server to Claude Desktop's config file:</p>
+
+                <h4>macOS: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code></h4>
+                <h4>Windows: <code>%APPDATA%\Claude\claude_desktop_config.json</code></h4>
+
+                <pre><code>{
+  "mcpServers": {
+    "filesystem": {
+      "command": "node",
+      "args": ["/path/to/your/server/dist/index.js"],
+      "env": {
+        "ALLOWED_DIR": "/Users/yourname/Documents"
+      }
+    }
+  }
+}</code></pre>
+            </div>
+
+            <h2>Best Practices</h2>
+
+            <div class="highlight-box">
+                <h3>Security</h3>
+                <ul>
+                    <li>✅ Always validate and sanitize inputs</li>
+                    <li>✅ Use allowlists for file paths and operations</li>
+                    <li>✅ Implement proper authentication</li>
+                    <li>✅ Log all operations for audit trails</li>
+                    <li>❌ Never trust user input directly</li>
+                    <li>❌ Don't expose sensitive system operations</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Design</h3>
+                <ul>
+                    <li>Keep tools focused and single-purpose</li>
+                    <li>Provide clear, detailed descriptions</li>
+                    <li>Use JSON Schema validation</li>
+                    <li>Return structured, parseable responses</li>
+                    <li>Handle errors gracefully with helpful messages</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="navigatePage('agentkits')">← Previous: Agentkits</button>
+                <button class="nav-button" onclick="navigatePage('tools')">Next: Popular Tools →</button>
+            </div>
+        </section>
+
+        <!-- Popular Tools -->
+        <section class="page-section" id="tools">
+            <div class="breadcrumb">
+                <a href="#intro">Home</a> / Popular Tools
+            </div>
+
+            <h1>Popular MCP Tools & Servers</h1>
+
+            <p>
+                The MCP ecosystem is growing rapidly. Here are some popular and useful MCP servers you can use.
+            </p>
+
+            <h2>Official Servers</h2>
+
+            <div class="card">
+                <h3>📁 Filesystem</h3>
+                <p>Access and manipulate local files and directories</p>
+                <pre><code>npx -y @modelcontextprotocol/server-filesystem /path/to/allowed/dir</code></pre>
+                <p><strong>Tools:</strong> read_file, write_file, list_directory, create_directory, move_file, search_files</p>
+            </div>
+
+            <div class="card">
+                <h3>🌐 Fetch</h3>
+                <p>Make HTTP requests and fetch web content</p>
+                <pre><code>npx -y @modelcontextprotocol/server-fetch</code></pre>
+                <p><strong>Tools:</strong> fetch_url, post_data</p>
+            </div>
+
+            <div class="card">
+                <h3>🗄️ PostgreSQL</h3>
+                <p>Query and interact with PostgreSQL databases</p>
+                <pre><code>npx -y @modelcontextprotocol/server-postgres postgresql://localhost/mydb</code></pre>
+                <p><strong>Tools:</strong> query, list_tables, describe_table</p>
+            </div>
+
+            <div class="card">
+                <h3>💾 SQLite</h3>
+                <p>Work with SQLite databases</p>
+                <pre><code>npx -y @modelcontextprotocol/server-sqlite /path/to/database.db</code></pre>
+                <p><strong>Tools:</strong> query, list_tables, read_schema</p>
+            </div>
+
+            <div class="card">
+                <h3>🐙 GitHub</h3>
+                <p>Interact with GitHub repositories, issues, and PRs</p>
+                <pre><code>npx -y @modelcontextprotocol/server-github</code></pre>
+                <p><strong>Tools:</strong> create_issue, list_repos, get_file, create_pr, search_code</p>
+            </div>
+
+            <h2>Community Servers</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>📧 Gmail</h4>
+                    <p>Read and send emails through Gmail API</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📊 Google Sheets</h4>
+                    <p>Read and write spreadsheet data</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📅 Google Calendar</h4>
+                    <p>Manage calendar events</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔍 Web Search</h4>
+                    <p>Search the web via APIs (Brave, Google, etc.)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🐳 Docker</h4>
+                    <p>Manage containers and images</p>
+                </div>
+                <div class="feature-card">
+                    <h4>☁️ AWS</h4>
+                    <p>Interact with AWS services</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🎨 DALL-E</h4>
+                    <p>Generate images from text</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🎵 Spotify</h4>
+                    <p>Control music playback and playlists</p>
+                </div>
+            </div>
+
+            <h2>Development Tools</h2>
+
+            <div class="card">
+                <h3>🔍 MCP Inspector</h3>
+                <p>Interactive debugging tool for MCP servers</p>
+                <pre><code>npx @modelcontextprotocol/inspector &lt;command&gt;</code></pre>
+                <p><strong>Features:</strong></p>
+                <ul>
+                    <li>Web-based UI for testing</li>
+                    <li>View all tools, resources, and prompts</li>
+                    <li>Test tool calls interactively</li>
+                    <li>See protocol messages in real-time</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>📦 Create MCP Server</h3>
+                <p>Scaffolding tool for new servers</p>
+                <pre><code>npx create-mcp-server my-server</code></pre>
+                <p>Creates a ready-to-go TypeScript project with:</p>
+                <ul>
+                    <li>Basic server structure</li>
+                    <li>Example tools and resources</li>
+                    <li>Build configuration</li>
+                    <li>Testing setup</li>
+                </ul>
+            </div>
+
+            <h2>Combining Multiple Servers</h2>
+
+            <div class="info-box">
+                <h4>Multi-Server Configuration</h4>
+                <p>Claude Desktop can connect to multiple MCP servers simultaneously:</p>
+                <pre><code>{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/user/docs"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "your-token"
+      }
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://localhost/mydb"]
+    }
+  }
+}</code></pre>
+                <p>Now Claude can use tools from all three servers in a single conversation!</p>
+            </div>
+
+            <h2>Finding More Servers</h2>
+
+            <div class="highlight-box">
+                <p><strong>Resources:</strong></p>
+                <ul>
+                    <li>🔗 <a href="https://github.com/modelcontextprotocol/servers" target="_blank">Official MCP Servers Repository</a></li>
+                    <li>🔗 <a href="https://github.com/topics/mcp-server" target="_blank">GitHub Topic: mcp-server</a></li>
+                    <li>🔗 <a href="https://www.anthropic.com/mcp" target="_blank">Anthropic MCP Documentation</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="navigatePage('building')">← Previous: Building with MCP</button>
+                <button class="nav-button" onclick="navigatePage('examples')">Next: Examples →</button>
+            </div>
+        </section>
+
+        <!-- Example Implementations -->
+        <section class="page-section" id="examples">
+            <div class="breadcrumb">
+                <a href="#intro">Home</a> / Example Implementations
+            </div>
+
+            <h1>Example Implementations</h1>
+
+            <p>
+                Let's look at some practical examples of what you can build with MCP.
+            </p>
+
+            <h2>Example 1: Code Review Assistant</h2>
+
+            <div class="card">
+                <h3>Use Case</h3>
+                <p>
+                    An AI agent that reviews code by accessing the filesystem, running tests,
+                    and checking style guidelines.
+                </p>
+
+                <h3 style="margin-top: 1.5rem;">MCP Servers Used</h3>
+                <ul>
+                    <li><strong>Filesystem:</strong> Read source code files</li>
+                    <li><strong>Git:</strong> Access commit history and diffs</li>
+                    <li><strong>Shell:</strong> Run linters and tests</li>
+                </ul>
+
+                <h3 style="margin-top: 1.5rem;">Workflow</h3>
+                <ol>
+                    <li>User asks: "Review the recent changes in src/auth.ts"</li>
+                    <li>Agent uses Git server to get the diff</li>
+                    <li>Agent uses Filesystem to read related files for context</li>
+                    <li>Agent uses Shell server to run TypeScript compiler and ESLint</li>
+                    <li>Agent provides comprehensive review with specific suggestions</li>
+                </ol>
+            </div>
+
+            <h2>Example 2: Research Assistant</h2>
+
+            <div class="card">
+                <h3>Use Case</h3>
+                <p>
+                    An agent that searches the web, reads documents, and compiles research summaries.
+                </p>
+
+                <h3 style="margin-top: 1.5rem;">MCP Servers Used</h3>
+                <ul>
+                    <li><strong>Web Search:</strong> Find relevant articles and papers</li>
+                    <li><strong>Fetch:</strong> Download and parse web content</li>
+                    <li><strong>Filesystem:</strong> Save and organize research notes</li>
+                    <li><strong>SQLite:</strong> Store citations and references</li>
+                </ul>
+
+                <h3 style="margin-top: 1.5rem;">Example Interaction</h3>
+                <pre><code>User: Research the latest developments in quantum computing and create a summary
+
+Agent Actions:
+1. Uses web_search tool to find recent papers
+2. Uses fetch tool to download paper abstracts
+3. Uses filesystem to save source materials
+4. Uses sqlite to store references with metadata
+5. Generates comprehensive summary with citations
+6. Uses filesystem to save final report</code></pre>
+            </div>
+
+            <h2>Example 3: DevOps Automation</h2>
+
+            <div class="card">
+                <h3>Use Case</h3>
+                <p>
+                    An agent that monitors systems, analyzes logs, and performs automated responses.
+                </p>
+
+                <h3 style="margin-top: 1.5rem;">MCP Servers Used</h3>
+                <ul>
+                    <li><strong>Docker:</strong> Inspect containers and services</li>
+                    <li><strong>AWS:</strong> Check cloud infrastructure status</li>
+                    <li><strong>PostgreSQL:</strong> Query application databases</li>
+                    <li><strong>GitHub:</strong> Create issues for problems found</li>
+                    <li><strong>Slack:</strong> Send notifications to team</li>
+                </ul>
+
+                <h3 style="margin-top: 1.5rem;">Automation Example</h3>
+                <pre><code>Trigger: High error rate detected
+
+Agent Actions:
+1. Query PostgreSQL for recent error logs
+2. Check Docker for container health status
+3. Analyze AWS CloudWatch metrics
+4. Identify root cause (database connection timeout)
+5. Create GitHub issue with full context
+6. Send Slack notification to on-call engineer
+7. Attempt automatic remediation (restart connection pool)</code></pre>
+            </div>
+
+            <h2>Example 4: Content Management System</h2>
+
+            <div class="card">
+                <h3>Use Case</h3>
+                <p>
+                    An agent that helps manage blog content, images, and publishing workflows.
+                </p>
+
+                <h3 style="margin-top: 1.5rem;">MCP Servers Used</h3>
+                <ul>
+                    <li><strong>Filesystem:</strong> Read and write blog posts</li>
+                    <li><strong>DALL-E:</strong> Generate featured images</li>
+                    <li><strong>Git:</strong> Version control for content</li>
+                    <li><strong>GitHub:</strong> Create PRs for review</li>
+                </ul>
+
+                <h3 style="margin-top: 1.5rem;">Publishing Workflow</h3>
+                <pre><code>User: Create a blog post about MCP with a featured image
+
+Agent:
+1. Drafts blog post content
+2. Uses filesystem to save draft markdown
+3. Generates featured image with DALL-E
+4. Saves image to assets folder
+5. Updates post frontmatter with image path
+6. Creates git branch for new post
+7. Opens GitHub PR for review
+8. Notifies author when ready</code></pre>
+            </div>
+
+            <h2>Example 5: Customer Support Bot</h2>
+
+            <div class="card">
+                <h3>Use Case</h3>
+                <p>
+                    An intelligent support agent that accesses documentation, tickets, and user data.
+                </p>
+
+                <h3 style="margin-top: 1.5rem;">MCP Servers Used</h3>
+                <ul>
+                    <li><strong>PostgreSQL:</strong> Access customer and ticket database</li>
+                    <li><strong>Filesystem:</strong> Read product documentation</li>
+                    <li><strong>Zendesk/Custom API:</strong> Update tickets</li>
+                    <li><strong>Stripe/Custom API:</strong> Check billing info</li>
+                </ul>
+
+                <h3 style="margin-top: 1.5rem;">Support Flow</h3>
+                <pre><code>Customer: Why am I being charged $99 instead of $49?
+
+Agent:
+1. Query PostgreSQL for customer account details
+2. Check Stripe for current subscription and billing history
+3. Read documentation about pricing plans
+4. Identify issue: Customer on legacy plan, price increased
+5. Search knowledge base for migration options
+6. Provide explanation with options
+7. Update support ticket with resolution
+8. Offer to process refund if applicable</code></pre>
+            </div>
+
+            <h2>Building Your Own</h2>
+
+            <div class="highlight-box">
+                <h3>Tips for Successful Implementations</h3>
+                <ul>
+                    <li><strong>Start Simple:</strong> Begin with 1-2 servers, add more as needed</li>
+                    <li><strong>Test Tools Individually:</strong> Use MCP Inspector to verify each tool works</li>
+                    <li><strong>Provide Rich Context:</strong> Good tool descriptions help the LLM choose correctly</li>
+                    <li><strong>Handle Errors Gracefully:</strong> Return helpful error messages</li>
+                    <li><strong>Log Everything:</strong> Makes debugging much easier</li>
+                    <li><strong>Iterate:</strong> Refine based on real usage patterns</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="navigatePage('tools')">← Previous: Popular Tools</button>
+                <button class="nav-button" onclick="navigatePage('resources')">Next: Resources →</button>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="page-section" id="resources">
+            <div class="breadcrumb">
+                <a href="#intro">Home</a> / Resources
+            </div>
+
+            <h1>Resources & Next Steps</h1>
+
+            <h2>Official Documentation</h2>
+
+            <div class="card">
+                <h3>📚 Core Resources</h3>
+                <ul>
+                    <li><a href="https://modelcontextprotocol.io/" target="_blank">Model Context Protocol Official Site</a></li>
+                    <li><a href="https://spec.modelcontextprotocol.io/" target="_blank">MCP Specification</a></li>
+                    <li><a href="https://github.com/modelcontextprotocol" target="_blank">MCP GitHub Organization</a></li>
+                    <li><a href="https://www.anthropic.com/mcp" target="_blank">Anthropic MCP Resources</a></li>
+                </ul>
+            </div>
+
+            <h2>SDKs & Libraries</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>TypeScript/JavaScript</h4>
+                    <pre style="font-size: 0.75rem;"><code>npm install @modelcontextprotocol/sdk</code></pre>
+                    <p><a href="https://github.com/modelcontextprotocol/typescript-sdk" target="_blank">GitHub Repo</a></p>
+                </div>
+                <div class="feature-card">
+                    <h4>Python</h4>
+                    <pre style="font-size: 0.75rem;"><code>pip install mcp</code></pre>
+                    <p><a href="https://github.com/modelcontextprotocol/python-sdk" target="_blank">GitHub Repo</a></p>
+                </div>
+            </div>
+
+            <h2>Example Servers</h2>
+
+            <div class="card">
+                <h3>🔧 Official Example Servers</h3>
+                <ul>
+                    <li><a href="https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem" target="_blank">Filesystem Server</a> - Full-featured file access</li>
+                    <li><a href="https://github.com/modelcontextprotocol/servers/tree/main/src/fetch" target="_blank">Fetch Server</a> - HTTP request capabilities</li>
+                    <li><a href="https://github.com/modelcontextprotocol/servers/tree/main/src/postgres" target="_blank">PostgreSQL Server</a> - Database integration</li>
+                    <li><a href="https://github.com/modelcontextprotocol/servers/tree/main/src/github" target="_blank">GitHub Server</a> - GitHub API integration</li>
+                </ul>
+            </div>
+
+            <h2>Development Tools</h2>
+
+            <div class="card">
+                <h3>🛠️ Essential Tools</h3>
+                <ul>
+                    <li><strong>MCP Inspector:</strong> <code>npx @modelcontextprotocol/inspector</code></li>
+                    <li><strong>Server Template:</strong> <code>npx create-mcp-server</code></li>
+                    <li><strong>Claude Desktop:</strong> <a href="https://claude.ai/download" target="_blank">Download</a></li>
+                </ul>
+            </div>
+
+            <h2>Community & Support</h2>
+
+            <div class="card">
+                <h3>💬 Get Help & Connect</h3>
+                <ul>
+                    <li><a href="https://discord.gg/anthropic" target="_blank">Anthropic Discord</a> - #mcp channel</li>
+                    <li><a href="https://github.com/modelcontextprotocol/servers/discussions" target="_blank">GitHub Discussions</a></li>
+                    <li><a href="https://twitter.com/AnthropicAI" target="_blank">Twitter/X</a> - Follow for updates</li>
+                </ul>
+            </div>
+
+            <h2>Learning Path</h2>
+
+            <div class="highlight-box">
+                <h3>📖 Recommended Learning Journey</h3>
+                <ol>
+                    <li><strong>Understand the Basics</strong>
+                        <ul>
+                            <li>Read this primer (you're here!)</li>
+                            <li>Review the MCP specification</li>
+                            <li>Understand JSON-RPC 2.0</li>
+                        </ul>
+                    </li>
+                    <li><strong>Experiment with Existing Servers</strong>
+                        <ul>
+                            <li>Install Claude Desktop</li>
+                            <li>Configure a few official servers</li>
+                            <li>Try using them in conversations</li>
+                        </ul>
+                    </li>
+                    <li><strong>Build a Simple Server</strong>
+                        <ul>
+                            <li>Use create-mcp-server to start</li>
+                            <li>Implement 1-2 basic tools</li>
+                            <li>Test with MCP Inspector</li>
+                        </ul>
+                    </li>
+                    <li><strong>Create a Practical Project</strong>
+                        <ul>
+                            <li>Identify a workflow to automate</li>
+                            <li>Build a custom server for it</li>
+                            <li>Integrate with Claude Desktop</li>
+                        </ul>
+                    </li>
+                    <li><strong>Explore Advanced Topics</strong>
+                        <ul>
+                            <li>Multi-server coordination</li>
+                            <li>Streaming responses</li>
+                            <li>Custom authentication</li>
+                            <li>Error handling strategies</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <h2>Related Technologies</h2>
+
+            <div class="info-box">
+                <h4>Complementary Tools & Frameworks</h4>
+                <ul>
+                    <li><strong>LangChain:</strong> Framework for LLM applications</li>
+                    <li><strong>AutoGen:</strong> Multi-agent conversation framework</li>
+                    <li><strong>LlamaIndex:</strong> Data framework for LLM applications</li>
+                    <li><strong>Semantic Kernel:</strong> Microsoft's AI orchestration SDK</li>
+                </ul>
+            </div>
+
+            <h2>Keep Learning</h2>
+
+            <div class="card">
+                <h3>🎯 Next Steps</h3>
+                <p>Now that you understand MCP and agentkits:</p>
+                <ul>
+                    <li>✅ Try the examples in this guide</li>
+                    <li>✅ Build a simple server for your own use case</li>
+                    <li>✅ Join the community and share what you build</li>
+                    <li>✅ Contribute to open source MCP servers</li>
+                    <li>✅ Explore multi-agent architectures</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <p style="font-size: 1.1rem; text-align: center; margin: 0;">
+                    <strong>🚀 Ready to build the future of AI agents?</strong><br>
+                    Start experimenting with MCP today!
+                </p>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="navigatePage('examples')">← Previous: Examples</button>
+                <button class="nav-button" onclick="navigatePage('intro')">Back to Start →</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // State management
+        const state = {
+            currentPage: 'intro',
+            visitedPages: new Set(['intro']),
+            pages: ['intro', 'what-is-mcp', 'architecture', 'protocol', 'components', 'agentkits', 'building', 'tools', 'examples', 'resources']
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateProgress();
+            setupNavigation();
+            setupMobileMenu();
+        });
+
+        // Navigation
+        function navigatePage(pageId) {
+            // Hide current page
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show new page
+            const newPage = document.getElementById(pageId);
+            if (newPage) {
+                newPage.classList.add('active');
+                state.currentPage = pageId;
+                state.visitedPages.add(pageId);
+
+                // Update nav menu
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.page === pageId) {
+                        item.classList.add('active');
+                    }
+                });
+
+                // Update progress
+                updateProgress();
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Close mobile menu if open
+                document.getElementById('sidebar').classList.remove('open');
+            }
+        }
+
+        // Setup navigation
+        function setupNavigation() {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    navigatePage(item.dataset.page);
+                });
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                const currentIndex = state.pages.indexOf(state.currentPage);
+
+                if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                    navigatePage(state.pages[currentIndex - 1]);
+                } else if (e.key === 'ArrowRight' && currentIndex < state.pages.length - 1) {
+                    navigatePage(state.pages[currentIndex + 1]);
+                }
+            });
+        }
+
+        // Update progress
+        function updateProgress() {
+            const progress = (state.visitedPages.size / state.pages.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            document.getElementById('progressText').textContent = `${Math.round(progress)}% Complete`;
+        }
+
+        // Mobile menu
+        function setupMobileMenu() {
+            document.getElementById('menuToggle').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('open');
+            });
+        }
+
+        // Make navigatePage available globally
+        window.navigatePage = navigatePage;
+    </script>
+</body>
+</html>
