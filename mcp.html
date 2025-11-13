@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCP & Agentkits Primer - Interactive Learning Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -11,135 +12,134 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --primary-color: #7c3aed;
-            --secondary-color: #a78bfa;
-            --accent-color: #06b6d4;
-            --text-color: #1f2937;
-            --bg-color: #f9fafb;
-            --sidebar-bg: #ffffff;
-            --border-color: #e5e7eb;
-            --code-bg: #f3f4f6;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            line-height: 1.8;
+            color: #000;
+            background: #fff;
+            overflow-x: hidden;
+            font-weight: 400;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background: var(--bg-color);
+        /* Layout Structure */
+        .docs-container {
             display: flex;
             min-height: 100vh;
         }
 
-        /* Sidebar styles */
+        /* Sidebar */
         .sidebar {
-            width: 280px;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border-color);
+            width: 260px;
+            background: #000;
+            color: #fff;
             position: fixed;
-            left: 0;
-            top: 0;
             height: 100vh;
             overflow-y: auto;
-            z-index: 100;
+            z-index: 1000;
             transition: transform 0.3s ease;
+            border-right: 1px solid #000;
         }
 
         .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 30px 20px;
+            border-bottom: 1px solid #333;
         }
 
+        .sidebar-header h1,
         .sidebar-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
+            font-size: 1.4em;
+            margin-bottom: 5px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            color: #fff;
         }
 
+        .sidebar-header p,
         .sidebar-subtitle {
-            font-size: 0.875rem;
-            color: #6b7280;
+            font-size: 0.85em;
+            opacity: 0.6;
+            font-weight: 300;
+            color: #fff;
         }
 
         .nav-menu {
             list-style: none;
-            padding: 1rem 0;
+            padding: 20px 0;
         }
 
         .nav-item {
-            padding: 0.5rem 1.5rem;
+            padding: 10px 20px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9375rem;
-            color: #4b5563;
-            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            border-left: 2px solid transparent;
+            font-size: 0.9em;
+            position: relative;
+            font-weight: 300;
+            color: #fff;
         }
 
         .nav-item:hover {
-            background: #f3f4f6;
-            color: var(--primary-color);
+            background: #1a1a1a;
+            border-left-color: #fff;
         }
 
         .nav-item.active {
-            background: #ede9fe;
-            color: var(--primary-color);
-            border-left-color: var(--primary-color);
-            font-weight: 600;
+            background: #1a1a1a;
+            border-left-color: #fff;
+            font-weight: 400;
         }
 
         .progress-section {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--border-color);
+            padding: 20px;
+            border-top: 1px solid #333;
         }
 
         .progress-label {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-bottom: 0.5rem;
+            font-size: 0.7em;
             text-transform: uppercase;
-            font-weight: 600;
+            letter-spacing: 2px;
+            opacity: 0.5;
+            font-weight: 500;
+            margin-bottom: 10px;
         }
 
         .progress-bar {
-            height: 8px;
-            background: #e5e7eb;
-            border-radius: 10px;
+            height: 4px;
+            background: #333;
+            border-radius: 0;
             overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            border-radius: 10px;
+            background: #fff;
+            border-radius: 0;
             transition: width 0.5s ease;
             width: 0%;
         }
 
         .progress-text {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-top: 0.25rem;
+            font-size: 0.75em;
+            opacity: 0.6;
+            margin-top: 5px;
         }
 
         /* Main content area */
         .main-content {
-            margin-left: 280px;
+            margin-left: 260px;
             flex: 1;
-            padding: 2rem;
-            max-width: 1200px;
+            padding: 60px 80px;
+            max-width: none;
         }
 
         .breadcrumb {
-            font-size: 0.875rem;
-            color: #6b7280;
-            margin-bottom: 1rem;
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 30px;
         }
 
         .breadcrumb a {
-            color: var(--primary-color);
+            color: #000;
             text-decoration: none;
         }
 
@@ -164,31 +164,29 @@
         }
 
         h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 2.8em;
+            font-weight: 500;
+            margin-bottom: 30px;
+            background: none;
+            color: #000;
         }
 
         h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 2rem 0 1rem;
-            color: var(--text-color);
+            font-size: 2em;
+            font-weight: 500;
+            margin: 40px 0 20px;
+            color: #000;
         }
 
         h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 1.5rem 0 1rem;
-            color: var(--primary-color);
+            font-size: 1.5em;
+            font-weight: 500;
+            margin: 30px 0 15px;
+            color: #000;
         }
 
         p {
-            margin-bottom: 1rem;
+            margin-bottom: 30px;
             color: #374151;
         }
 
@@ -202,27 +200,27 @@
         }
 
         code {
-            background: var(--code-bg);
+            background: #f5f5f5;
             padding: 0.2rem 0.4rem;
             border-radius: 4px;
             font-family: 'Courier New', monospace;
             font-size: 0.9em;
-            color: var(--primary-color);
+            color: #000;
         }
 
         pre {
-            background: var(--code-bg);
+            background: #f5f5f5;
             padding: 1rem;
             border-radius: 8px;
             overflow-x: auto;
             margin: 1rem 0;
-            border-left: 4px solid var(--primary-color);
+            border-left: 4px solid #000;
         }
 
         pre code {
             background: none;
             padding: 0;
-            color: var(--text-color);
+            color: #000;
         }
 
         .card {
@@ -231,7 +229,7 @@
             padding: 1.5rem;
             margin: 1.5rem 0;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border-color);
+            border: 1px solid #e0e0e0;
         }
 
         .card h3 {
@@ -239,24 +237,24 @@
         }
 
         .highlight-box {
-            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
-            border-left: 4px solid var(--primary-color);
+            background: none;
+            border-left: 4px solid #000;
             padding: 1rem 1.5rem;
             margin: 1.5rem 0;
             border-radius: 8px;
         }
 
         .info-box {
-            background: #dbeafe;
-            border-left: 4px solid var(--accent-color);
+            background: #f5f5f5;
+            border-left: 4px solid #000;
             padding: 1rem 1.5rem;
             margin: 1.5rem 0;
             border-radius: 8px;
         }
 
         .warning-box {
-            background: #fef3c7;
-            border-left: 4px solid var(--warning-color);
+            background: #f5f5f5;
+            border-left: 4px solid #666;
             padding: 1rem 1.5rem;
             margin: 1.5rem 0;
             border-radius: 8px;
@@ -267,12 +265,12 @@
             justify-content: space-between;
             margin-top: 3rem;
             padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid #e0e0e0;
         }
 
         .nav-button {
             padding: 0.75rem 1.5rem;
-            background: var(--primary-color);
+            background: #000;
             color: white;
             border: none;
             border-radius: 8px;
@@ -297,17 +295,17 @@
 
         .interactive-demo {
             background: white;
-            border: 2px solid var(--border-color);
+            border: 2px solid #e0e0e0;
             border-radius: 12px;
-            padding: 2rem;
+            padding: 60px 80px;
             margin: 2rem 0;
         }
 
         .demo-title {
             font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 30px;
+            color: #000;
         }
 
         .architecture-diagram {
@@ -318,10 +316,10 @@
         }
 
         .arch-layer {
-            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            background: none;
             padding: 1.5rem;
             border-radius: 8px;
-            border-left: 4px solid var(--primary-color);
+            border-left: 4px solid #000;
             cursor: pointer;
             transition: all 0.3s;
         }
@@ -333,7 +331,7 @@
 
         .arch-layer h4 {
             margin: 0 0 0.5rem 0;
-            color: var(--primary-color);
+            color: #000;
         }
 
         .arch-layer p {
@@ -366,7 +364,7 @@
             background: white;
             padding: 1.5rem;
             border-radius: 8px;
-            border: 1px solid var(--border-color);
+            border: 1px solid #e0e0e0;
             transition: all 0.3s;
         }
 
@@ -376,14 +374,14 @@
         }
 
         .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
+            font-size: 2em;
+            margin-bottom: 30px;
         }
 
         .feature-title {
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 0.5rem;
-            color: var(--primary-color);
+            color: #000;
         }
 
         /* Mobile menu toggle */
@@ -393,7 +391,7 @@
             top: 1rem;
             left: 1rem;
             z-index: 101;
-            background: var(--primary-color);
+            background: #000;
             color: white;
             border: none;
             padding: 0.75rem;
@@ -403,31 +401,41 @@
 
         /* Version switcher */
         .version-switcher {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            background: #f9fafb;
+            padding: 15px 20px;
+            border-bottom: 1px solid #333;
+            background: #0a0a0a;
+        }
+
+        .version-switcher-title {
+            font-size: 0.7em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.5;
+            font-weight: 500;
+            margin-bottom: 10px;
         }
 
         .version-links {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 8px;
         }
 
         .version-link {
-            color: var(--accent-color);
+            color: #888;
             text-decoration: none;
-            font-size: 0.875rem;
+            font-size: 0.85em;
             transition: color 0.2s;
+            font-weight: 300;
         }
 
         .version-link:hover {
-            color: var(--primary-color);
+            color: #fff;
         }
 
         .version-link.current {
-            font-weight: 600;
-            color: var(--primary-color);
+            color: #fff;
+            font-weight: 400;
         }
 
         /* Responsive */
@@ -450,11 +458,11 @@
             }
 
             h1 {
-                font-size: 2rem;
+                font-size: 2em;
             }
 
             h2 {
-                font-size: 1.5rem;
+                font-size: 1.5em;
             }
         }
     </style>
@@ -468,9 +476,10 @@
         </div>
 
         <div class="version-switcher">
+            <div class="version-switcher-title">Other Versions</div>
             <div class="version-links">
-                <a href="index.html" class="version-link">📚 LLM & Transformers Guide</a>
-                <a href="mcp.html" class="version-link current">🔌 MCP & Agentkits Primer</a>
+                <a href="index.html" class="version-link">📚 LLM & Transformers</a>
+                <a href="mcp.html" class="version-link current">🔌 MCP & Agentkits</a>
                 <a href="slides.html" class="version-link">🎯 Presentation Mode</a>
             </div>
         </div>
@@ -509,7 +518,7 @@
             </div>
 
             <h1>Model Context Protocol & Agentkits</h1>
-            <p class="subtitle" style="font-size: 1.25rem; color: #6b7280; margin-bottom: 2rem;">
+            <p class="subtitle" style="font-size: 1.25rem; color: #666; margin-bottom: 2rem;">
                 A comprehensive primer on building AI agents with the Model Context Protocol
             </p>
 
@@ -684,24 +693,24 @@
 
             <table style="width: 100%; border-collapse: collapse; margin: 2rem 0;">
                 <tr style="background: #f3f4f6;">
-                    <th style="padding: 1rem; text-align: left; border: 1px solid var(--border-color);">Approach</th>
-                    <th style="padding: 1rem; text-align: left; border: 1px solid var(--border-color);">Pros</th>
-                    <th style="padding: 1rem; text-align: left; border: 1px solid var(--border-color);">Cons</th>
+                    <th style="padding: 1rem; text-align: left; border: 1px solid #e0e0e0;">Approach</th>
+                    <th style="padding: 1rem; text-align: left; border: 1px solid #e0e0e0;">Pros</th>
+                    <th style="padding: 1rem; text-align: left; border: 1px solid #e0e0e0;">Cons</th>
                 </tr>
                 <tr>
-                    <td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Custom Integration</strong></td>
-                    <td style="padding: 1rem; border: 1px solid var(--border-color);">Flexible, tailored</td>
-                    <td style="padding: 1rem; border: 1px solid var(--border-color);">Not reusable, time-consuming</td>
+                    <td style="padding: 1rem; border: 1px solid #e0e0e0;"><strong>Custom Integration</strong></td>
+                    <td style="padding: 1rem; border: 1px solid #e0e0e0;">Flexible, tailored</td>
+                    <td style="padding: 1rem; border: 1px solid #e0e0e0;">Not reusable, time-consuming</td>
                 </tr>
                 <tr>
-                    <td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>Function Calling</strong></td>
-                    <td style="padding: 1rem; border: 1px solid var(--border-color);">Simple, model-native</td>
-                    <td style="padding: 1rem; border: 1px solid var(--border-color);">No standard format, limited</td>
+                    <td style="padding: 1rem; border: 1px solid #e0e0e0;"><strong>Function Calling</strong></td>
+                    <td style="padding: 1rem; border: 1px solid #e0e0e0;">Simple, model-native</td>
+                    <td style="padding: 1rem; border: 1px solid #e0e0e0;">No standard format, limited</td>
                 </tr>
                 <tr>
-                    <td style="padding: 1rem; border: 1px solid var(--border-color);"><strong>MCP</strong></td>
-                    <td style="padding: 1rem; border: 1px solid var(--border-color);">Standardized, reusable, secure</td>
-                    <td style="padding: 1rem; border: 1px solid var(--border-color);">Requires protocol understanding</td>
+                    <td style="padding: 1rem; border: 1px solid #e0e0e0;"><strong>MCP</strong></td>
+                    <td style="padding: 1rem; border: 1px solid #e0e0e0;">Standardized, reusable, secure</td>
+                    <td style="padding: 1rem; border: 1px solid #e0e0e0;">Requires protocol understanding</td>
                 </tr>
             </table>
 
