@@ -5252,6 +5252,8 @@ the same two-pointer technique?"
         };
 
         function showPage(pageId) {
+            console.log('showPage called with:', pageId);
+
             // Hide all pages
             document.querySelectorAll('.page-section').forEach(page => {
                 page.classList.remove('active');
@@ -5264,6 +5266,7 @@ the same two-pointer technique?"
                 return;
             }
             targetPage.classList.add('active');
+            console.log('Set active class on:', targetPage.id);
 
             // Update navigation
             document.querySelectorAll('.nav-link[data-page]').forEach(item => {
