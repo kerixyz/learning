@@ -2135,7 +2135,7 @@ def pretrain_language_model(
 
     def get_lr(step):
         """Learning rate schedule with warmup + cosine decay"""
-        if step < warmup_steps:
+        if step &lt; warmup_steps:
             # Linear warmup
             return learning_rate * step / warmup_steps
         else:
@@ -2343,15 +2343,15 @@ def quality_filter(text):
         return False
 
     # Remove too short/long documents
-    if len(text) < 100 or len(text) > 1_000_000:
+    if len(text) &lt; 100 or len(text) &gt; 1_000_000:
         return False
 
     # Content quality heuristics
-    if perplexity(text, model=kenlm) > 500:  # Too random
+    if perplexity(text, model=kenlm) &gt; 500:  # Too random
         return False
-    if repetition_ratio(text) > 0.3:  # Too repetitive
+    if repetition_ratio(text) &gt; 0.3:  # Too repetitive
         return False
-    if symbol_to_word_ratio(text) > 0.5:  # Too much noise
+    if symbol_to_word_ratio(text) &gt; 0.5:  # Too much noise
         return False
 
     return True
@@ -2409,7 +2409,7 @@ def pack_sequences(tokenized_docs, seq_len=2048):
         buffer.append(tokenizer.eos_token_id)  # Separate documents
 
         # Extract full sequences
-        while len(buffer) >= seq_len:
+        while len(buffer) &gt;= seq_len:
             sequences.append(buffer[:seq_len])
             buffer = buffer[seq_len:]
 
