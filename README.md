@@ -59,7 +59,6 @@ Then visit `http://localhost:8000`
 - Business analytics and product metrics
 - Banking domain knowledge
 - 70+ code examples and real interview questions
-- Compensation negotiation guide
 
 ## 🛠️ Technologies
 
