@@ -5258,7 +5258,12 @@ the same two-pointer technique?"
             });
 
             // Show selected page
-            document.getElementById('page-' + pageId).classList.add('active');
+            const targetPage = document.getElementById('page-' + pageId);
+            if (!targetPage) {
+                console.error('Page not found:', 'page-' + pageId);
+                return;
+            }
+            targetPage.classList.add('active');
 
             // Update navigation
             document.querySelectorAll('.nav-link[data-page]').forEach(item => {
@@ -5594,8 +5599,13 @@ the same two-pointer technique?"
             }
         }
 
-        // Initialize
+        // Initialize on page load
         updateProgress();
+
+        // Ensure intro page is active on first load
+        if (!document.querySelector('.page-section.active')) {
+            showPage('intro');
+        }
     </script>
 </body>
 </html>
