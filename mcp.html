@@ -67,7 +67,7 @@
             padding: 20px 0;
         }
 
-        .nav-item {
+        .nav-link {
             padding: 10px 20px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -78,12 +78,12 @@
             color: #fff;
         }
 
-        .nav-item:hover {
+        .nav-link:hover {
             background: #1a1a1a;
             border-left-color: #fff;
         }
 
-        .nav-item.active {
+        .nav-link.active {
             background: #1a1a1a;
             border-left-color: #fff;
             font-weight: 400;
@@ -400,43 +400,17 @@
         }
 
         /* Version switcher */
-        .version-switcher {
-            padding: 15px 20px;
-            border-bottom: 1px solid #333;
-            background: #0a0a0a;
-        }
+        
 
-        .version-switcher-title {
-            font-size: 0.7em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.5;
-            font-weight: 500;
-            margin-bottom: 10px;
-        }
+        
 
-        .version-links {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        
 
-        .version-link {
-            color: #888;
-            text-decoration: none;
-            font-size: 0.85em;
-            transition: color 0.2s;
-            font-weight: 300;
-        }
+        
 
-        .version-link:hover {
-            color: #fff;
-        }
+        
 
-        .version-link.current {
-            color: #fff;
-            font-weight: 400;
-        }
+        
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -475,26 +449,19 @@
             <div class="sidebar-subtitle">Interactive Primer</div>
         </div>
 
-        <div class="version-switcher">
-            <div class="version-switcher-title">Other Versions</div>
-            <div class="version-links">
-                <a href="index.html" class="version-link">📚 LLM & Transformers</a>
-                <a href="mcp.html" class="version-link current">🔌 MCP & Agentkits</a>
-                <a href="slides.html" class="version-link">🎯 Presentation Mode</a>
-            </div>
-        </div>
+        
 
         <ul class="nav-menu">
-            <li class="nav-item active" data-page="intro">Introduction to MCP</li>
-            <li class="nav-item" data-page="what-is-mcp">What is MCP?</li>
-            <li class="nav-item" data-page="architecture">Architecture</li>
-            <li class="nav-item" data-page="protocol">Protocol Basics</li>
-            <li class="nav-item" data-page="components">Core Components</li>
-            <li class="nav-item" data-page="agentkits">Agentkits & Frameworks</li>
-            <li class="nav-item" data-page="building">Building with MCP</li>
-            <li class="nav-item" data-page="tools">Popular Tools</li>
-            <li class="nav-item" data-page="examples">Example Implementations</li>
-            <li class="nav-item" data-page="resources">Resources</li>
+            <li class="nav-link active" data-page="intro">Introduction to MCP</li>
+            <li class="nav-link" data-page="what-is-mcp">What is MCP?</li>
+            <li class="nav-link" data-page="architecture">Architecture</li>
+            <li class="nav-link" data-page="protocol">Protocol Basics</li>
+            <li class="nav-link" data-page="components">Core Components</li>
+            <li class="nav-link" data-page="agentkits">Agentkits & Frameworks</li>
+            <li class="nav-link" data-page="building">Building with MCP</li>
+            <li class="nav-link" data-page="tools">Popular Tools</li>
+            <li class="nav-link" data-page="examples">Example Implementations</li>
+            <li class="nav-link" data-page="resources">Resources</li>
         </ul>
 
         <div class="progress-section">
@@ -502,6 +469,17 @@
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Learning Guides</div>
+                    <ul class="nav-links">
+                        <li><a href="index.html" class="nav-link">LLM & Transformers</a></li>
+                        <li><a href="mcp.html" class="nav-link active">MCP & Agentkits</a></li>
+                        <li><a href="quant-analytics.html" class="nav-link">Quant Analytics - Concepts</a></li>
+                        <li><a href="interview-quant-analytics.html" class="nav-link">Quant Analytics - Interview</a></li>
+                    </ul>
+                </div>
+
             <div class="progress-text" id="progressText">0% Complete</div>
         </div>
     </aside>
