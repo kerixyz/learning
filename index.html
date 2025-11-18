@@ -5413,11 +5413,14 @@ the same two-pointer technique?"
         }
 
         // Add enter key support for tokenization
-        document.getElementById('tokenInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                tokenizeText();
-            }
-        });
+        const tokenInput = document.getElementById('tokenInput');
+        if (tokenInput) {
+            tokenInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    tokenizeText();
+                }
+            });
+        }
 
         // Pre-training simulation
         function simulatePretraining() {
