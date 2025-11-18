@@ -58,43 +58,17 @@
             font-weight: 300;
         }
 
-        .version-switcher {
-            padding: 15px 20px;
-            border-bottom: 1px solid #333;
-            background: #0a0a0a;
-        }
+        
 
-        .version-switcher-title {
-            font-size: 0.7em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.5;
-            font-weight: 500;
-            margin-bottom: 10px;
-        }
+        
 
-        .version-links {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        
 
-        .version-link {
-            color: #888;
-            text-decoration: none;
-            font-size: 0.85em;
-            transition: color 0.2s;
-            font-weight: 300;
-        }
+        
 
-        .version-link:hover {
-            color: #fff;
-        }
+        
 
-        .version-link.current {
-            color: #fff;
-            font-weight: 400;
-        }
+        
 
         .sidebar-nav {
             padding: 20px 0;
@@ -113,7 +87,7 @@
             font-weight: 500;
         }
 
-        .nav-item {
+        .nav-link {
             padding: 10px 20px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -123,18 +97,18 @@
             font-weight: 300;
         }
 
-        .nav-item:hover {
+        .nav-link:hover {
             background: #1a1a1a;
             border-left-color: #fff;
         }
 
-        .nav-item.active {
+        .nav-link.active {
             background: #1a1a1a;
             border-left-color: #fff;
             font-weight: 400;
         }
 
-        .nav-item.active::before {
+        .nav-link.active::before {
             content: '';
         }
 
@@ -694,49 +668,53 @@
                 <p>Interactive Documentation</p>
             </div>
 
-            <div class="version-switcher">
-                <div class="version-switcher-title">Other Versions</div>
-                <div class="version-links">
-                    <a href="index.html" class="version-link current">📚 LLM & Transformers</a>
-                    <a href="mcp.html" class="version-link">🔌 MCP & Agentkits</a>
-                    <a href="slides.html" class="version-link">🎯 Presentation Mode</a>
-                </div>
-            </div>
+            
 
             <div class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Getting Started</div>
-                    <div class="nav-item" data-page="intro">Introduction to LLMs</div>
-                    <div class="nav-item" data-page="transformer">Transformer Architecture</div>
-                    <div class="nav-item" data-page="attention">Attention Mechanism</div>
+                    <div class="nav-link" data-page="intro">Introduction to LLMs</div>
+                    <div class="nav-link" data-page="transformer">Transformer Architecture</div>
+                    <div class="nav-link" data-page="attention">Attention Mechanism</div>
                 </div>
 
                 <div class="nav-section">
                     <div class="nav-section-title">Training</div>
-                    <div class="nav-item" data-page="pretraining">Pre-training (Phase 1)</div>
-                    <div class="nav-item" data-page="posttraining">Post-training (Phase 2)</div>
+                    <div class="nav-link" data-page="pretraining">Pre-training (Phase 1)</div>
+                    <div class="nav-link" data-page="posttraining">Post-training (Phase 2)</div>
                 </div>
 
                 <div class="nav-section">
                     <div class="nav-section-title">Core Concepts</div>
-                    <div class="nav-item" data-page="concepts">Essential Concepts</div>
-                    <div class="nav-item" data-page="models">Popular Models</div>
+                    <div class="nav-link" data-page="concepts">Essential Concepts</div>
+                    <div class="nav-link" data-page="models">Popular Models</div>
                 </div>
 
                 <div class="nav-section">
                     <div class="nav-section-title">Coding & Algorithms</div>
-                    <div class="nav-item" data-page="coding">How LLMs Code</div>
-                    <div class="nav-item" data-page="algorithms">Algorithmic Reasoning</div>
-                    <div class="nav-item" data-page="prompting">Prompting for Coding</div>
+                    <div class="nav-link" data-page="coding">How LLMs Code</div>
+                    <div class="nav-link" data-page="algorithms">Algorithmic Reasoning</div>
+                    <div class="nav-link" data-page="prompting">Prompting for Coding</div>
                 </div>
 
                 <div class="nav-section">
                     <div class="nav-section-title">Practice</div>
-                    <div class="nav-item" data-page="projects">Projects & Practice</div>
-                    <div class="nav-item" data-page="quiz">Knowledge Quiz</div>
-                    <div class="nav-item" data-page="resources">Learning Resources</div>
+                    <div class="nav-link" data-page="projects">Projects & Practice</div>
+                    <div class="nav-link" data-page="quiz">Knowledge Quiz</div>
+                    <div class="nav-link" data-page="resources">Learning Resources</div>
                 </div>
             </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Learning Guides</div>
+                    <ul class="nav-links">
+                        <li><a href="index.html" class="nav-link active">LLM & Transformers</a></li>
+                        <li><a href="mcp.html" class="nav-link">MCP & Agentkits</a></li>
+                        <li><a href="quant-analytics.html" class="nav-link">Quant Analytics - Concepts</a></li>
+                        <li><a href="interview-quant-analytics.html" class="nav-link">Quant Analytics - Interview</a></li>
+                    </ul>
+                </div>
+
         </nav>
 
         <!-- Main Content -->
