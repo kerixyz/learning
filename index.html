@@ -5594,8 +5594,13 @@ the same two-pointer technique?"
             }
         }
 
-        // Initialize
+        // Initialize on page load
         updateProgress();
+
+        // Ensure intro page is active on first load
+        if (!document.querySelector('.page-section.active')) {
+            showPage('intro');
+        }
     </script>
 </body>
 </html>
