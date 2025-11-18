@@ -1,0 +1,2962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantitative Analytics Interview Prep - Senior Associate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            line-height: 1.8;
+            color: #000;
+            background: #fff;
+            overflow-x: hidden;
+            font-weight: 400;
+        }
+
+        /* Layout Structure */
+        .docs-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #000;
+            color: #fff;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            border-right: 1px solid #000;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.3em;
+            margin-bottom: 5px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.8em;
+            opacity: 0.6;
+            font-weight: 300;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 25px;
+        }
+
+        .nav-section-title {
+            padding: 10px 20px;
+            font-size: 0.7em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.5;
+            font-weight: 500;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-link {
+            padding: 8px 20px;
+            color: #888;
+            text-decoration: none;
+            display: block;
+            font-size: 0.9em;
+            transition: all 0.2s;
+            border-left: 2px solid transparent;
+            font-weight: 300;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            border-left-color: #fff;
+        }
+
+        .nav-link.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #fff;
+            font-weight: 400;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 60px 80px;
+            max-width: 1200px;
+        }
+
+        .content-header {
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .content-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 500;
+            letter-spacing: -1px;
+        }
+
+        .content-header .subtitle {
+            font-size: 1.1em;
+            color: #666;
+            font-weight: 300;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+        }
+
+        .section h3 {
+            font-size: 1.3em;
+            margin: 30px 0 15px 0;
+            font-weight: 500;
+        }
+
+        .section p {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1em;
+        }
+
+        .topic-card {
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .topic-card:hover {
+            background: #f0f0f0;
+            border-color: #000;
+        }
+
+        .topic-card h4 {
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .topic-card ul {
+            margin-left: 20px;
+            color: #333;
+        }
+
+        .topic-card li {
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .code-block {
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            border-radius: 0;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            border: 1px solid #000;
+        }
+
+        .important-note {
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #fff;
+        }
+
+        .key-concepts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .concept-pill {
+            background: #000;
+            color: #fff;
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 0.9em;
+            font-weight: 400;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .tool-item {
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            background: #fafafa;
+        }
+
+        .tool-item strong {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .tool-item p {
+            font-size: 0.85em;
+            color: #666;
+            margin: 0;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="docs-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Quant Analytics Prep</h1>
+                <p>Senior Associate Interview Guide</p>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Core Topics</div>
+                    <ul class="nav-links">
+                        <li><a href="#overview" class="nav-link">Role Overview</a></li>
+                        <li><a href="#data-analysis" class="nav-link">Data Analysis & Statistics</a></li>
+                        <li><a href="#programming" class="nav-link">Programming & Tools</a></li>
+                        <li><a href="#machine-learning" class="nav-link">Machine Learning</a></li>
+                        <li><a href="#cloud" class="nav-link">Cloud & Infrastructure</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Business Skills</div>
+                    <ul class="nav-links">
+                        <li><a href="#project-mgmt" class="nav-link">Project Management</a></li>
+                        <li><a href="#business-analytics" class="nav-link">Business Analytics</a></li>
+                        <li><a href="#communication" class="nav-link">Communication</a></li>
+                        <li><a href="#domain" class="nav-link">Banking Domain</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Technical Interview</div>
+                    <ul class="nav-links">
+                        <li><a href="#sql-questions" class="nav-link">SQL Questions</a></li>
+                        <li><a href="#sql-advanced" class="nav-link">Advanced SQL</a></li>
+                        <li><a href="#python-questions" class="nav-link">Python Questions</a></li>
+                        <li><a href="#python-advanced" class="nav-link">Advanced Python</a></li>
+                        <li><a href="#probability" class="nav-link">Probability & Stats</a></li>
+                        <li><a href="#ml-questions" class="nav-link">ML Interview Qs</a></li>
+                        <li><a href="#time-series" class="nav-link">Time Series</a></li>
+                        <li><a href="#experimentation" class="nav-link">Experimentation</a></li>
+                        <li><a href="#algorithms" class="nav-link">Algorithms</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Advanced Topics</div>
+                    <ul class="nav-links">
+                        <li><a href="#data-governance" class="nav-link">Data Governance</a></li>
+                        <li><a href="#product-metrics" class="nav-link">Product Metrics</a></li>
+                        <li><a href="#root-cause" class="nav-link">Root Cause Analysis</a></li>
+                        <li><a href="#big-data" class="nav-link">Big Data & Spark</a></li>
+                        <li><a href="#system-design" class="nav-link">System Design</a></li>
+                        <li><a href="#banking-metrics" class="nav-link">Banking Metrics</a></li>
+                        <li><a href="#dashboards" class="nav-link">Dashboard Design</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Interview Strategy</div>
+                    <ul class="nav-links">
+                        <li><a href="#case-studies" class="nav-link">Case Studies</a></li>
+                        <li><a href="#behavioral" class="nav-link">Behavioral Questions</a></li>
+                        <li><a href="#more-behavioral" class="nav-link">More STAR Examples</a></li>
+                        <li><a href="#mistakes" class="nav-link">Common Mistakes</a></li>
+                        <li><a href="#first-90-days" class="nav-link">First 90 Days</a></li>
+                        <li><a href="#resources" class="nav-link">Study Resources</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Senior Quantitative Analytics Associate</h1>
+                <p class="subtitle">JPMorgan Chase - Machine Learning & Intelligent Operations Team</p>
+            </div>
+
+            <!-- Role Overview -->
+            <section id="overview" class="section">
+                <h2>Role Overview</h2>
+                <p>This position is within the CCB Data & Analytics organization, focusing on enabling data-driven decision-making through insights, recommendations, and strategic analysis.</p>
+
+                <div class="important-note">
+                    <strong>Key Focus Areas:</strong><br>
+                    • Reducing operating expenses through ML/AI solutions<br>
+                    • Improving customer and agent experience<br>
+                    • Data-informed product decisions<br>
+                    • Cross-functional collaboration (Engineering, Design, Product)
+                </div>
+
+                <div class="key-concepts">
+                    <div class="concept-pill">Exploratory Data Analysis</div>
+                    <div class="concept-pill">ML/AI Operations</div>
+                    <div class="concept-pill">Product Analytics</div>
+                    <div class="concept-pill">Agile Methodology</div>
+                    <div class="concept-pill">Stakeholder Management</div>
+                    <div class="concept-pill">Data Storytelling</div>
+                </div>
+            </section>
+
+            <!-- Data Analysis & Statistics -->
+            <section id="data-analysis" class="section">
+                <h2>1. Data Analysis & Statistics</h2>
+
+                <div class="topic-card">
+                    <h4>Exploratory Data Analysis (EDA)</h4>
+                    <ul>
+                        <li><strong>Univariate Analysis:</strong> Distributions, histograms, box plots, summary statistics</li>
+                        <li><strong>Bivariate Analysis:</strong> Scatter plots, correlation matrices, cross-tabulation</li>
+                        <li><strong>Multivariate Analysis:</strong> Heatmaps, pair plots, dimensionality reduction (PCA, t-SNE)</li>
+                        <li><strong>Data Quality Checks:</strong> Missing values, outliers, duplicates, data types</li>
+                        <li><strong>Feature Engineering:</strong> Creating derived features, binning, encoding categorical variables</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Statistical Concepts</h4>
+                    <ul>
+                        <li><strong>Descriptive Statistics:</strong> Mean, median, mode, standard deviation, percentiles</li>
+                        <li><strong>Probability Distributions:</strong> Normal, binomial, Poisson, exponential</li>
+                        <li><strong>Hypothesis Testing:</strong> t-tests, chi-square, ANOVA, p-values, significance levels</li>
+                        <li><strong>Confidence Intervals:</strong> Understanding margin of error, sample size calculations</li>
+                        <li><strong>Correlation vs Causation:</strong> Pearson, Spearman, confounding variables</li>
+                        <li><strong>Statistical Power:</strong> Type I/II errors, power analysis</li>
+                        <li><strong>A/B Testing:</strong> Experimental design, control groups, statistical significance</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Data Mining Techniques</h4>
+                    <ul>
+                        <li><strong>Pattern Recognition:</strong> Association rules (Apriori, FP-Growth)</li>
+                        <li><strong>Anomaly Detection:</strong> Isolation Forest, statistical methods, clustering-based</li>
+                        <li><strong>Time Series Analysis:</strong> Trends, seasonality, ARIMA, forecasting</li>
+                        <li><strong>Segmentation:</strong> Customer segmentation, RFM analysis, cohort analysis</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Programming & Tools -->
+            <section id="programming" class="section">
+                <h2>2. Programming & Tools</h2>
+
+                <h3>SQL (Essential)</h3>
+                <div class="topic-card">
+                    <h4>Advanced SQL Topics</h4>
+                    <ul>
+                        <li><strong>Window Functions:</strong> ROW_NUMBER(), RANK(), DENSE_RANK(), LAG(), LEAD(), running totals</li>
+                        <li><strong>CTEs & Subqueries:</strong> Common Table Expressions, nested queries, correlated subqueries</li>
+                        <li><strong>Joins:</strong> INNER, LEFT, RIGHT, FULL OUTER, CROSS, self-joins</li>
+                        <li><strong>Aggregations:</strong> GROUP BY, HAVING, ROLLUP, CUBE, grouping sets</li>
+                        <li><strong>Performance Optimization:</strong> Indexing strategies, query execution plans, partitioning</li>
+                        <li><strong>Data Manipulation:</strong> CASE statements, COALESCE, NULLIF, string functions</li>
+                        <li><strong>Date/Time Functions:</strong> DATEADD, DATEDIFF, EXTRACT, date formatting</li>
+                    </ul>
+                </div>
+
+                <h3>Python</h3>
+                <div class="topic-card">
+                    <h4>Core Python Libraries</h4>
+                    <ul>
+                        <li><strong>Pandas:</strong> DataFrames, groupby, merge/join, pivot tables, time series, data cleaning</li>
+                        <li><strong>NumPy:</strong> Arrays, vectorization, broadcasting, linear algebra operations</li>
+                        <li><strong>Matplotlib/Seaborn:</strong> Data visualization, statistical plots, customization</li>
+                        <li><strong>Scikit-learn:</strong> Preprocessing, model selection, evaluation metrics, pipelines</li>
+                        <li><strong>SciPy:</strong> Statistical tests, optimization, interpolation</li>
+                        <li><strong>Automation:</strong> File I/O, API calls, scheduling jobs, error handling</li>
+                    </ul>
+                </div>
+
+                <div class="code-block">
+# Example: Data transformation automation
+import pandas as pd
+import numpy as np
+
+# Load and clean data
+df = pd.read_csv('operations_data.csv')
+df['date'] = pd.to_datetime(df['date'])
+
+# Feature engineering
+df['hour'] = df['date'].dt.hour
+df['day_of_week'] = df['date'].dt.dayofweek
+
+# Aggregation with window functions
+df['rolling_avg'] = df.groupby('agent_id')['handle_time'].transform(
+    lambda x: x.rolling(window=7).mean()
+)
+
+# Export results
+df.to_csv('processed_data.csv', index=False)
+                </div>
+
+                <h3>Data Analytics Tools</h3>
+                <div class="tools-grid">
+                    <div class="tool-item">
+                        <strong>Tableau</strong>
+                        <p>Dashboards, LOD calculations, parameters, actions, filters, data blending</p>
+                    </div>
+                    <div class="tool-item">
+                        <strong>Alteryx</strong>
+                        <p>ETL workflows, data preparation, predictive tools, spatial analytics</p>
+                    </div>
+                    <div class="tool-item">
+                        <strong>Snowflake</strong>
+                        <p>Cloud data warehouse, semi-structured data, data sharing, time travel</p>
+                    </div>
+                    <div class="tool-item">
+                        <strong>SAS</strong>
+                        <p>PROC SQL, data steps, statistical procedures, macros</p>
+                    </div>
+                    <div class="tool-item">
+                        <strong>R</strong>
+                        <p>dplyr, ggplot2, tidyr, statistical modeling, Shiny dashboards</p>
+                    </div>
+                    <div class="tool-item">
+                        <strong>Git</strong>
+                        <p>Version control, branching, pull requests, code collaboration</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Machine Learning -->
+            <section id="machine-learning" class="section">
+                <h2>3. Machine Learning</h2>
+
+                <div class="topic-card">
+                    <h4>Supervised Learning</h4>
+                    <ul>
+                        <li><strong>Regression:</strong> Linear, Ridge, Lasso, ElasticNet, Polynomial</li>
+                        <li><strong>Classification:</strong> Logistic Regression, Decision Trees, Random Forest, Gradient Boosting (XGBoost, LightGBM)</li>
+                        <li><strong>Support Vector Machines:</strong> Linear and non-linear kernels</li>
+                        <li><strong>Neural Networks:</strong> Basic architectures, backpropagation</li>
+                        <li><strong>Ensemble Methods:</strong> Bagging, boosting, stacking</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Unsupervised Learning</h4>
+                    <ul>
+                        <li><strong>Clustering:</strong> K-means, DBSCAN, Hierarchical, Gaussian Mixture Models</li>
+                        <li><strong>Dimensionality Reduction:</strong> PCA, t-SNE, UMAP, autoencoders</li>
+                        <li><strong>Association Rules:</strong> Market basket analysis, recommendation systems</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Model Development & Evaluation</h4>
+                    <ul>
+                        <li><strong>Feature Engineering:</strong> Selection methods (RFE, LASSO), importance ranking, interaction terms</li>
+                        <li><strong>Train/Validation/Test Split:</strong> Cross-validation, stratification, time-based splits</li>
+                        <li><strong>Metrics:</strong>
+                            <ul>
+                                <li>Classification: Accuracy, Precision, Recall, F1, ROC-AUC, Confusion Matrix</li>
+                                <li>Regression: RMSE, MAE, R², MAPE</li>
+                            </ul>
+                        </li>
+                        <li><strong>Hyperparameter Tuning:</strong> Grid search, random search, Bayesian optimization</li>
+                        <li><strong>Overfitting Prevention:</strong> Regularization, early stopping, dropout</li>
+                        <li><strong>Model Interpretability:</strong> SHAP, LIME, feature importance, partial dependence plots</li>
+                        <li><strong>Model Monitoring:</strong> Performance degradation, data drift, retraining strategies</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>ML Operations Context</h4>
+                    <ul>
+                        <li><strong>Model Deployment:</strong> Batch vs real-time scoring, API development</li>
+                        <li><strong>A/B Testing:</strong> Champion/challenger models, gradual rollout</li>
+                        <li><strong>Business Impact:</strong> Cost savings calculation, ROI measurement</li>
+                        <li><strong>Ethical Considerations:</strong> Bias detection, fairness metrics, model governance</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Cloud & Infrastructure -->
+            <section id="cloud" class="section">
+                <h2>4. Cloud & Infrastructure (AWS)</h2>
+
+                <div class="topic-card">
+                    <h4>Core AWS Services for Analytics</h4>
+                    <ul>
+                        <li><strong>S3:</strong> Data lake storage, bucket policies, lifecycle rules, versioning</li>
+                        <li><strong>Redshift:</strong> Data warehousing, spectrum for querying S3, distribution keys</li>
+                        <li><strong>Athena:</strong> Serverless SQL queries on S3 data</li>
+                        <li><strong>Glue:</strong> ETL jobs, data catalog, crawlers, schema discovery</li>
+                        <li><strong>EMR:</strong> Big data processing with Spark, Hadoop</li>
+                        <li><strong>SageMaker:</strong> ML model training, deployment, notebooks</li>
+                        <li><strong>Lambda:</strong> Serverless computing, event-driven processing</li>
+                        <li><strong>QuickSight:</strong> BI dashboards, visualizations</li>
+                        <li><strong>IAM:</strong> Access control, roles, policies</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Data Pipeline Concepts</h4>
+                    <ul>
+                        <li><strong>ETL vs ELT:</strong> Extract-Transform-Load patterns for different use cases</li>
+                        <li><strong>Data Quality:</strong> Validation rules, error handling, data lineage</li>
+                        <li><strong>Orchestration:</strong> Airflow, Step Functions, scheduling dependencies</li>
+                        <li><strong>Incremental Loading:</strong> Change data capture, timestamps, watermarks</li>
+                        <li><strong>Data Formats:</strong> Parquet, ORC, Avro, JSON optimization</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Project Management -->
+            <section id="project-mgmt" class="section">
+                <h2>5. Project Management & Agile</h2>
+
+                <div class="topic-card">
+                    <h4>Agile Methodology</h4>
+                    <ul>
+                        <li><strong>Scrum Framework:</strong> Sprints, daily standups, sprint planning, retrospectives, sprint reviews</li>
+                        <li><strong>Kanban:</strong> WIP limits, continuous flow, visual board management</li>
+                        <li><strong>User Stories:</strong> Writing acceptance criteria, story points, estimation</li>
+                        <li><strong>Backlog Management:</strong> Prioritization, grooming, epic breakdown</li>
+                        <li><strong>Agile Roles:</strong> Product Owner, Scrum Master, Development Team interactions</li>
+                        <li><strong>Metrics:</strong> Velocity, burndown charts, cycle time, throughput</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Analytics Project Lifecycle</h4>
+                    <ul>
+                        <li><strong>Problem Definition:</strong> Business objectives, success metrics, constraints</li>
+                        <li><strong>Data Collection:</strong> Source identification, access requirements, data assessment</li>
+                        <li><strong>Analysis & Modeling:</strong> Approach selection, iteration, validation</li>
+                        <li><strong>Insights & Recommendations:</strong> Actionable findings, impact quantification</li>
+                        <li><strong>Implementation:</strong> Deployment, monitoring, handoff documentation</li>
+                        <li><strong>Post-Deployment:</strong> Performance tracking, refinement, lessons learned</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Independent Problem Solving</h4>
+                    <ul>
+                        <li>Navigating organizational complexity and finding stakeholders</li>
+                        <li>Resourcefulness in finding data and documentation</li>
+                        <li>Breaking down ambiguous requirements into actionable tasks</li>
+                        <li>Risk identification and mitigation strategies</li>
+                        <li>Escalation protocols and when to ask for help</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Business Analytics -->
+            <section id="business-analytics" class="section">
+                <h2>6. Business Analytics</h2>
+
+                <div class="topic-card">
+                    <h4>Building Business Cases</h4>
+                    <ul>
+                        <li><strong>Cost-Benefit Analysis:</strong> ROI calculation, NPV, payback period</li>
+                        <li><strong>Impact Sizing:</strong> Market size estimation, addressable opportunity</li>
+                        <li><strong>Assumptions & Risks:</strong> Sensitivity analysis, scenario planning</li>
+                        <li><strong>Implementation Roadmap:</strong> Phased approach, resource requirements</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>KPIs & Metrics Development</h4>
+                    <ul>
+                        <li><strong>Operations Metrics:</strong>
+                            <ul>
+                                <li>Average Handle Time (AHT), First Call Resolution (FCR)</li>
+                                <li>Service Level, Abandonment Rate, Agent Utilization</li>
+                                <li>Quality scores, Compliance rates</li>
+                            </ul>
+                        </li>
+                        <li><strong>Customer Experience:</strong>
+                            <ul>
+                                <li>Net Promoter Score (NPS), Customer Satisfaction (CSAT)</li>
+                                <li>Customer Effort Score (CES), Churn rate</li>
+                                <li>Journey completion rates, Drop-off analysis</li>
+                            </ul>
+                        </li>
+                        <li><strong>Product Analytics:</strong>
+                            <ul>
+                                <li>Adoption rate, Feature usage, Retention cohorts</li>
+                                <li>Conversion funnels, Time-to-value</li>
+                            </ul>
+                        </li>
+                        <li><strong>ML Model Performance:</strong>
+                            <ul>
+                                <li>Prediction accuracy, Model lift, Business impact</li>
+                                <li>Cost savings, Efficiency gains</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Data Storytelling</h4>
+                    <ul>
+                        <li><strong>Narrative Structure:</strong> Context → Complication → Resolution</li>
+                        <li><strong>Audience Adaptation:</strong> Technical vs executive presentations</li>
+                        <li><strong>Visualization Principles:</strong>
+                            <ul>
+                                <li>Chart selection (bar, line, scatter, heatmap)</li>
+                                <li>Color usage, labeling, annotations</li>
+                                <li>Reducing chart junk, emphasizing key insights</li>
+                            </ul>
+                        </li>
+                        <li><strong>Insights vs Observations:</strong> "So what?" test, actionability</li>
+                        <li><strong>Executive Summaries:</strong> BLUF (Bottom Line Up Front), pyramid principle</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Exploratory Analysis for Product Opportunities</h4>
+                    <ul>
+                        <li>Identifying pain points in user journeys</li>
+                        <li>Benchmarking against industry standards</li>
+                        <li>Cohort analysis to understand behavior segments</li>
+                        <li>Root cause analysis techniques (5 Whys, Fishbone diagrams)</li>
+                        <li>Prioritization frameworks (RICE, ICE, Value vs Effort)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Communication -->
+            <section id="communication" class="section">
+                <h2>7. Communication & Stakeholder Management</h2>
+
+                <div class="topic-card">
+                    <h4>Working with Senior Leaders</h4>
+                    <ul>
+                        <li><strong>Executive Presence:</strong> Confidence, clarity, conciseness</li>
+                        <li><strong>Meeting Preparation:</strong> Pre-reads, agenda setting, objectives</li>
+                        <li><strong>Presenting Recommendations:</strong> Options analysis, pros/cons, recommended path</li>
+                        <li><strong>Handling Questions:</strong> Bridging techniques, parking lot for tangents</li>
+                        <li><strong>Follow-up:</strong> Action items, timelines, accountability</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Cross-Functional Collaboration</h4>
+                    <ul>
+                        <li><strong>Engineering Teams:</strong> Technical feasibility, data requirements, API specs</li>
+                        <li><strong>Product Teams:</strong> Feature prioritization, user stories, success metrics</li>
+                        <li><strong>Design Teams:</strong> User research insights, prototype testing data</li>
+                        <li><strong>Business Units:</strong> Requirements gathering, change management, training</li>
+                        <li><strong>Influence without Authority:</strong> Building trust, finding win-wins, persistence</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Presentation Skills</h4>
+                    <ul>
+                        <li>Structuring slides for different audiences (technical vs business)</li>
+                        <li>Using appendix for detailed methodology and assumptions</li>
+                        <li>Rehearsing timing and transitions</li>
+                        <li>Managing Q&A sessions</li>
+                        <li>Creating compelling dashboards that tell a story</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Banking Domain -->
+            <section id="domain" class="section">
+                <h2>8. Banking & Financial Services Domain</h2>
+
+                <div class="topic-card">
+                    <h4>Consumer & Community Banking (CCB)</h4>
+                    <ul>
+                        <li><strong>Product Lines:</strong>
+                            <ul>
+                                <li>Personal banking (checking, savings accounts)</li>
+                                <li>Credit cards, mortgages, auto financing</li>
+                                <li>Investment advice, wealth management</li>
+                                <li>Small business banking</li>
+                            </ul>
+                        </li>
+                        <li><strong>Customer Lifecycle:</strong> Acquisition, onboarding, engagement, retention, churn</li>
+                        <li><strong>Servicing Operations:</strong>
+                            <ul>
+                                <li>Call centers, branch operations, digital servicing</li>
+                                <li>Dispute resolution, fraud prevention</li>
+                                <li>Account maintenance, payment processing</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Operational Excellence in Banking</h4>
+                    <ul>
+                        <li><strong>Cost Reduction:</strong> Process automation, straight-through processing, self-service adoption</li>
+                        <li><strong>Efficiency Metrics:</strong> Cost per transaction, Cost per account, Operating expense ratio</li>
+                        <li><strong>Regulatory Compliance:</strong> KYC/AML, GDPR/privacy, audit trails</li>
+                        <li><strong>Risk Management:</strong> Fraud detection, credit risk, operational risk</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>ML/AI Use Cases in Banking Operations</h4>
+                    <ul>
+                        <li><strong>Customer Service:</strong> Chatbots, intent classification, sentiment analysis, call routing</li>
+                        <li><strong>Fraud Detection:</strong> Anomaly detection, transaction monitoring, pattern recognition</li>
+                        <li><strong>Process Automation:</strong> Document processing (OCR), data extraction, RPA augmentation</li>
+                        <li><strong>Predictive Analytics:</strong> Churn prediction, product recommendations, loan default prediction</li>
+                        <li><strong>Operational Forecasting:</strong> Call volume prediction, staffing optimization</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Understanding the Quad</h4>
+                    <ul>
+                        <li><strong>Four Key Functions:</strong>
+                            <ul>
+                                <li>Product: Feature roadmap, user experience</li>
+                                <li>Engineering: Technical implementation, infrastructure</li>
+                                <li>Design: User research, interface design</li>
+                                <li>Data/Analytics: Insights, measurement, optimization</li>
+                            </ul>
+                        </li>
+                        <li>How analytics informs product roadmap decisions</li>
+                        <li>Establishing communication networks across teams</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SQL Questions -->
+            <section id="sql-questions" class="section">
+                <h2>9. Sample SQL Interview Questions</h2>
+
+                <div class="topic-card">
+                    <h4>Question 1: Customer Transaction Analysis</h4>
+                    <p><strong>Problem:</strong> Find customers who made transactions in 3 consecutive months.</p>
+                    <div class="code-block">
+WITH monthly_transactions AS (
+    SELECT
+        customer_id,
+        DATE_TRUNC('month', transaction_date) AS month,
+        COUNT(*) AS transaction_count
+    FROM transactions
+    GROUP BY customer_id, DATE_TRUNC('month', transaction_date)
+),
+consecutive_months AS (
+    SELECT
+        customer_id,
+        month,
+        LAG(month, 1) OVER (PARTITION BY customer_id ORDER BY month) AS prev_month_1,
+        LAG(month, 2) OVER (PARTITION BY customer_id ORDER BY month) AS prev_month_2
+    FROM monthly_transactions
+)
+SELECT DISTINCT customer_id
+FROM consecutive_months
+WHERE month = prev_month_1 + INTERVAL '1 month'
+  AND prev_month_1 = prev_month_2 + INTERVAL '1 month';</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Question 2: Agent Performance Metrics</h4>
+                    <p><strong>Problem:</strong> Calculate average handle time, first call resolution rate, and customer satisfaction by agent.</p>
+                    <div class="code-block">
+SELECT
+    agent_id,
+    agent_name,
+    COUNT(call_id) AS total_calls,
+    AVG(handle_time_seconds) AS avg_handle_time,
+    SUM(CASE WHEN first_call_resolution = 'Y' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS fcr_rate,
+    AVG(customer_satisfaction_score) AS avg_csat,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY handle_time_seconds) AS median_handle_time
+FROM calls c
+JOIN agents a ON c.agent_id = a.agent_id
+WHERE call_date >= CURRENT_DATE - INTERVAL '30 days'
+GROUP BY agent_id, agent_name
+HAVING COUNT(call_id) >= 50
+ORDER BY fcr_rate DESC;</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Question 3: Cohort Retention Analysis</h4>
+                    <p><strong>Problem:</strong> Calculate monthly retention rates for customer cohorts.</p>
+                    <div class="code-block">
+WITH cohorts AS (
+    SELECT
+        customer_id,
+        DATE_TRUNC('month', MIN(signup_date)) AS cohort_month
+    FROM customers
+    GROUP BY customer_id
+),
+customer_activity AS (
+    SELECT DISTINCT
+        customer_id,
+        DATE_TRUNC('month', activity_date) AS activity_month
+    FROM transactions
+)
+SELECT
+    c.cohort_month,
+    a.activity_month,
+    EXTRACT(MONTH FROM AGE(a.activity_month, c.cohort_month)) AS months_since_signup,
+    COUNT(DISTINCT a.customer_id) AS active_customers,
+    COUNT(DISTINCT a.customer_id) * 100.0 /
+        (SELECT COUNT(*) FROM cohorts WHERE cohort_month = c.cohort_month) AS retention_rate
+FROM cohorts c
+JOIN customer_activity a ON c.customer_id = a.customer_id
+GROUP BY c.cohort_month, a.activity_month
+ORDER BY c.cohort_month, months_since_signup;</div>
+                </div>
+            </section>
+
+            <!-- Python Questions -->
+            <section id="python-questions" class="section">
+                <h2>10. Sample Python Interview Questions</h2>
+
+                <div class="topic-card">
+                    <h4>Question 1: Data Cleaning Pipeline</h4>
+                    <p><strong>Problem:</strong> Build a function to clean and prepare customer data for analysis.</p>
+                    <div class="code-block">
+import pandas as pd
+import numpy as np
+
+def clean_customer_data(df):
+    """
+    Clean customer data by handling missing values, outliers,
+    and standardizing formats.
+    """
+    # Create a copy to avoid modifying original
+    df_clean = df.copy()
+
+    # Handle missing values
+    df_clean['email'].fillna('unknown@email.com', inplace=True)
+    df_clean['age'].fillna(df_clean['age'].median(), inplace=True)
+
+    # Remove outliers using IQR method
+    Q1 = df_clean['transaction_amount'].quantile(0.25)
+    Q3 = df_clean['transaction_amount'].quantile(0.75)
+    IQR = Q3 - Q1
+    df_clean = df_clean[
+        (df_clean['transaction_amount'] >= Q1 - 1.5 * IQR) &
+        (df_clean['transaction_amount'] <= Q3 + 1.5 * IQR)
+    ]
+
+    # Standardize date formats
+    df_clean['signup_date'] = pd.to_datetime(df_clean['signup_date'])
+
+    # Create derived features
+    df_clean['tenure_days'] = (pd.Timestamp.now() - df_clean['signup_date']).dt.days
+    df_clean['age_group'] = pd.cut(df_clean['age'],
+                                     bins=[0, 25, 40, 60, 100],
+                                     labels=['18-25', '26-40', '41-60', '60+'])
+
+    return df_clean</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Question 2: A/B Test Analysis</h4>
+                    <p><strong>Problem:</strong> Analyze results of an A/B test and determine statistical significance.</p>
+                    <div class="code-block">
+import pandas as pd
+from scipy import stats
+
+def analyze_ab_test(control_group, treatment_group, metric='conversion_rate'):
+    """
+    Perform statistical analysis on A/B test results.
+    """
+    # Calculate conversion rates
+    control_conversions = control_group['converted'].sum()
+    control_total = len(control_group)
+    control_rate = control_conversions / control_total
+
+    treatment_conversions = treatment_group['converted'].sum()
+    treatment_total = len(treatment_group)
+    treatment_rate = treatment_conversions / treatment_total
+
+    # Perform two-proportion z-test
+    successes = np.array([control_conversions, treatment_conversions])
+    samples = np.array([control_total, treatment_total])
+
+    stat, p_value = stats.proportions_ztest(successes, samples)
+
+    # Calculate confidence interval for difference
+    pooled_prob = (control_conversions + treatment_conversions) / (control_total + treatment_total)
+    se = np.sqrt(pooled_prob * (1 - pooled_prob) * (1/control_total + 1/treatment_total))
+    ci_lower = (treatment_rate - control_rate) - 1.96 * se
+    ci_upper = (treatment_rate - control_rate) + 1.96 * se
+
+    results = {
+        'control_rate': control_rate,
+        'treatment_rate': treatment_rate,
+        'lift': (treatment_rate - control_rate) / control_rate * 100,
+        'p_value': p_value,
+        'significant': p_value < 0.05,
+        'ci_95': (ci_lower, ci_upper)
+    }
+
+    return results</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Question 3: Feature Engineering for ML</h4>
+                    <p><strong>Problem:</strong> Create features for a churn prediction model.</p>
+                    <div class="code-block">
+def engineer_churn_features(transactions_df, customers_df):
+    """
+    Create features for customer churn prediction.
+    """
+    # Aggregate transaction features
+    customer_features = transactions_df.groupby('customer_id').agg({
+        'transaction_amount': ['sum', 'mean', 'std', 'count'],
+        'transaction_date': ['min', 'max']
+    }).reset_index()
+
+    # Flatten column names
+    customer_features.columns = ['_'.join(col).strip('_')
+                                   for col in customer_features.columns.values]
+
+    # Calculate recency, frequency, monetary (RFM)
+    reference_date = pd.Timestamp.now()
+    customer_features['recency_days'] = (
+        reference_date - pd.to_datetime(customer_features['transaction_date_max'])
+    ).dt.days
+    customer_features['tenure_days'] = (
+        reference_date - pd.to_datetime(customer_features['transaction_date_min'])
+    ).dt.days
+    customer_features['frequency'] = customer_features['transaction_amount_count']
+    customer_features['monetary'] = customer_features['transaction_amount_sum']
+
+    # Calculate transaction trends
+    recent_30d = transactions_df[
+        transactions_df['transaction_date'] >= reference_date - pd.Timedelta(days=30)
+    ]
+    recent_activity = recent_30d.groupby('customer_id').agg({
+        'transaction_amount': 'sum'
+    }).reset_index()
+    recent_activity.columns = ['customer_id', 'amount_last_30d']
+
+    customer_features = customer_features.merge(
+        recent_activity, on='customer_id', how='left'
+    )
+    customer_features['amount_last_30d'].fillna(0, inplace=True)
+
+    # Join with customer demographics
+    final_features = customer_features.merge(customers_df, on='customer_id')
+
+    return final_features</div>
+                </div>
+            </section>
+
+            <!-- Case Studies -->
+            <section id="case-studies" class="section">
+                <h2>11. Business Case Study Examples</h2>
+
+                <div class="topic-card">
+                    <h4>Case Study 1: Reducing Call Center Costs</h4>
+                    <p><strong>Scenario:</strong> The call center handles 1M calls/month with an average cost of $5 per call. Leadership wants to reduce costs by 20% while maintaining customer satisfaction.</p>
+                    <p><strong>Approach:</strong></p>
+                    <ul>
+                        <li><strong>Analyze call drivers:</strong> Use text mining on call transcripts to identify top reasons for calls</li>
+                        <li><strong>Identify automation opportunities:</strong> Simple inquiries (balance checks, payment status) → chatbot/IVR</li>
+                        <li><strong>Calculate impact:</strong> 30% of calls are routine inquiries, automation saves $3.50 per call</li>
+                        <li><strong>Estimate savings:</strong> 300K calls × $3.50 = $1.05M/month (21% reduction)</li>
+                        <li><strong>Monitor metrics:</strong> CSAT, containment rate, escalation rate, agent handle time</li>
+                        <li><strong>Iterate:</strong> Continuous improvement based on feedback and failure analysis</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Case Study 2: Improving First Call Resolution</h4>
+                    <p><strong>Scenario:</strong> Current FCR is 70%. Industry benchmark is 80%. Each repeat call costs $5.</p>
+                    <p><strong>Analysis Framework:</strong></p>
+                    <ul>
+                        <li><strong>Root cause analysis:</strong> Why do customers call back?
+                            <ul>
+                                <li>Agent knowledge gaps → training opportunities</li>
+                                <li>System limitations → tool improvements</li>
+                                <li>Process issues → workflow optimization</li>
+                            </ul>
+                        </li>
+                        <li><strong>Segmentation:</strong> Which customer segments / issue types have lowest FCR?</li>
+                        <li><strong>Agent analysis:</strong> Top performers vs bottom performers - what's different?</li>
+                        <li><strong>Data-driven recommendations:</strong>
+                            <ul>
+                                <li>Implement knowledge management system</li>
+                                <li>Create decision trees for common scenarios</li>
+                                <li>Real-time agent assist using ML</li>
+                            </ul>
+                        </li>
+                        <li><strong>Impact sizing:</strong> 10% FCR improvement = 100K fewer calls/month = $500K savings</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Case Study 3: ML Model for Fraud Detection</h4>
+                    <p><strong>Scenario:</strong> Build a case for implementing ML-based fraud detection.</p>
+                    <p><strong>Business Case Structure:</strong></p>
+                    <ul>
+                        <li><strong>Current state:</strong>
+                            <ul>
+                                <li>Rule-based system flags 5% of transactions</li>
+                                <li>Manual review costs $2 per transaction</li>
+                                <li>False positive rate: 90% (high customer friction)</li>
+                                <li>Fraud losses: $10M annually</li>
+                            </ul>
+                        </li>
+                        <li><strong>Proposed solution:</strong> ML model using ensemble methods (Random Forest + XGBoost)</li>
+                        <li><strong>Expected improvements:</strong>
+                            <ul>
+                                <li>Reduce false positives by 40% → better customer experience</li>
+                                <li>Increase fraud detection rate by 15% → $1.5M additional fraud caught</li>
+                                <li>Reduce manual review volume by 35% → $1.4M cost savings</li>
+                            </ul>
+                        </li>
+                        <li><strong>Implementation costs:</strong> $500K (data prep, model dev, infrastructure, testing)</li>
+                        <li><strong>ROI:</strong> ($1.5M + $1.4M - $500K) / $500K = 480% first year</li>
+                        <li><strong>Success metrics:</strong> Precision, Recall, F1, AUC-ROC, cost per fraud detected</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Behavioral Questions -->
+            <section id="behavioral" class="section">
+                <h2>12. Behavioral Interview Preparation</h2>
+
+                <div class="topic-card">
+                    <h4>Common Behavioral Questions (STAR Method)</h4>
+                    <ul>
+                        <li><strong>"Tell me about a time you had to influence stakeholders without direct authority."</strong>
+                            <ul>
+                                <li>Situation: Cross-functional project requiring buy-in from product, engineering, design</li>
+                                <li>Task: Convince teams to prioritize data infrastructure improvements</li>
+                                <li>Action: Built business case showing impact, created prototype, addressed concerns individually</li>
+                                <li>Result: Secured resources, delivered 30% reduction in data processing time</li>
+                            </ul>
+                        </li>
+                        <li><strong>"Describe a complex analytical problem you solved independently."</strong>
+                            <ul>
+                                <li>Situation: Unexplained drop in conversion rates</li>
+                                <li>Task: Identify root cause with limited guidance</li>
+                                <li>Action: Segmented users, analyzed funnels, discovered browser-specific bug</li>
+                                <li>Result: Fixed issue, recovered $500K in monthly revenue</li>
+                            </ul>
+                        </li>
+                        <li><strong>"Give an example of when you had to make a data-driven recommendation to senior leadership."</strong></li>
+                        <li><strong>"Tell me about a time you failed and what you learned."</strong></li>
+                        <li><strong>"Describe how you handled conflicting priorities in an Agile environment."</strong></li>
+                        <li><strong>"Share an example of improving operational efficiency through analytics."</strong></li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Questions to Ask Interviewers</h4>
+                    <ul>
+                        <li>"What are the biggest challenges the MLIO team is currently facing?"</li>
+                        <li>"How does the team measure success for ML/AI implementations?"</li>
+                        <li>"What does the typical analytics project lifecycle look like here?"</li>
+                        <li>"How does the team balance exploratory analysis with productionizing solutions?"</li>
+                        <li>"What tools and technologies is the team investing in for the future?"</li>
+                        <li>"How does this role interact with product teams during roadmap planning?"</li>
+                        <li>"What opportunities exist for professional development and learning?"</li>
+                        <li>"Can you describe a recent success story from the team?"</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Key Themes to Emphasize</h4>
+                    <ul>
+                        <li><strong>Business Impact Focus:</strong> Always tie technical work to business outcomes (cost savings, customer experience, revenue)</li>
+                        <li><strong>Communication:</strong> Ability to translate technical insights for non-technical audiences</li>
+                        <li><strong>Collaboration:</strong> Working effectively with engineering, product, design, and business teams</li>
+                        <li><strong>Agile Mindset:</strong> Iterative approach, failing fast, continuous improvement</li>
+                        <li><strong>Independence:</strong> Self-starter who can navigate ambiguity and find solutions</li>
+                        <li><strong>Customer-Centric:</strong> Understanding how analytics improves customer and agent experience</li>
+                        <li><strong>Learning Agility:</strong> Quickly picking up new tools, domains, and methodologies</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Advanced SQL Questions -->
+            <section id="sql-advanced" class="section">
+                <h2>13. Advanced SQL Interview Questions</h2>
+
+                <div class="topic-card">
+                    <h4>Question 4: Running Totals and Moving Averages</h4>
+                    <p><strong>Problem:</strong> Calculate running total of sales and 7-day moving average by product.</p>
+                    <div class="code-block">
+SELECT
+    product_id,
+    sale_date,
+    daily_sales,
+    SUM(daily_sales) OVER (
+        PARTITION BY product_id
+        ORDER BY sale_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS running_total,
+    AVG(daily_sales) OVER (
+        PARTITION BY product_id
+        ORDER BY sale_date
+        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+    ) AS moving_avg_7day,
+    daily_sales - LAG(daily_sales, 7) OVER (
+        PARTITION BY product_id
+        ORDER BY sale_date
+    ) AS week_over_week_change
+FROM daily_product_sales
+ORDER BY product_id, sale_date;</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Question 5: Self-Join for Finding Gaps</h4>
+                    <p><strong>Problem:</strong> Find gaps in customer account numbers (missing IDs).</p>
+                    <div class="code-block">
+WITH account_numbers AS (
+    SELECT DISTINCT account_id
+    FROM accounts
+    ORDER BY account_id
+),
+gaps AS (
+    SELECT
+        a1.account_id + 1 AS gap_start,
+        MIN(a2.account_id) - 1 AS gap_end
+    FROM account_numbers a1
+    LEFT JOIN account_numbers a2 ON a2.account_id > a1.account_id
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM account_numbers a3
+        WHERE a3.account_id = a1.account_id + 1
+    )
+    GROUP BY a1.account_id
+    HAVING MIN(a2.account_id) IS NOT NULL
+)
+SELECT gap_start, gap_end,
+       gap_end - gap_start + 1 AS gap_size
+FROM gaps
+WHERE gap_start <= gap_end;</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Question 6: Hierarchical Queries (Manager-Employee)</h4>
+                    <p><strong>Problem:</strong> Find all employees in a manager's reporting chain with their level.</p>
+                    <div class="code-block">
+WITH RECURSIVE employee_hierarchy AS (
+    -- Anchor: Start with the manager
+    SELECT
+        employee_id,
+        employee_name,
+        manager_id,
+        1 AS level,
+        CAST(employee_name AS VARCHAR(1000)) AS path
+    FROM employees
+    WHERE manager_id IS NULL  -- Top-level manager
+
+    UNION ALL
+
+    -- Recursive: Get all reports
+    SELECT
+        e.employee_id,
+        e.employee_name,
+        e.manager_id,
+        eh.level + 1,
+        CAST(eh.path || ' -> ' || e.employee_name AS VARCHAR(1000))
+    FROM employees e
+    INNER JOIN employee_hierarchy eh ON e.manager_id = eh.employee_id
+)
+SELECT
+    employee_id,
+    employee_name,
+    level,
+    path,
+    REPEAT('  ', level - 1) || employee_name AS indented_name
+FROM employee_hierarchy
+ORDER BY path;</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Question 7: Complex Aggregation - Pivoting Data</h4>
+                    <p><strong>Problem:</strong> Pivot transaction data to show monthly sales by product category.</p>
+                    <div class="code-block">
+SELECT
+    product_category,
+    SUM(CASE WHEN EXTRACT(MONTH FROM transaction_date) = 1 THEN amount ELSE 0 END) AS jan_sales,
+    SUM(CASE WHEN EXTRACT(MONTH FROM transaction_date) = 2 THEN amount ELSE 0 END) AS feb_sales,
+    SUM(CASE WHEN EXTRACT(MONTH FROM transaction_date) = 3 THEN amount ELSE 0 END) AS mar_sales,
+    SUM(CASE WHEN EXTRACT(MONTH FROM transaction_date) = 4 THEN amount ELSE 0 END) AS apr_sales,
+    SUM(CASE WHEN EXTRACT(MONTH FROM transaction_date) = 5 THEN amount ELSE 0 END) AS may_sales,
+    SUM(CASE WHEN EXTRACT(MONTH FROM transaction_date) = 6 THEN amount ELSE 0 END) AS jun_sales,
+    SUM(amount) AS total_sales,
+    COUNT(DISTINCT customer_id) AS unique_customers
+FROM transactions
+WHERE EXTRACT(YEAR FROM transaction_date) = 2024
+GROUP BY product_category
+ORDER BY total_sales DESC;</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Question 8: Performance Optimization</h4>
+                    <p><strong>Problem:</strong> Optimize a slow query that joins multiple large tables.</p>
+                    <p><strong>Before (Slow):</strong></p>
+                    <div class="code-block">
+-- Slow version
+SELECT *
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+JOIN order_items oi ON o.order_id = oi.order_id
+WHERE o.order_date >= '2024-01-01';</div>
+                    <p><strong>After (Optimized):</strong></p>
+                    <div class="code-block">
+-- Optimized version
+WITH recent_orders AS (
+    SELECT order_id, customer_id, order_date
+    FROM orders
+    WHERE order_date >= '2024-01-01'  -- Filter early
+    AND status != 'cancelled'
+),
+order_summary AS (
+    SELECT
+        ro.customer_id,
+        COUNT(DISTINCT ro.order_id) AS order_count,
+        SUM(oi.quantity * oi.unit_price) AS total_value
+    FROM recent_orders ro
+    JOIN order_items oi ON ro.order_id = oi.order_id
+    GROUP BY ro.customer_id
+)
+SELECT
+    c.customer_id,
+    c.customer_name,
+    c.email,
+    COALESCE(os.order_count, 0) AS order_count,
+    COALESCE(os.total_value, 0) AS total_value
+FROM customers c
+LEFT JOIN order_summary os ON c.customer_id = os.customer_id
+WHERE c.status = 'active';
+
+-- Key optimizations:
+-- 1. Filter early (WHERE on indexed column)
+-- 2. Use CTEs for readability
+-- 3. Aggregate before joining to reduce rows
+-- 4. Select only needed columns (not SELECT *)
+-- 5. Ensure indexes on join columns and WHERE conditions</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Question 9: Detecting Fraud Patterns</h4>
+                    <p><strong>Problem:</strong> Identify suspicious transaction patterns (multiple transactions in short time from different locations).</p>
+                    <div class="code-block">
+WITH transaction_pairs AS (
+    SELECT
+        t1.customer_id,
+        t1.transaction_id AS trans_1,
+        t2.transaction_id AS trans_2,
+        t1.transaction_time AS time_1,
+        t2.transaction_time AS time_2,
+        t1.location AS location_1,
+        t2.location AS location_2,
+        EXTRACT(EPOCH FROM (t2.transaction_time - t1.transaction_time))/60 AS minutes_apart,
+        t1.amount + t2.amount AS combined_amount
+    FROM transactions t1
+    JOIN transactions t2
+        ON t1.customer_id = t2.customer_id
+        AND t1.transaction_id < t2.transaction_id
+        AND t2.transaction_time BETWEEN t1.transaction_time
+                                    AND t1.transaction_time + INTERVAL '30 minutes'
+    WHERE t1.location != t2.location
+)
+SELECT
+    customer_id,
+    COUNT(*) AS suspicious_pairs,
+    SUM(combined_amount) AS total_suspicious_amount,
+    MIN(minutes_apart) AS fastest_transaction_minutes,
+    ARRAY_AGG(DISTINCT location_1 || ' -> ' || location_2) AS location_pairs
+FROM transaction_pairs
+WHERE minutes_apart <= 15  -- Transactions less than 15 min apart
+GROUP BY customer_id
+HAVING COUNT(*) >= 2
+ORDER BY suspicious_pairs DESC, total_suspicious_amount DESC;</div>
+                </div>
+            </section>
+
+            <!-- Advanced Python Questions -->
+            <section id="python-advanced" class="section">
+                <h2>14. Advanced Python Interview Questions</h2>
+
+                <div class="topic-card">
+                    <h4>Question 4: Time Series Decomposition</h4>
+                    <p><strong>Problem:</strong> Decompose time series into trend, seasonality, and residuals.</p>
+                    <div class="code-block">
+import pandas as pd
+import numpy as np
+from statsmodels.tsa.seasonal import seasonal_decompose
+import matplotlib.pyplot as plt
+
+def analyze_time_series(df, date_col, value_col, period=7):
+    """
+    Decompose time series and detect anomalies.
+    """
+    # Ensure datetime index
+    df = df.sort_values(date_col)
+    df.set_index(date_col, inplace=True)
+
+    # Decomposition
+    decomposition = seasonal_decompose(
+        df[value_col],
+        model='additive',  # or 'multiplicative'
+        period=period
+    )
+
+    # Extract components
+    trend = decomposition.trend
+    seasonal = decomposition.seasonal
+    residual = decomposition.resid
+
+    # Detect anomalies using residuals
+    residual_std = residual.std()
+    threshold = 3 * residual_std
+    anomalies = df[np.abs(residual) > threshold].copy()
+    anomalies['residual'] = residual
+
+    # Calculate metrics
+    metrics = {
+        'trend_direction': 'increasing' if trend.iloc[-1] > trend.iloc[0] else 'decreasing',
+        'avg_seasonal_variation': seasonal.std(),
+        'anomaly_count': len(anomalies),
+        'coefficient_of_variation': df[value_col].std() / df[value_col].mean()
+    }
+
+    return {
+        'trend': trend,
+        'seasonal': seasonal,
+        'residual': residual,
+        'anomalies': anomalies,
+        'metrics': metrics
+    }</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Question 5: Customer Segmentation with K-Means</h4>
+                    <p><strong>Problem:</strong> Segment customers using RFM analysis and K-means clustering.</p>
+                    <div class="code-block">
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+import pandas as pd
+import numpy as np
+
+def customer_segmentation(transactions_df):
+    """
+    Perform RFM analysis and K-means clustering.
+    """
+    reference_date = transactions_df['transaction_date'].max()
+
+    # Calculate RFM
+    rfm = transactions_df.groupby('customer_id').agg({
+        'transaction_date': lambda x: (reference_date - x.max()).days,  # Recency
+        'transaction_id': 'count',  # Frequency
+        'amount': 'sum'  # Monetary
+    })
+
+    rfm.columns = ['recency', 'frequency', 'monetary']
+
+    # Add additional features
+    rfm['avg_transaction_value'] = rfm['monetary'] / rfm['frequency']
+
+    # Handle outliers with log transformation
+    rfm['log_monetary'] = np.log1p(rfm['monetary'])
+    rfm['log_frequency'] = np.log1p(rfm['frequency'])
+
+    # Standardize features
+    features = ['recency', 'log_frequency', 'log_monetary']
+    scaler = StandardScaler()
+    rfm_scaled = scaler.fit_transform(rfm[features])
+
+    # Find optimal number of clusters using elbow method
+    inertias = []
+    K_range = range(2, 11)
+    for k in K_range:
+        kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+        kmeans.fit(rfm_scaled)
+        inertias.append(kmeans.inertia_)
+
+    # Apply K-means with optimal k (let's say 4)
+    optimal_k = 4
+    kmeans = KMeans(n_clusters=optimal_k, random_state=42, n_init=10)
+    rfm['cluster'] = kmeans.fit_predict(rfm_scaled)
+
+    # Profile each cluster
+    cluster_profiles = rfm.groupby('cluster').agg({
+        'recency': ['mean', 'median'],
+        'frequency': ['mean', 'median'],
+        'monetary': ['mean', 'median'],
+        'customer_id': 'count'
+    }).round(2)
+
+    # Label clusters
+    cluster_labels = {
+        0: 'Champions',
+        1: 'Loyal Customers',
+        2: 'At Risk',
+        3: 'Lost'
+    }
+    rfm['segment'] = rfm['cluster'].map(cluster_labels)
+
+    return rfm, cluster_profiles</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Question 6: ETL Pipeline with Error Handling</h4>
+                    <p><strong>Problem:</strong> Build a robust ETL pipeline with logging and error handling.</p>
+                    <div class="code-block">
+import pandas as pd
+import logging
+from datetime import datetime
+from typing import Dict, List
+import sys
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(f'etl_pipeline_{datetime.now().strftime("%Y%m%d")}.log'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
+
+class DataPipeline:
+    def __init__(self, config: Dict):
+        self.config = config
+        self.metrics = {
+            'rows_extracted': 0,
+            'rows_transformed': 0,
+            'rows_loaded': 0,
+            'errors': []
+        }
+
+    def extract(self, source_path: str) -> pd.DataFrame:
+        """Extract data from source."""
+        try:
+            logger.info(f"Extracting data from {source_path}")
+            df = pd.read_csv(source_path)
+            self.metrics['rows_extracted'] = len(df)
+            logger.info(f"Successfully extracted {len(df)} rows")
+            return df
+        except Exception as e:
+            logger.error(f"Extraction failed: {str(e)}")
+            self.metrics['errors'].append(f"Extraction: {str(e)}")
+            raise
+
+    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Transform and clean data."""
+        try:
+            logger.info("Starting data transformation")
+            initial_rows = len(df)
+
+            # Validation
+            required_columns = self.config.get('required_columns', [])
+            missing_cols = set(required_columns) - set(df.columns)
+            if missing_cols:
+                raise ValueError(f"Missing required columns: {missing_cols}")
+
+            # Data quality checks
+            duplicates = df.duplicated().sum()
+            if duplicates > 0:
+                logger.warning(f"Removing {duplicates} duplicate rows")
+                df = df.drop_duplicates()
+
+            # Handle missing values
+            null_counts = df.isnull().sum()
+            for col, null_count in null_counts[null_counts > 0].items():
+                logger.info(f"Column '{col}' has {null_count} null values")
+
+                if col in self.config.get('numeric_columns', []):
+                    df[col].fillna(df[col].median(), inplace=True)
+                elif col in self.config.get('categorical_columns', []):
+                    df[col].fillna('Unknown', inplace=True)
+
+            # Type conversions
+            for col, dtype in self.config.get('column_types', {}).items():
+                if col in df.columns:
+                    df[col] = df[col].astype(dtype)
+
+            # Business logic transformations
+            if 'transaction_date' in df.columns:
+                df['transaction_date'] = pd.to_datetime(df['transaction_date'])
+                df['year'] = df['transaction_date'].dt.year
+                df['month'] = df['transaction_date'].dt.month
+                df['day_of_week'] = df['transaction_date'].dt.dayofweek
+
+            # Outlier handling
+            for col in self.config.get('outlier_columns', []):
+                Q1 = df[col].quantile(0.25)
+                Q3 = df[col].quantile(0.75)
+                IQR = Q3 - Q1
+                lower_bound = Q1 - 1.5 * IQR
+                upper_bound = Q3 + 1.5 * IQR
+
+                outliers = ((df[col] < lower_bound) | (df[col] > upper_bound)).sum()
+                if outliers > 0:
+                    logger.warning(f"Found {outliers} outliers in '{col}'")
+                    df = df[(df[col] >= lower_bound) & (df[col] <= upper_bound)]
+
+            self.metrics['rows_transformed'] = len(df)
+            rows_removed = initial_rows - len(df)
+            logger.info(f"Transformation complete. Removed {rows_removed} rows")
+
+            return df
+
+        except Exception as e:
+            logger.error(f"Transformation failed: {str(e)}")
+            self.metrics['errors'].append(f"Transformation: {str(e)}")
+            raise
+
+    def load(self, df: pd.DataFrame, destination_path: str):
+        """Load data to destination."""
+        try:
+            logger.info(f"Loading data to {destination_path}")
+            df.to_csv(destination_path, index=False)
+            self.metrics['rows_loaded'] = len(df)
+            logger.info(f"Successfully loaded {len(df)} rows")
+        except Exception as e:
+            logger.error(f"Load failed: {str(e)}")
+            self.metrics['errors'].append(f"Load: {str(e)}")
+            raise
+
+    def run(self, source_path: str, destination_path: str) -> Dict:
+        """Execute full ETL pipeline."""
+        start_time = datetime.now()
+        logger.info("=" * 50)
+        logger.info("Starting ETL Pipeline")
+        logger.info("=" * 50)
+
+        try:
+            # ETL steps
+            df = self.extract(source_path)
+            df_transformed = self.transform(df)
+            self.load(df_transformed, destination_path)
+
+            # Calculate metrics
+            duration = (datetime.now() - start_time).total_seconds()
+            self.metrics['duration_seconds'] = duration
+            self.metrics['success'] = True
+
+            logger.info("=" * 50)
+            logger.info("ETL Pipeline Completed Successfully")
+            logger.info(f"Duration: {duration:.2f} seconds")
+            logger.info(f"Rows: {self.metrics['rows_extracted']} → {self.metrics['rows_loaded']}")
+            logger.info("=" * 50)
+
+        except Exception as e:
+            self.metrics['success'] = False
+            logger.error("ETL Pipeline Failed")
+            logger.error(str(e))
+
+        return self.metrics
+
+# Usage
+config = {
+    'required_columns': ['customer_id', 'transaction_date', 'amount'],
+    'numeric_columns': ['amount'],
+    'categorical_columns': ['product_category'],
+    'column_types': {'customer_id': str},
+    'outlier_columns': ['amount']
+}
+
+pipeline = DataPipeline(config)
+results = pipeline.run('source_data.csv', 'processed_data.csv')</div>
+                </div>
+            </section>
+
+            <!-- Probability & Statistics -->
+            <section id="probability" class="section">
+                <h2>15. Probability & Statistics Problems</h2>
+
+                <div class="topic-card">
+                    <h4>Problem 1: Expected Value</h4>
+                    <p><strong>Question:</strong> A credit card company offers cashback: 3% on gas, 2% on groceries, 1% on everything else. Average customer spends $200/month on gas, $400 on groceries, $600 on other. What's the expected monthly cashback?</p>
+                    <p><strong>Solution:</strong></p>
+                    <div class="code-block">
+Expected Cashback = (0.03 × $200) + (0.02 × $400) + (0.01 × $600)
+                  = $6 + $8 + $6
+                  = $20/month
+
+Annual expected cashback = $20 × 12 = $240</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Problem 2: Bayes' Theorem (Fraud Detection)</h4>
+                    <p><strong>Question:</strong> 0.1% of transactions are fraudulent. Your fraud detection model has 95% sensitivity (true positive rate) and 98% specificity (true negative rate). If a transaction is flagged as fraud, what's the probability it's actually fraudulent?</p>
+                    <p><strong>Solution:</strong></p>
+                    <div class="code-block">
+Given:
+- P(Fraud) = 0.001
+- P(Not Fraud) = 0.999
+- P(Flagged | Fraud) = 0.95 (sensitivity)
+- P(Not Flagged | Not Fraud) = 0.98 (specificity)
+- P(Flagged | Not Fraud) = 0.02 (false positive rate)
+
+Using Bayes' Theorem:
+P(Fraud | Flagged) = P(Flagged | Fraud) × P(Fraud) / P(Flagged)
+
+P(Flagged) = P(Flagged | Fraud) × P(Fraud) + P(Flagged | Not Fraud) × P(Not Fraud)
+           = (0.95 × 0.001) + (0.02 × 0.999)
+           = 0.00095 + 0.01998
+           = 0.02093
+
+P(Fraud | Flagged) = (0.95 × 0.001) / 0.02093
+                   = 0.00095 / 0.02093
+                   = 0.0454 or 4.54%
+
+Insight: Even with a good model, only 4.54% of flagged transactions are
+actually fraudulent due to the low base rate (0.1%).</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Problem 3: Central Limit Theorem</h4>
+                    <p><strong>Question:</strong> Average customer wait time is 5 minutes with standard deviation of 2 minutes. What's the probability that the average wait time for 100 customers exceeds 5.3 minutes?</p>
+                    <p><strong>Solution:</strong></p>
+                    <div class="code-block">
+Given:
+- μ = 5 minutes
+- σ = 2 minutes
+- n = 100 customers
+- Sample mean distribution: μ_x̄ = 5, σ_x̄ = σ/√n = 2/√100 = 0.2
+
+Calculate z-score:
+z = (x̄ - μ_x̄) / σ_x̄ = (5.3 - 5) / 0.2 = 1.5
+
+P(X̄ > 5.3) = P(Z > 1.5) = 1 - Φ(1.5) = 1 - 0.9332 = 0.0668 or 6.68%
+
+Conclusion: There's about a 6.68% chance the average wait time exceeds 5.3 minutes.</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Problem 4: Statistical Power</h4>
+                    <p><strong>Question:</strong> You want to detect a 5% improvement in conversion rate (from 10% to 10.5%) with 80% power and 95% confidence. How many samples do you need per group?</p>
+                    <div class="code-block">
+import scipy.stats as stats
+import numpy as np
+
+def sample_size_proportions(p1, p2, alpha=0.05, power=0.80):
+    """
+    Calculate required sample size for two-proportion test.
+    """
+    # Z-scores
+    z_alpha = stats.norm.ppf(1 - alpha/2)  # Two-tailed
+    z_beta = stats.norm.ppf(power)
+
+    # Pooled proportion
+    p_avg = (p1 + p2) / 2
+
+    # Sample size formula
+    n = (z_alpha * np.sqrt(2 * p_avg * (1 - p_avg)) +
+         z_beta * np.sqrt(p1 * (1 - p1) + p2 * (1 - p2)))**2 / (p1 - p2)**2
+
+    return int(np.ceil(n))
+
+p1 = 0.10  # Control conversion rate
+p2 = 0.105  # Treatment conversion rate (5% relative improvement)
+
+n = sample_size_proportions(p1, p2)
+print(f"Required sample size per group: {n:,}")
+# Output: Required sample size per group: ~15,686
+
+# For 5% absolute improvement (10% to 15%):
+n_large_effect = sample_size_proportions(0.10, 0.15)
+print(f"For 5 percentage point improvement: {n_large_effect:,}")
+# Output: ~385 per group</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Problem 5: Confidence Intervals</h4>
+                    <p><strong>Question:</strong> Sample of 500 customers shows average transaction value of $75 with standard deviation of $20. Calculate 95% confidence interval.</p>
+                    <div class="code-block">
+Given:
+- n = 500
+- x̄ = $75
+- s = $20
+- Confidence level = 95%
+
+Standard error: SE = s/√n = 20/√500 = 0.894
+
+For n > 30, use z-distribution:
+z = 1.96 for 95% confidence
+
+Margin of error: ME = z × SE = 1.96 × 0.894 = 1.75
+
+95% CI = x̄ ± ME = $75 ± $1.75 = ($73.25, $76.75)
+
+Interpretation: We're 95% confident the true average transaction value
+for all customers is between $73.25 and $76.75.</div>
+                </div>
+            </section>
+
+            <!-- ML Interview Questions -->
+            <section id="ml-questions" class="section">
+                <h2>16. Machine Learning Interview Questions</h2>
+
+                <div class="topic-card">
+                    <h4>Q1: Explain bias-variance tradeoff</h4>
+                    <p><strong>Answer:</strong> The bias-variance tradeoff is the balance between two sources of model error:</p>
+                    <ul>
+                        <li><strong>Bias:</strong> Error from overly simplistic assumptions. High bias → underfitting (model too simple, misses patterns). Example: linear regression for non-linear data.</li>
+                        <li><strong>Variance:</strong> Error from sensitivity to training data fluctuations. High variance → overfitting (model too complex, captures noise). Example: deep decision tree.</li>
+                        <li><strong>Tradeoff:</strong> Total Error = Bias² + Variance + Irreducible Error
+                            <ul>
+                                <li>Simple models: High bias, low variance</li>
+                                <li>Complex models: Low bias, high variance</li>
+                                <li>Goal: Find sweet spot that minimizes total error</li>
+                            </ul>
+                        </li>
+                        <li><strong>Mitigation:</strong> Cross-validation, regularization (L1/L2), ensemble methods, feature engineering</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Q2: When would you use Random Forest vs Gradient Boosting?</h4>
+                    <p><strong>Answer:</strong></p>
+                    <ul>
+                        <li><strong>Random Forest (Bagging):</strong>
+                            <ul>
+                                <li>Trains trees in parallel, each on random sample of data/features</li>
+                                <li>Reduces variance through averaging</li>
+                                <li>More robust to outliers and noise</li>
+                                <li>Faster to train (parallelizable)</li>
+                                <li>Less prone to overfitting</li>
+                                <li><strong>Use when:</strong> Need robustness, have noisy data, want faster training, need feature importance</li>
+                            </ul>
+                        </li>
+                        <li><strong>Gradient Boosting (Boosting):</strong>
+                            <ul>
+                                <li>Trains trees sequentially, each correcting previous errors</li>
+                                <li>Reduces bias through iterative improvement</li>
+                                <li>Often higher accuracy</li>
+                                <li>Slower to train (sequential)</li>
+                                <li>More prone to overfitting, needs careful tuning</li>
+                                <li><strong>Use when:</strong> Need maximum accuracy, have clean data, willing to tune hyperparameters</li>
+                            </ul>
+                        </li>
+                        <li><strong>Banking Example:</strong>
+                            <ul>
+                                <li>Fraud detection → Random Forest (need robustness, speed for real-time)</li>
+                                <li>Credit scoring → Gradient Boosting (accuracy critical, offline training acceptable)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Q3: How do you handle imbalanced classes?</h4>
+                    <p><strong>Answer:</strong> Imbalanced classes (e.g., 99% non-fraud, 1% fraud) require special handling:</p>
+                    <ul>
+                        <li><strong>1. Resampling:</strong>
+                            <ul>
+                                <li>Oversampling minority class (SMOTE creates synthetic samples)</li>
+                                <li>Undersampling majority class (risks losing information)</li>
+                                <li>Hybrid approaches</li>
+                            </ul>
+                        </li>
+                        <li><strong>2. Algorithm-level:</strong>
+                            <ul>
+                                <li>Class weights (penalize errors on minority class more)</li>
+                                <li>Threshold adjustment (lower threshold for minority class)</li>
+                                <li>Anomaly detection algorithms (Isolation Forest, One-Class SVM)</li>
+                            </ul>
+                        </li>
+                        <li><strong>3. Evaluation metrics:</strong>
+                            <ul>
+                                <li>Don't use accuracy (misleading with imbalance)</li>
+                                <li>Use: Precision, Recall, F1-score, ROC-AUC, PR-AUC</li>
+                                <li>Focus on minority class performance</li>
+                            </ul>
+                        </li>
+                        <li><strong>4. Ensemble methods:</strong>
+                            <ul>
+                                <li>EasyEnsemble, BalancedRandomForest</li>
+                                <li>Train multiple models on different balanced subsets</li>
+                            </ul>
+                        </li>
+                        <li><strong>Banking Example:</strong> Fraud detection with 0.1% fraud rate
+                            <ul>
+                                <li>Use class_weight='balanced' in sklearn</li>
+                                <li>Optimize for high recall (catch frauds) with acceptable precision</li>
+                                <li>Use PR-AUC as primary metric</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Q4: Feature selection techniques</h4>
+                    <p><strong>Answer:</strong></p>
+                    <ul>
+                        <li><strong>Filter Methods (Statistical tests, before modeling):</strong>
+                            <ul>
+                                <li>Correlation coefficient (remove highly correlated features)</li>
+                                <li>Chi-square test (categorical features)</li>
+                                <li>Mutual information (captures non-linear relationships)</li>
+                                <li>Variance threshold (remove low-variance features)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Wrapper Methods (Use model performance):</strong>
+                            <ul>
+                                <li>Recursive Feature Elimination (RFE): Iteratively remove least important features</li>
+                                <li>Forward selection: Start empty, add best features one by one</li>
+                                <li>Backward elimination: Start with all, remove worst one by one</li>
+                            </ul>
+                        </li>
+                        <li><strong>Embedded Methods (Built into algorithm):</strong>
+                            <ul>
+                                <li>L1 regularization (Lasso): Shrinks coefficients to zero</li>
+                                <li>Tree-based importance: Random Forest, XGBoost feature importance</li>
+                                <li>ElasticNet: Combines L1 and L2</li>
+                            </ul>
+                        </li>
+                        <li><strong>When to use:</strong>
+                            <ul>
+                                <li>High dimensionality (curse of dimensionality)</li>
+                                <li>Reduce overfitting</li>
+                                <li>Improve interpretability</li>
+                                <li>Faster training and inference</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Q5: Explain regularization</h4>
+                    <p><strong>Answer:</strong> Regularization adds a penalty term to the loss function to prevent overfitting:</p>
+                    <div class="code-block">
+Loss = Data Loss + λ × Regularization Term
+
+L1 (Lasso): Loss = MSE + λ Σ|w_i|
+- Penalty on absolute values of weights
+- Produces sparse models (some weights become exactly 0)
+- Good for feature selection
+- Less stable with correlated features
+
+L2 (Ridge): Loss = MSE + λ Σw_i²
+- Penalty on squared weights
+- Weights approach 0 but never exactly 0
+- Better with correlated features
+- Produces smaller, distributed weights
+
+ElasticNet: Combines L1 and L2
+- Loss = MSE + λ₁ Σ|w_i| + λ₂ Σw_i²
+- Benefits of both approaches
+
+λ (lambda): Regularization strength
+- λ = 0: No regularization (may overfit)
+- λ → ∞: Strong regularization (may underfit)
+- Find optimal λ via cross-validation</div>
+                    <p><strong>Practical example:</strong> Predicting customer churn with 50 features, many correlated (age/tenure, income/balance). Use ElasticNet to handle correlations while selecting most important features.</p>
+                </div>
+            </section>
+
+            <!-- Time Series Analysis -->
+            <section id="time-series" class="section">
+                <h2>17. Time Series Analysis</h2>
+
+                <div class="topic-card">
+                    <h4>Core Concepts</h4>
+                    <ul>
+                        <li><strong>Components:</strong>
+                            <ul>
+                                <li>Trend: Long-term increase or decrease</li>
+                                <li>Seasonality: Regular patterns (daily, weekly, yearly)</li>
+                                <li>Cyclical: Irregular fluctuations (business cycles)</li>
+                                <li>Residual/Noise: Random variation</li>
+                            </ul>
+                        </li>
+                        <li><strong>Stationarity:</strong> Statistical properties constant over time
+                            <ul>
+                                <li>Tests: Augmented Dickey-Fuller (ADF), KPSS</li>
+                                <li>Make stationary: Differencing, detrending, log transform</li>
+                            </ul>
+                        </li>
+                        <li><strong>Autocorrelation:</strong> Correlation with lagged values
+                            <ul>
+                                <li>ACF (Autocorrelation Function): Direct correlation</li>
+                                <li>PACF (Partial ACF): Correlation after removing effects of intermediate lags</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Time Series Models</h4>
+                    <ul>
+                        <li><strong>ARIMA (AutoRegressive Integrated Moving Average):</strong>
+                            <ul>
+                                <li>AR(p): Regression on past p values</li>
+                                <li>I(d): Differencing d times for stationarity</li>
+                                <li>MA(q): Regression on past q forecast errors</li>
+                                <li>Model selection: Use ACF/PACF plots, AIC/BIC criteria</li>
+                            </ul>
+                        </li>
+                        <li><strong>SARIMA:</strong> ARIMA with seasonal components</li>
+                        <li><strong>Prophet (Facebook):</strong> Handles seasonality, holidays, trend changes</li>
+                        <li><strong>LSTM/GRU:</strong> Deep learning for complex patterns</li>
+                        <li><strong>Exponential Smoothing:</strong> Simple, interpretable forecasting</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Banking Use Case: Call Volume Forecasting</h4>
+                    <div class="code-block">
+import pandas as pd
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.seasonal import seasonal_decompose
+import matplotlib.pyplot as plt
+
+# Load call volume data
+df = pd.read_csv('call_volumes.csv', parse_dates=['date'])
+df.set_index('date', inplace=True)
+
+# Decompose
+decomposition = seasonal_decompose(df['calls'], model='additive', period=7)
+
+# Check stationarity
+from statsmodels.tsa.stattools import adfuller
+result = adfuller(df['calls'])
+print(f'ADF Statistic: {result[0]}')
+print(f'p-value: {result[1]}')
+
+# If not stationary, difference
+if result[1] > 0.05:
+    df['calls_diff'] = df['calls'].diff()
+    df = df.dropna()
+
+# Fit SARIMA model
+# (p,d,q) x (P,D,Q,s)
+# s=7 for weekly seasonality
+model = SARIMAX(
+    df['calls'],
+    order=(1, 1, 1),  # (p, d, q)
+    seasonal_order=(1, 1, 1, 7),  # (P, D, Q, s)
+    enforce_stationarity=False,
+    enforce_invertibility=False
+)
+
+results = model.fit()
+
+# Forecast next 14 days
+forecast = results.get_forecast(steps=14)
+forecast_df = forecast.conf_int()
+forecast_df['forecast'] = forecast.predicted_mean
+
+# Business application
+peak_days = forecast_df[forecast_df['forecast'] > forecast_df['forecast'].quantile(0.75)]
+print(f"High volume days: {peak_days.index.tolist()}")
+print("Recommended staffing: Increase by 15% on these days")</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Evaluation Metrics</h4>
+                    <ul>
+                        <li><strong>MAE (Mean Absolute Error):</strong> Average absolute difference, same units as data</li>
+                        <li><strong>RMSE (Root Mean Squared Error):</strong> Penalizes large errors more</li>
+                        <li><strong>MAPE (Mean Absolute Percentage Error):</strong> Scale-independent, interpretable as %</li>
+                        <li><strong>SMAPE (Symmetric MAPE):</strong> Better for data with zeros</li>
+                        <li><strong>AIC/BIC:</strong> Model selection (lower is better)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Experimentation & Causal Inference -->
+            <section id="experimentation" class="section">
+                <h2>18. Experimentation & Causal Inference</h2>
+
+                <div class="topic-card">
+                    <h4>A/B Testing Best Practices</h4>
+                    <ul>
+                        <li><strong>Design Phase:</strong>
+                            <ul>
+                                <li>Define hypothesis (null and alternative)</li>
+                                <li>Choose primary metric (guardrail metrics too)</li>
+                                <li>Calculate required sample size (power analysis)</li>
+                                <li>Determine test duration (avoid novelty effect)</li>
+                                <li>Randomization strategy (user-level vs session-level)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Running Phase:</strong>
+                            <ul>
+                                <li>Monitor for sample ratio mismatch (SRM)</li>
+                                <li>Check for data quality issues early</li>
+                                <li>Don't peek! (or use sequential testing methods)</li>
+                                <li>Watch for external factors (holidays, outages)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Analysis Phase:</strong>
+                            <ul>
+                                <li>Check assumptions (normality, equal variance)</li>
+                                <li>Statistical significance AND practical significance</li>
+                                <li>Segmentation analysis (did all segments benefit?)</li>
+                                <li>Long-term impact estimation</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Common Pitfalls</h4>
+                    <ul>
+                        <li><strong>Peeking:</strong> Looking at results before test completes inflates Type I error
+                            <ul>
+                                <li>Solution: Use sequential testing (e.g., always valid inference)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Multiple comparisons:</strong> Testing many metrics increases false positives
+                            <ul>
+                                <li>Solution: Bonferroni correction, FDR control, pre-specify primary metric</li>
+                            </ul>
+                        </li>
+                        <li><strong>Network effects:</strong> Treatment spills over to control group
+                            <ul>
+                                <li>Example: Referral program affects control users</li>
+                                <li>Solution: Cluster randomization, ego-network analysis</li>
+                            </ul>
+                        </li>
+                        <li><strong>Novelty effect:</strong> Users try new feature just because it's new
+                            <ul>
+                                <li>Solution: Run test longer (2-4 weeks minimum)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Survivorship bias:</strong> Only analyzing users who completed journey
+                            <ul>
+                                <li>Solution: Intent-to-treat analysis</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Advanced Techniques</h4>
+                    <ul>
+                        <li><strong>CUPED (Controlled-Experiment Using Pre-Experiment Data):</strong>
+                            <ul>
+                                <li>Reduces variance using pre-experiment covariates</li>
+                                <li>Can reduce required sample size by 30-50%</li>
+                                <li>Adjusted metric = Y - θ(X_pre - E[X_pre])</li>
+                            </ul>
+                        </li>
+                        <li><strong>Multi-Armed Bandits:</strong>
+                            <ul>
+                                <li>Adaptive allocation: shift traffic to better variants</li>
+                                <li>Reduce opportunity cost of experimentation</li>
+                                <li>Trade-off: Exploration vs Exploitation</li>
+                            </ul>
+                        </li>
+                        <li><strong>Difference-in-Differences:</strong>
+                            <ul>
+                                <li>Quasi-experimental design when randomization impossible</li>
+                                <li>Compare changes over time between treatment and control</li>
+                                <li>Assumes parallel trends</li>
+                            </ul>
+                        </li>
+                        <li><strong>Synthetic Control:</strong>
+                            <ul>
+                                <li>Create synthetic control group from weighted combination</li>
+                                <li>Useful for single-unit treatments (e.g., policy change in one region)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Case Study: Testing New Chatbot for Customer Service</h4>
+                    <div class="code-block">
+Hypothesis: AI chatbot will reduce call center volume by 10%
+
+Design:
+- Randomization: 50/50 split at customer level
+- Primary metric: Call volume per customer (30 days)
+- Guardrail metrics: CSAT, issue resolution time, escalation rate
+- Sample size: 10,000 per group (80% power, 5% significance)
+- Duration: 4 weeks (account for weekly seasonality + novelty)
+
+Potential issues:
+1. Learning effect: Chatbot improves over time
+   → Solution: Pre-train with historical data
+
+2. Selection bias: Tech-savvy users prefer chatbot
+   → Solution: Random assignment before showing chatbot option
+
+3. Novelty effect: Users try chatbot out of curiosity
+   → Solution: 4-week duration, analyze week-over-week trends
+
+4. Metric dilution: Some users in treatment never see chatbot
+   → Solution: Analyze both ITT (intent-to-treat) and TOT (treatment-on-treated)
+
+Analysis:
+- Primary: Two-sample t-test on call volume
+- Segmentation: Analyze by issue type, customer tenure, previous contact frequency
+- Long-term: Estimate sustained impact after novelty wears off
+
+Decision framework:
+- Ship if: >8% reduction, no guardrail degradation, positive across key segments
+- Iterate if: 5-8% reduction or negative sentiment
+- Kill if: <5% reduction or significant CSAT decline</div>
+                </div>
+            </section>
+
+            <!-- Dashboard Design -->
+            <section id="dashboards" class="section">
+                <h2>19. Dashboard Design Best Practices</h2>
+
+                <div class="topic-card">
+                    <h4>Design Principles</h4>
+                    <ul>
+                        <li><strong>1. Know Your Audience:</strong>
+                            <ul>
+                                <li>Executive: High-level KPIs, trends, anomalies</li>
+                                <li>Manager: Performance tracking, comparisons, drill-downs</li>
+                                <li>Analyst: Granular data, filters, ad-hoc exploration</li>
+                            </ul>
+                        </li>
+                        <li><strong>2. Information Hierarchy:</strong>
+                            <ul>
+                                <li>Most important metrics top-left (Western reading pattern)</li>
+                                <li>Group related metrics together</li>
+                                <li>Progressive disclosure: summary → details</li>
+                            </ul>
+                        </li>
+                        <li><strong>3. Visual Best Practices:</strong>
+                            <ul>
+                                <li>Limit colors (3-4 max for categories)</li>
+                                <li>Use white space effectively</li>
+                                <li>Consistent formatting (dates, numbers, percentages)</li>
+                                <li>Clear labels, no jargon</li>
+                                <li>Include context (targets, benchmarks, previous period)</li>
+                            </ul>
+                        </li>
+                        <li><strong>4. Interactivity:</strong>
+                            <ul>
+                                <li>Filters should be prominent but not dominate</li>
+                                <li>Drill-down paths should be intuitive</li>
+                                <li>Tooltips for additional context</li>
+                                <li>Reset button to return to default view</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Chart Selection Guide</h4>
+                    <ul>
+                        <li><strong>Comparison:</strong> Bar chart (categorical), Column chart (time-based)</li>
+                        <li><strong>Trend over time:</strong> Line chart</li>
+                        <li><strong>Part-to-whole:</strong> Pie/donut (if <6 categories), Stacked bar, Treemap</li>
+                        <li><strong>Distribution:</strong> Histogram, Box plot, Violin plot</li>
+                        <li><strong>Correlation:</strong> Scatter plot, Bubble chart</li>
+                        <li><strong>Magnitude:</strong> Bullet chart (vs target), KPI cards</li>
+                        <li><strong>Ranking:</strong> Horizontal bar chart (sorted)</li>
+                        <li><strong>Geographical:</strong> Filled map, Symbol map</li>
+                        <li><strong>Multi-dimensional:</strong> Heatmap, Small multiples</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>KPI Dashboard Structure (Operations)</h4>
+                    <div class="code-block">
+┌─────────────────────────────────────────────────────────────┐
+│  OPERATIONS PERFORMANCE DASHBOARD                Month: Nov  │
+├─────────────────────────────────────────────────────────────┤
+│  [Filters: Date Range | Channel | Region | Product]         │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  KEY METRICS (Big Numbers with Trend Indicators)            │
+│  ┌──────────────┬──────────────┬──────────────┬──────────┐ │
+│  │ Call Volume  │ Avg Handle   │ First Call   │ CSAT     │ │
+│  │ 125,430      │ Time         │ Resolution   │ 4.2/5.0  │ │
+│  │ ▲ 5.2%       │ 6:32 min     │ 78.5%        │ ▼ 0.3    │ │
+│  │              │ ▼ 12s        │ ▲ 2.1%       │          │ │
+│  └──────────────┴──────────────┴──────────────┴──────────┘ │
+│                                                              │
+│  TRENDS (Line Charts)                                        │
+│  ┌────────────────────────────┬───────────────────────────┐ │
+│  │ Call Volume - Last 30 Days │ FCR Rate by Channel       │ │
+│  │ [Line chart showing daily  │ [Multi-line: Phone, Chat, │ │
+│  │  volume with 7-day MA]     │  Email trends]            │ │
+│  └────────────────────────────┴───────────────────────────┘ │
+│                                                              │
+│  PERFORMANCE BREAKDOWN                                       │
+│  ┌────────────────────────────┬───────────────────────────┐ │
+│  │ Top Call Drivers           │ Agent Performance         │ │
+│  │ [Horizontal bar chart:     │ [Scatter: AHT vs CSAT     │ │
+│  │  1. Password reset - 25%   │  with bubble size = vol]  │ │
+│  │  2. Balance inquiry - 18%  │                           │ │
+│  │  3. Dispute - 15%...]      │                           │ │
+│  └────────────────────────────┴───────────────────────────┘ │
+│                                                              │
+│  ALERTS & ACTIONS                                            │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │ ⚠ CSAT below target in West region (-0.5)            │  │
+│  │ ⚠ Call volume spike on Nov 15 (+35%) - investigate   │  │
+│  │ ✓ AHT improvement target met for 3rd consecutive month│ │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                              │
+│  Last updated: 2024-11-18 08:00 ET    [Export] [Schedule]   │
+└─────────────────────────────────────────────────────────────┘</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Common Mistakes to Avoid</h4>
+                    <ul>
+                        <li>❌ 3D charts, pie charts with many slices, dual axes with different scales</li>
+                        <li>❌ Too many metrics (cognitive overload)</li>
+                        <li>❌ Misleading axes (not starting at zero for bar charts)</li>
+                        <li>❌ Red/green without alternative encoding (colorblind accessibility)</li>
+                        <li>❌ Meaningless default sort (alphabetical when magnitude matters)</li>
+                        <li>❌ No context (numbers without comparison)</li>
+                        <li>✅ Simple, focused, actionable insights</li>
+                        <li>✅ Clear data sources and refresh time</li>
+                        <li>✅ Mobile-responsive design</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Algorithms & Data Structures -->
+            <section id="algorithms" class="section">
+                <h2>20. Algorithms & Data Structures Basics</h2>
+
+                <div class="topic-card">
+                    <h4>Essential Data Structures</h4>
+                    <ul>
+                        <li><strong>Arrays/Lists:</strong> O(1) access, O(n) search, good for indexed access</li>
+                        <li><strong>Hash Tables/Dictionaries:</strong> O(1) average insert/lookup, perfect for counting, grouping</li>
+                        <li><strong>Sets:</strong> O(1) membership testing, removing duplicates</li>
+                        <li><strong>Queues:</strong> FIFO, BFS, task scheduling</li>
+                        <li><strong>Stacks:</strong> LIFO, DFS, undo operations, expression evaluation</li>
+                        <li><strong>Heaps:</strong> O(log n) insert/delete min/max, priority queues, top-K problems</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Common Algorithm Patterns</h4>
+                    <div class="code-block">
+# 1. Two Pointers
+def remove_duplicates_sorted_array(arr):
+    """Remove duplicates from sorted array in-place."""
+    if not arr:
+        return 0
+
+    write_idx = 1
+    for read_idx in range(1, len(arr)):
+        if arr[read_idx] != arr[read_idx - 1]:
+            arr[write_idx] = arr[read_idx]
+            write_idx += 1
+
+    return write_idx  # New length
+
+# 2. Sliding Window
+def max_sum_subarray(arr, k):
+    """Maximum sum of subarray of size k."""
+    if len(arr) < k:
+        return None
+
+    window_sum = sum(arr[:k])
+    max_sum = window_sum
+
+    for i in range(k, len(arr)):
+        window_sum = window_sum - arr[i - k] + arr[i]
+        max_sum = max(max_sum, window_sum)
+
+    return max_sum
+
+# 3. HashMap for Counting
+def top_k_frequent(nums, k):
+    """Find k most frequent elements."""
+    from collections import Counter
+    import heapq
+
+    counts = Counter(nums)
+    return heapq.nlargest(k, counts.keys(), key=counts.get)
+
+# 4. Binary Search
+def binary_search(arr, target):
+    """Find target in sorted array."""
+    left, right = 0, len(arr) - 1
+
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+
+    return -1  # Not found</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Analytics-Specific Problems</h4>
+                    <div class="code-block">
+# Problem: Find median of streaming data
+import heapq
+
+class MedianFinder:
+    """
+    Efficient median calculation for streaming data.
+    Uses two heaps: max heap for smaller half, min heap for larger half.
+    """
+    def __init__(self):
+        self.small = []  # Max heap (negate values)
+        self.large = []  # Min heap
+
+    def add_num(self, num):
+        # Add to max heap (small)
+        heapq.heappush(self.small, -num)
+
+        # Balance: ensure max of small <= min of large
+        if self.small and self.large and (-self.small[0] > self.large[0]):
+            val = -heapq.heappop(self.small)
+            heapq.heappush(self.large, val)
+
+        # Balance sizes
+        if len(self.small) > len(self.large) + 1:
+            val = -heapq.heappop(self.small)
+            heapq.heappush(self.large, val)
+        if len(self.large) > len(self.small):
+            val = heapq.heappop(self.large)
+            heapq.heappush(self.small, -val)
+
+    def find_median(self):
+        if len(self.small) > len(self.large):
+            return -self.small[0]
+        return (-self.small[0] + self.large[0]) / 2
+
+# Usage: Calculate rolling median for transaction amounts
+mf = MedianFinder()
+for amount in transaction_stream:
+    mf.add_num(amount)
+    current_median = mf.find_median()
+
+# Time complexity: O(log n) per insertion, O(1) for median
+# Space complexity: O(n)</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Time Complexity Cheat Sheet</h4>
+                    <ul>
+                        <li><strong>O(1):</strong> Hash table lookup, array access by index</li>
+                        <li><strong>O(log n):</strong> Binary search, balanced tree operations</li>
+                        <li><strong>O(n):</strong> Linear scan, single loop</li>
+                        <li><strong>O(n log n):</strong> Efficient sorting (merge sort, heap sort)</li>
+                        <li><strong>O(n²):</strong> Nested loops (avoid when possible!)</li>
+                        <li><strong>O(2ⁿ):</strong> Recursive algorithms without memoization (avoid!)</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>SQL Query Optimization Mindset</h4>
+                    <ul>
+                        <li><strong>Indexes:</strong> Like hash tables for databases - O(log n) vs O(n) scan</li>
+                        <li><strong>WHERE before JOIN:</strong> Filter early to reduce join size</li>
+                        <li><strong>Avoid SELECT *:</strong> Only fetch needed columns</li>
+                        <li><strong>Use EXISTS vs IN:</strong> EXISTS stops at first match</li>
+                        <li><strong>Partition pruning:</strong> WHERE on partitioned column</li>
+                        <li><strong>Materialized views:</strong> Pre-compute expensive aggregations</li>
+                    </ul>
+                </div>
+            </section>
+
+
+            <!-- More Sections Note -->
+            <div class="important-note" style="margin: 40px 0;">
+                <h3>🎯 Interview Prep Summary</h3>
+                <p style="margin-top: 15px;">This comprehensive guide now contains <strong>20+ sections</strong> covering:</p>
+                <ul style="margin-top: 15px; margin-left: 20px;">
+                    <li><strong>Technical Skills:</strong> SQL, Python, Statistics, ML, Time Series, Algorithms</li>
+                    <li><strong>Business Skills:</strong> Product Analytics, Communication, Project Management, Data Storytelling</li>
+                    <li><strong>Domain Knowledge:</strong> Banking operations, CCB products, ML/AI use cases</li>
+                    <li><strong>Practical Examples:</strong> 50+ code examples, case studies, real interview questions</li>
+                    <li><strong>Strategic Prep:</strong> Behavioral examples, common mistakes, first 90 days planning</li>
+                </ul>
+                <p style="margin-top: 15px;"><strong>ProTip:</strong> Don't try to memorize everything. Focus on understanding concepts deeply, practice coding/SQL problems actively, and prepare 8-10 strong STAR stories that demonstrate your impact.</p>
+            </div>
+
+            <!-- Additional Quick Reference -->
+            <section id="quick-reference" class="section">
+                <h2>21. Quick Reference Cheat Sheet</h2>
+
+                <div class="topic-card">
+                    <h4>SQL Window Functions Syntax</h4>
+                    <div class="code-block">
+-- Basic window function template
+SELECT
+    column1,
+    column2,
+    WINDOW_FUNCTION() OVER (
+        [PARTITION BY partition_column]
+        [ORDER BY order_column]
+        [ROWS/RANGE BETWEEN ... AND ...]
+    ) AS result_column
+FROM table;
+
+-- Common window functions:
+ROW_NUMBER()  -- Unique sequential number
+RANK()        -- Rank with gaps for ties
+DENSE_RANK()  -- Rank without gaps
+LAG(col, n)   -- Previous nth row value
+LEAD(col, n)  -- Next nth row value
+FIRST_VALUE() -- First value in window
+LAST_VALUE()  -- Last value in window
+
+-- Frame specifications:
+ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW  -- Running total
+ROWS BETWEEN 6 PRECEDING AND CURRENT ROW          -- 7-day window
+ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING  -- Remaining rows</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Python Pandas Quick Reference</h4>
+                    <div class="code-block">
+# Data loading
+df = pd.read_csv('file.csv')
+df = pd.read_sql(query, connection)
+df = pd.read_parquet('file.parquet')
+
+# Exploration
+df.head(), df.tail(), df.sample(5)
+df.info(), df.describe()
+df.shape, df.columns, df.dtypes
+df.isnull().sum()
+df.value_counts()
+
+# Filtering
+df[df['col'] > 10]
+df[df['col'].isin([1, 2, 3])]
+df.query('col1 > 10 and col2 == "A"')
+
+# Aggregation
+df.groupby('col').agg({'val': ['sum', 'mean', 'count']})
+df.pivot_table(values='val', index='row', columns='col', aggfunc='mean')
+
+# Merging
+pd.merge(df1, df2, on='key', how='left')
+pd.concat([df1, df2], axis=0)  # Stack vertically
+
+# Window operations
+df['running_total'] = df.groupby('group')['value'].cumsum()
+df['pct_change'] = df['value'].pct_change()
+df['rolling_mean'] = df['value'].rolling(window=7).mean()
+
+# Apply functions
+df['new_col'] = df['col'].apply(lambda x: x * 2)
+df['category'] = df['value'].apply(lambda x: 'high' if x > 100 else 'low')</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Statistics Formulas Quick Reference</h4>
+                    <div class="code-block">
+# Confidence Interval (mean)
+CI = x̄ ± (z * σ/√n)
+where: z = 1.96 for 95% confidence
+
+# Sample Size (two proportions)
+n = (z_α + z_β)² * [p1(1-p1) + p2(1-p2)] / (p1 - p2)²
+
+# Standard Error
+SE = σ / √n
+
+# Z-score
+z = (x - μ) / σ
+
+# T-statistic (two-sample)
+t = (x̄1 - x̄2) / √(s1²/n1 + s2²/n2)
+
+# Chi-square test statistic
+χ² = Σ[(O - E)² / E]
+
+# Correlation
+r = Σ[(xi - x̄)(yi - ȳ)] / √[Σ(xi - x̄)² * Σ(yi - ȳ)²]
+
+# R-squared
+R² = 1 - (SS_res / SS_tot)</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>ML Model Selection Guide</h4>
+                    <div class="code-block">
+Problem Type → Algorithm Choice:
+
+CLASSIFICATION (Binary):
+├── Linear separable → Logistic Regression
+├── Non-linear, need interpretability → Decision Tree
+├── High accuracy needed → Random Forest, XGBoost
+├── Large dataset, many features → Neural Network
+└── Imbalanced classes → Random Forest with class weights, SMOTE
+
+CLASSIFICATION (Multi-class):
+├── Simple baseline → Multinomial Logistic Regression
+├── Complex patterns → Random Forest, XGBoost
+├── Text/images → Neural Networks (CNN, Transformers)
+└── Many classes (100+) → Hierarchical models
+
+REGRESSION:
+├── Linear relationship → Linear Regression
+├── Feature selection needed → Lasso (L1)
+├── Multicollinearity → Ridge (L2)
+├── Non-linear → Polynomial Regression, Decision Trees
+├── High accuracy → Random Forest, XGBoost
+└── Time series → ARIMA, Prophet, LSTM
+
+CLUSTERING:
+├── Known number of clusters → K-Means
+├── Density-based → DBSCAN
+├── Hierarchical structure → Hierarchical Clustering
+└── Mixed data types → K-Prototypes
+
+DIMENSIONALITY REDUCTION:
+├── Linear → PCA
+├── Non-linear → t-SNE, UMAP
+└── Supervised → LDA</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Interview Question Frameworks</h4>
+                    <div class="code-block">
+SQL PROBLEM FRAMEWORK:
+1. Clarify requirements (what's the desired output?)
+2. Identify tables and relationships
+3. Break problem into steps (CTEs)
+4. Write query incrementally
+5. Test with edge cases
+6. Optimize if needed (indexes, window functions vs subqueries)
+
+PYTHON PROBLEM FRAMEWORK:
+1. Clarify inputs/outputs and constraints
+2. Discuss approach at high level
+3. Consider edge cases
+4. Write code with clear variable names
+5. Test with examples
+6. Discuss time/space complexity
+
+CASE STUDY FRAMEWORK:
+1. Clarify the business context and goal
+2. Define success metrics
+3. Identify data needed
+4. Propose analysis approach
+5. Discuss potential findings and recommendations
+6. Consider implementation challenges
+
+BEHAVIORAL (STAR):
+1. Situation (2 sentences max - set context)
+2. Task (1 sentence - your specific responsibility)
+3. Action (3-4 specific actions YOU took)
+4. Result (quantified outcome + learning)</div>
+                </div>
+            </section>
+
+
+            <!-- Key Formulas & Concepts -->
+            <section id="formulas" class="section">
+                <h2>22. Essential Formulas & Concepts</h2>
+
+                <div class="topic-card">
+                    <h4>Business Metrics Calculations</h4>
+                    <div class="code-block">
+# Customer Acquisition Cost (CAC)
+CAC = Total Marketing & Sales Spend / Number of New Customers
+
+# Customer Lifetime Value (CLV)
+CLV = (Average Purchase Value × Purchase Frequency × Customer Lifespan) - CAC
+
+# Churn Rate
+Monthly Churn = (Customers Lost in Month / Customers at Start of Month) × 100
+
+# Net Revenue Retention (NRR)
+NRR = (Starting MRR + Expansion - Contraction - Churn) / Starting MRR × 100
+
+# Monthly Active Users (MAU)
+MAU = Count of unique users with activity in last 30 days
+
+# DAU/MAU Ratio (Stickiness)
+Stickiness = (DAU / MAU) × 100
+Target: >20% is good, >50% is excellent
+
+# Conversion Rate
+Conversion Rate = (Conversions / Total Visitors) × 100
+
+# Average Revenue Per User (ARPU)
+ARPU = Total Revenue / Number of Users
+
+# Payback Period
+Payback Period = CAC / (ARPU × Gross Margin %)</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Statistical Tests Decision Tree</h4>
+                    <div class="code-block">
+Choosing the Right Test:
+
+COMPARING MEANS:
+├── Two groups, continuous outcome
+│   ├── Normal distribution, equal variance → Independent t-test
+│   ├── Non-normal OR unequal variance → Welch's t-test
+│   └── Paired/matched data → Paired t-test
+├── Three+ groups → ANOVA (if normal) or Kruskal-Wallis (if not)
+└── Before/after single group → Paired t-test or Wilcoxon signed-rank
+
+COMPARING PROPORTIONS:
+├── Two proportions → Two-proportion z-test
+├── More than two proportions → Chi-square test
+└── Small sample (<30) → Fisher's exact test
+
+RELATIONSHIPS:
+├── Two continuous variables → Pearson correlation (linear) or Spearman (monotonic)
+├── Categorical × Categorical → Chi-square test of independence
+└── Predict continuous from predictors → Linear regression
+
+ASSUMPTIONS TO CHECK:
+├── Normality: Shapiro-Wilk test, Q-Q plot, histogram
+├── Equal variance: Levene's test, F-test
+├── Independence: Study design, no autocorrelation
+└── Sample size: Rule of thumb n ≥ 30 for CLT</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Time Complexity Examples</h4>
+                    <div class="code-block">
+# O(1) - Constant
+hash_map[key]  # Dictionary lookup
+array[index]   # Array access
+
+# O(log n) - Logarithmic
+binary_search(sorted_array, target)
+balanced_tree.search(value)
+
+# O(n) - Linear
+for item in list:
+    process(item)
+sum(array)
+linear_search(array, target)
+
+# O(n log n) - Linearithmic
+sorted(array)  # Timsort, Mergesort
+heapq.nlargest(k, array)  # when k ~= n
+
+# O(n²) - Quadratic
+for i in array:
+    for j in array:
+        compare(i, j)
+bubble_sort(array)
+
+# O(2^n) - Exponential (AVOID!)
+def fibonacci_recursive(n):  # Without memoization
+    if n <= 1: return n
+    return fibonacci_recursive(n-1) + fibonacci_recursive(n-2)
+
+# Optimization: Use memoization or dynamic programming
+@lru_cache(maxsize=None)
+def fibonacci_memoized(n):  # Now O(n)
+    if n <= 1: return n
+    return fibonacci_memoized(n-1) + fibonacci_memoized(n-2)</div>
+                </div>
+            </section>
+
+            <!-- Real Interview Questions from JPMorgan -->
+            <section id="real-questions" class="section">
+                <h2>23. Real JPMorgan Interview Questions</h2>
+
+                <div class="topic-card">
+                    <h4>Technical Round Questions (Glassdoor/Blind Compilation)</h4>
+                    <ul>
+                        <li><strong>SQL:</strong>
+                            <ul>
+                                <li>"Write a query to find the second highest salary in each department"</li>
+                                <li>"Calculate running total of transactions by customer, ordered by date"</li>
+                                <li>"Find customers who made purchases in all 12 months of the year"</li>
+                                <li>"Identify gaps in sequential transaction IDs"</li>
+                                <li>"Calculate month-over-month growth rate for each product"</li>
+                            </ul>
+                        </li>
+                        <li><strong>Python/Pandas:</strong>
+                            <ul>
+                                <li>"Given a DataFrame of transactions, find customers with declining spend over last 3 months"</li>
+                                <li>"Implement a function to detect outliers using IQR method"</li>
+                                <li>"Merge two datasets on approximate string matching (fuzzy matching)"</li>
+                                <li>"Calculate cohort retention rates from transaction data"</li>
+                            </ul>
+                        </li>
+                        <li><strong>Statistics:</strong>
+                            <ul>
+                                <li>"How would you detect if a coin is biased?"</li>
+                                <li>"Explain p-value to a non-technical stakeholder"</li>
+                                <li>"You run an A/B test and get p=0.051. What do you do?"</li>
+                                <li>"How do you determine sample size for an experiment?"</li>
+                            </ul>
+                        </li>
+                        <li><strong>Machine Learning:</strong>
+                            <ul>
+                                <li>"How would you build a model to predict credit card fraud?"</li>
+                                <li>"Explain the difference between precision and recall, and when each matters"</li>
+                                <li>"How do you handle imbalanced datasets?"</li>
+                                <li>"Walk me through your process for feature engineering"</li>
+                                <li>"How do you prevent overfitting?"</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Case Study Examples</h4>
+                    <ul>
+                        <li><strong>"Credit card approval rates dropped 15% last month. Investigate."</strong>
+                            <ul>
+                                <li>Framework: Segment by applicant type, product, channel, geography, time</li>
+                                <li>Check: Model changes, policy changes, data quality, external factors (economy, marketing)</li>
+                                <li>Action: Root cause analysis, quantify impact, recommend fixes</li>
+                            </ul>
+                        </li>
+                        <li><strong>"Design a dashboard for contact center operations leaders."</strong>
+                            <ul>
+                                <li>Stakeholders: Ops managers, team leads, executives</li>
+                                <li>Metrics: Volume, AHT, FCR, CSAT, agent utilization, SLA</li>
+                                <li>Features: Real-time view, trends, alerts, drill-downs by channel/reason/agent</li>
+                            </ul>
+                        </li>
+                        <li><strong>"Should we invest in a chatbot for customer service?"</strong>
+                            <ul>
+                                <li>Define success: Cost per interaction, CSAT, containment rate</li>
+                                <li>Estimate: Addressable call volume, cost savings, development cost</li>
+                                <li>ROI calculation: Savings vs investment, payback period</li>
+                                <li>Risks: CSAT decline, implementation challenges, adoption</li>
+                            </ul>
+                        </li>
+                        <li><strong>"Analyze mobile app ratings decline from 4.5 to 4.0."</strong>
+                            <ul>
+                                <li>Data: App store reviews, version history, support tickets, usage analytics</li>
+                                <li>Analysis: Text mining of reviews, correlation with app versions, platform differences</li>
+                                <li>Findings: Recent update (v3.2) introduced bugs for iOS 14 users</li>
+                                <li>Recommendation: Hotfix release, proactive communication, improved QA</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Behavioral Questions (JPM-Specific)</h4>
+                    <ul>
+                        <li>"Tell me about a time you had to work with incomplete data"</li>
+                        <li>"Describe a situation where your analysis changed a business decision"</li>
+                        <li>"How do you prioritize when you have multiple urgent requests?"</li>
+                        <li>"Tell me about a time you had to explain a technical concept to a non-technical audience"</li>
+                        <li>"Describe a project where you had to collaborate with engineering and product teams"</li>
+                        <li>"What do you know about JPMorgan Chase's consumer banking business?"</li>
+                        <li>"Why do you want to work in the ML & Intelligent Operations team specifically?"</li>
+                        <li>"How would you approach learning about a new business domain?"</li>
+                        <li>"Tell me about a time you identified an opportunity that others missed"</li>
+                        <li>"Describe your experience with Agile/Scrum methodology"</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Salary & Offer Negotiation -->
+            <section id="compensation" class="section">
+                <h2>24. Compensation & Offer Negotiation</h2>
+
+                <div class="topic-card">
+                    <h4>Market Rates (2024 - U.S.)</h4>
+                    <div class="code-block">
+Senior Quantitative Analytics Associate @ JPMorgan Chase:
+├── Base Salary: $110K - $145K
+├── Sign-on Bonus: $10K - $25K (common for external hires)
+├── Annual Bonus: 10-20% of base (performance-dependent)
+├── Total Cash Comp: $125K - $180K
+└── RSUs: Varies (typically for VP+ levels)
+
+Factors affecting compensation:
+- Location (NYC/SF higher than regional offices)
+- Years of experience (3-5 years vs 5-7 years)
+- Education (Master's/PhD premium)
+- Competing offers
+- Critical skills (ML expertise, domain knowledge)
+
+Benefits:
+✓ Health insurance (medical, dental, vision)
+✓ 401(k) with company match (up to 5%)
+✓ PTO: 15-20 days + holidays
+✓ Tuition reimbursement
+✓ Employee stock purchase plan (ESPP)
+✓ Wellness programs, gym discounts
+✓ Commuter benefits</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Negotiation Strategy</h4>
+                    <ul>
+                        <li><strong>Before Negotiating:</strong>
+                            <ul>
+                                <li>Research market rates (Glassdoor, Levels.fyi, Blind)</li>
+                                <li>Know your walk-away number</li>
+                                <li>Get competing offers if possible (leverage)</li>
+                                <li>Document your achievements and impact</li>
+                            </ul>
+                        </li>
+                        <li><strong>Initial Offer Response:</strong>
+                            <ul>
+                                <li>Always express enthusiasm first</li>
+                                <li>Ask for time to review (2-3 days is reasonable)</li>
+                                <li>Don't accept immediately (even if it's great)</li>
+                                <li>Review entire package, not just base salary</li>
+                            </ul>
+                        </li>
+                        <li><strong>Negotiation Tactics:</strong>
+                            <ul>
+                                <li>Start with base salary (most impactful long-term)</li>
+                                <li>Use data: "Based on market research for my experience level..."</li>
+                                <li>Anchor high but reasonable: Ask for 10-20% more than target</li>
+                                <li>If they can't move on base, ask for: sign-on bonus, earlier review, additional PTO</li>
+                                <li>Get everything in writing</li>
+                            </ul>
+                        </li>
+                        <li><strong>Example Script:</strong>
+                            <ul>
+                                <li>"I'm very excited about this opportunity and the MLIO team. The offered base of $125K is below market for my experience level and skills. Based on my research and the value I'll bring in ML/analytics, I'm looking for $140K base. Can we discuss?"</li>
+                            </ul>
+                        </li>
+                        <li><strong>Red Flags:</strong>
+                            <ul>
+                                <li>Unwillingness to negotiate at all</li>
+                                <li>Pressuring you to decide immediately</li>
+                                <li>Reneging on verbal commitments</li>
+                                <li>Vague answers about bonus/promotion timelines</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Evaluating the Offer Holistically</h4>
+                    <ul>
+                        <li><strong>Beyond Compensation:</strong>
+                            <ul>
+                                <li>Career growth: Clear promotion path? Learning opportunities?</li>
+                                <li>Work-life balance: Expected hours? Flexibility? Remote policy?</li>
+                                <li>Team quality: Will you learn from smart colleagues?</li>
+                                <li>Manager: Do you respect them? Do they invest in team development?</li>
+                                <li>Impact: Will your work matter? Visibility to leadership?</li>
+                                <li>Company trajectory: Is JPM investing in this area?</li>
+                            </ul>
+                        </li>
+                        <li><strong>Questions to Ask:</strong>
+                            <ul>
+                                <li>"What does success look like in the first year?"</li>
+                                <li>"What's the typical promotion timeline?"</li>
+                                <li>"How does annual bonus determination work?"</li>
+                                <li>"What's the team's remote work policy?"</li>
+                                <li>"What learning & development budget exists?"</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Final Tips -->
+            <div class="important-note">
+                <h3>Interview Day Tips</h3>
+                <ul style="margin-top: 15px;">
+                    <li>Prepare 2-3 strong examples that showcase different competencies</li>
+                    <li>Review recent projects in Chase's CCB division (credit cards, mortgages, digital banking)</li>
+                    <li>Be ready to walk through your thought process on technical problems - show your work</li>
+                    <li>Demonstrate curiosity by asking clarifying questions before diving into solutions</li>
+                    <li>Bring a notebook to take notes and jot down follow-up questions</li>
+                    <li>Follow up with thank you notes referencing specific conversation points</li>
+                    <li>Be authentic - cultural fit is important in collaborative environments</li>
+                </ul>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                    // Update active state
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Update active nav link on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            let currentSection = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 100) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
