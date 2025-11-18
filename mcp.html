@@ -2154,7 +2154,7 @@ Agent:
                 state.visitedPages.add(pageId);
 
                 // Update nav menu
-                document.querySelectorAll('.nav-item').forEach(item => {
+                document.querySelectorAll('.nav-link[data-page]').forEach(item => {
                     item.classList.remove('active');
                     if (item.dataset.page === pageId) {
                         item.classList.add('active');
@@ -2174,7 +2174,7 @@ Agent:
 
         // Setup navigation
         function setupNavigation() {
-            document.querySelectorAll('.nav-item').forEach(item => {
+            document.querySelectorAll('.nav-link[data-page]').forEach(item => {
                 item.addEventListener('click', () => {
                     navigatePage(item.dataset.page);
                 });
