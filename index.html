@@ -5261,7 +5261,7 @@ the same two-pointer technique?"
             document.getElementById('page-' + pageId).classList.add('active');
 
             // Update navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
+            document.querySelectorAll('.nav-link[data-page]').forEach(item => {
                 item.classList.remove('active');
                 if (item.dataset.page === pageId) {
                     item.classList.add('active');
@@ -5301,7 +5301,7 @@ the same two-pointer technique?"
         }
 
         // Sidebar navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
+        document.querySelectorAll('.nav-link[data-page]').forEach(item => {
             item.addEventListener('click', function() {
                 showPage(this.dataset.page);
             });
