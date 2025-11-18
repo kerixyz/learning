@@ -340,7 +340,8 @@
                     <ul>
                         <li><strong>Univariate Analysis:</strong> Distributions, histograms, box plots, summary statistics</li>
                         <li><strong>Bivariate Analysis:</strong> Scatter plots, correlation matrices, cross-tabulation</li>
-                        <li><strong>Multivariate Analysis:</strong> Heatmaps, pair plots, dimensionality reduction (PCA, t-SNE)</li>
+                        <li><strong>Multivariate Analysis:</strong> Multiple regression, MANOVA, factor analysis, canonical correlation</li>
+                        <li><strong>Dimensionality Reduction:</strong> PCA, t-SNE, UMAP (for visualization and feature reduction)</li>
                         <li><strong>Data Quality Checks:</strong> Missing values, outliers, duplicates, data types</li>
                         <li><strong>Feature Engineering:</strong> Creating derived features, binning, encoding categorical variables</li>
                     </ul>
@@ -356,6 +357,17 @@
                         <li><strong>Correlation vs Causation:</strong> Pearson, Spearman, confounding variables</li>
                         <li><strong>Statistical Power:</strong> Type I/II errors, power analysis</li>
                         <li><strong>A/B Testing:</strong> Experimental design, control groups, statistical significance</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Key Statistical Formulas</h4>
+                    <ul>
+                        <li><strong>T-test:</strong> t = (x̄₁ - x̄₂) / √(s²(1/n₁ + 1/n₂))</li>
+                        <li><strong>Chi-square:</strong> χ² = Σ(O - E)² / E</li>
+                        <li><strong>Pearson correlation:</strong> r = Σ((xᵢ - x̄)(yᵢ - ȳ)) / √(Σ(xᵢ - x̄)² Σ(yᵢ - ȳ)²)</li>
+                        <li><strong>Standard deviation:</strong> σ = √(Σ(xᵢ - μ)² / N)</li>
+                        <li><strong>Confidence Interval:</strong> CI = x̄ ± (t* × SE)</li>
                     </ul>
                 </div>
 
@@ -383,7 +395,7 @@
                         <li><strong>Aggregations:</strong> GROUP BY, HAVING, ROLLUP, CUBE, grouping sets</li>
                         <li><strong>Performance Optimization:</strong> Indexing strategies, query execution plans, partitioning</li>
                         <li><strong>Data Manipulation:</strong> CASE statements, COALESCE, NULLIF, string functions</li>
-                        <li><strong>Date/Time Functions:</strong> DATEADD, DATEDIFF, EXTRACT, date formatting</li>
+                        <li><strong>Date/Time Functions:</strong> SQL Server (DATEADD, DATEDIFF), PostgreSQL (INTERVAL, AGE, EXTRACT), MySQL (DATE_ADD, DATE_SUB), Standard SQL (EXTRACT)</li>
                     </ul>
                 </div>
 
@@ -483,6 +495,16 @@ df.to_csv('processed_data.csv', index=False)
                             <ul>
                                 <li>Classification: Accuracy, Precision, Recall, F1, ROC-AUC, Confusion Matrix</li>
                                 <li>Regression: RMSE, MAE, R², MAPE</li>
+                            </ul>
+                        </li>
+                        <li><strong>Key ML Formulas:</strong>
+                            <ul>
+                                <li>Precision: P = TP / (TP + FP)</li>
+                                <li>Recall: R = TP / (TP + FN)</li>
+                                <li>F1 Score: F1 = 2 × (P × R) / (P + R)</li>
+                                <li>RMSE: √(Σ(yᵢ - ŷᵢ)² / n)</li>
+                                <li>MAE: Σ|yᵢ - ŷᵢ| / n</li>
+                                <li>R²: 1 - (SS_res / SS_tot)</li>
                             </ul>
                         </li>
                         <li><strong>Hyperparameter Tuning:</strong> Grid search, random search, Bayesian optimization</li>
@@ -593,6 +615,14 @@ df.to_csv('processed_data.csv', index=False)
                                 <li>Average Handle Time (AHT), First Call Resolution (FCR)</li>
                                 <li>Service Level, Abandonment Rate, Agent Utilization</li>
                                 <li>Quality scores, Compliance rates</li>
+                            </ul>
+                        </li>
+                        <li><strong>Banking Metrics Formulas:</strong>
+                            <ul>
+                                <li>AHT = (Total Talk Time + Total Hold Time + Total Wrap-up Time) / Total Calls</li>
+                                <li>FCR = (Calls Resolved on First Contact / Total Calls) × 100</li>
+                                <li>Service Level = (Calls Answered within Threshold / Total Calls Offered) × 100</li>
+                                <li>NPS = % Promoters (9-10) - % Detractors (0-6)</li>
                             </ul>
                         </li>
                         <li><strong>Customer Experience:</strong>
@@ -747,7 +777,7 @@ df.to_csv('processed_data.csv', index=False)
             </section>
 
             <section id="dashboards" class="section">
-                <h2>19. Dashboard Design Best Practices</h2>
+                <h2>9. Dashboard Design Best Practices</h2>
 
                 <div class="topic-card">
                     <h4>Design Principles</h4>
@@ -858,6 +888,86 @@ df.to_csv('processed_data.csv', index=False)
                         <li>✅ Clear data sources and refresh time</li>
                         <li>✅ Mobile-responsive design</li>
                     </ul>
+                </div>
+            </section>
+
+            <section id="references" class="section">
+                <h2>10. Sources & References</h2>
+
+                <div class="topic-card">
+                    <h4>Statistical Foundations</h4>
+                    <ul>
+                        <li><strong>Casella, G., & Berger, R. L. (2002).</strong> <em>Statistical Inference</em> (2nd ed.). Duxbury Press.</li>
+                        <li><strong>Montgomery, D. C., Peck, E. A., & Vining, G. G. (2012).</strong> <em>Introduction to Linear Regression Analysis</em> (5th ed.). Wiley.</li>
+                        <li><strong>Wasserman, L. (2004).</strong> <em>All of Statistics: A Concise Course in Statistical Inference</em>. Springer.</li>
+                        <li><strong>Gelman, A., & Hill, J. (2006).</strong> <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em>. Cambridge University Press.</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Machine Learning & AI</h4>
+                    <ul>
+                        <li><strong>Hastie, T., Tibshirani, R., & Friedman, J. (2009).</strong> <em>The Elements of Statistical Learning: Data Mining, Inference, and Prediction</em> (2nd ed.). Springer. <a href="https://web.stanford.edu/~hastie/ElemStatLearn/" target="_blank">https://web.stanford.edu/~hastie/ElemStatLearn/</a></li>
+                        <li><strong>Bishop, C. M. (2006).</strong> <em>Pattern Recognition and Machine Learning</em>. Springer.</li>
+                        <li><strong>Goodfellow, I., Bengio, Y., & Courville, A. (2016).</strong> <em>Deep Learning</em>. MIT Press. <a href="https://www.deeplearningbook.org/" target="_blank">https://www.deeplearningbook.org/</a></li>
+                        <li><strong>James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013).</strong> <em>An Introduction to Statistical Learning</em>. Springer. <a href="https://www.statlearning.com/" target="_blank">https://www.statlearning.com/</a></li>
+                        <li><strong>Breiman, L. (2001).</strong> "Random Forests." <em>Machine Learning</em>, 45(1), 5-32.</li>
+                        <li><strong>Chen, T., & Guestrin, C. (2016).</strong> "XGBoost: A Scalable Tree Boosting System." <em>Proceedings of the 22nd ACM SIGKDD</em>. <a href="https://arxiv.org/abs/1603.02754" target="_blank">arXiv:1603.02754</a></li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Data Visualization & Communication</h4>
+                    <ul>
+                        <li><strong>Tufte, E. R. (2001).</strong> <em>The Visual Display of Quantitative Information</em> (2nd ed.). Graphics Press.</li>
+                        <li><strong>Cairo, A. (2016).</strong> <em>The Truthful Art: Data, Charts, and Maps for Communication</em>. New Riders.</li>
+                        <li><strong>Knaflic, C. N. (2015).</strong> <em>Storytelling with Data: A Data Visualization Guide for Business Professionals</em>. Wiley.</li>
+                        <li><strong>Few, S. (2012).</strong> <em>Show Me the Numbers: Designing Tables and Graphs to Enlighten</em> (2nd ed.). Analytics Press.</li>
+                        <li><strong>Wilke, C. O. (2019).</strong> <em>Fundamentals of Data Visualization</em>. O'Reilly. <a href="https://clauswilke.com/dataviz/" target="_blank">https://clauswilke.com/dataviz/</a></li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Python & Data Science Tools</h4>
+                    <ul>
+                        <li><strong>McKinney, W. (2017).</strong> <em>Python for Data Analysis</em> (2nd ed.). O'Reilly.</li>
+                        <li><strong>VanderPlas, J. (2016).</strong> <em>Python Data Science Handbook</em>. O'Reilly. <a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank">https://jakevdp.github.io/PythonDataScienceHandbook/</a></li>
+                        <li><strong>Géron, A. (2019).</strong> <em>Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow</em> (2nd ed.). O'Reilly.</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Business Analytics & Product</h4>
+                    <ul>
+                        <li><strong>Davenport, T. H., & Harris, J. G. (2007).</strong> <em>Competing on Analytics: The New Science of Winning</em>. Harvard Business Press.</li>
+                        <li><strong>Provost, F., & Fawcett, T. (2013).</strong> <em>Data Science for Business</em>. O'Reilly.</li>
+                        <li><strong>Croll, A., & Yoskovitz, B. (2013).</strong> <em>Lean Analytics: Use Data to Build a Better Startup Faster</em>. O'Reilly.</li>
+                        <li><strong>Kohavi, R., Tang, D., & Xu, Y. (2020).</strong> <em>Trustworthy Online Controlled Experiments: A Practical Guide to A/B Testing</em>. Cambridge University Press.</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Key Research Papers</h4>
+                    <ul>
+                        <li><strong>Lundberg, S. M., & Lee, S. I. (2017).</strong> "A Unified Approach to Interpreting Model Predictions." <em>NIPS</em>. <a href="https://arxiv.org/abs/1705.07874" target="_blank">arXiv:1705.07874</a></li>
+                        <li><strong>Ribeiro, M. T., Singh, S., & Guestrin, C. (2016).</strong> "Why Should I Trust You?: Explaining the Predictions of Any Classifier." <em>KDD</em>. <a href="https://arxiv.org/abs/1602.04938" target="_blank">arXiv:1602.04938</a></li>
+                        <li><strong>McInnes, L., Healy, J., & Melville, J. (2018).</strong> "UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction." <a href="https://arxiv.org/abs/1802.03426" target="_blank">arXiv:1802.03426</a></li>
+                        <li><strong>Ke, G., et al. (2017).</strong> "LightGBM: A Highly Efficient Gradient Boosting Decision Tree." <em>NIPS</em>.</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Cloud & Engineering</h4>
+                    <ul>
+                        <li><strong>Kleppmann, M. (2017).</strong> <em>Designing Data-Intensive Applications</em>. O'Reilly.</li>
+                        <li><strong>AWS Documentation.</strong> <a href="https://docs.aws.amazon.com/" target="_blank">https://docs.aws.amazon.com/</a></li>
+                        <li><strong>Reis, J., & Housley, M. (2022).</strong> <em>Fundamentals of Data Engineering</em>. O'Reilly.</li>
+                    </ul>
+                </div>
+
+                <div class="important-note">
+                    <strong>Note on References:</strong><br>
+                    These resources provide comprehensive coverage of the concepts outlined in this guide. For interview preparation, focus on understanding core principles rather than memorizing formulas. Practical experience with Python, SQL, and data visualization tools is essential.
                 </div>
             </section>
 

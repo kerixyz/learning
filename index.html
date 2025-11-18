@@ -1332,6 +1332,10 @@ print(f"Logits shape: {logits.shape}")  # [4, 128, 50257]
                             </tr>
                         </table>
 
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #e74c3c; background-color: #fff5f5;">
+                            <p><strong>Note:</strong> GPT-4's architecture details (parameter count, MoE structure) are unconfirmed rumors. OpenAI has not publicly disclosed these specifications.</p>
+                        </div>
+
                         <p style="margin-top: 15px;"><strong>Scaling pattern:</strong> Larger models generally have more layers, wider hidden dimensions, and more attention heads. The ratio d_model/num_heads is typically kept constant (64-128 per head).</p>
                     </div>
 
@@ -2064,7 +2068,7 @@ Where:
 - P(x_t | context): probability distribution over vocabulary
 
 In practice, we minimize negative log-likelihood (cross-entropy loss):
-Loss = -1/T Σ log P(x_t | x_&lt;t)
+Loss = -1/T Σ log P(x_t | x_<t)
             t=1 to T
                         </div>
 
@@ -2220,6 +2224,10 @@ Loss L scales with:
 
 Key insight: Performance improves smoothly and predictably!
 Doubling compute → ~X% loss reduction (consistent)
+                        </div>
+
+                        <div class="info-box" style="margin-top: 15px; border-left: 2px solid #f39c12; background-color: #fffbf0;">
+                            <p><strong>Important Note:</strong> These are the original Kaplan et al. (2020) scaling laws. The Chinchilla paper (Hoffmann et al., 2022) later revised these findings, showing that training should balance model size and data more equally than originally thought.</p>
                         </div>
 
                         <h3>Optimal Allocation (Chinchilla Scaling)</h3>
@@ -3905,6 +3913,66 @@ def top_p_sampling(logits, p=0.9):
                                 <li>Follow AI research communities</li>
                                 <li>Consider specializing in an area (safety, applications, research)</li>
                             </ol>
+                        </div>
+                    </div>
+
+                    <div class="content-card" style="margin-top: 30px;">
+                        <h2>Sources & References</h2>
+                        <p>This guide draws from foundational papers and research in the field of large language models. Below are key citations and resources:</p>
+
+                        <h3 style="margin-top: 25px;">Foundational Papers</h3>
+                        <div style="margin-left: 20px; line-height: 2;">
+                            <p><strong>Vaswani, A., Shazeer, N., Parmar, N., et al. (2017).</strong> "Attention Is All You Need"<br>
+                            <em>The original Transformer architecture paper</em><br>
+                            <a href="https://arxiv.org/abs/1706.03762" target="_blank" style="color: #667eea;">https://arxiv.org/abs/1706.03762</a></p>
+
+                            <p style="margin-top: 15px;"><strong>Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2018).</strong> "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"<br>
+                            <em>Introduced bidirectional pre-training and masked language modeling</em><br>
+                            <a href="https://arxiv.org/abs/1810.04805" target="_blank" style="color: #667eea;">https://arxiv.org/abs/1810.04805</a></p>
+
+                            <p style="margin-top: 15px;"><strong>Radford, A., Wu, J., Child, R., et al. (2019).</strong> "Language Models are Unsupervised Multitask Learners"<br>
+                            <em>GPT-2: Demonstrated zero-shot task transfer capabilities</em><br>
+                            <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank" style="color: #667eea;">OpenAI GPT-2 Paper</a></p>
+                        </div>
+
+                        <h3 style="margin-top: 25px;">Scaling & Training</h3>
+                        <div style="margin-left: 20px; line-height: 2;">
+                            <p><strong>Kaplan, J., McCandlish, S., Henighan, T., et al. (2020).</strong> "Scaling Laws for Neural Language Models"<br>
+                            <em>Original scaling laws for LLMs</em><br>
+                            <a href="https://arxiv.org/abs/2001.08361" target="_blank" style="color: #667eea;">https://arxiv.org/abs/2001.08361</a></p>
+
+                            <p style="margin-top: 15px;"><strong>Hoffmann, J., Borgeaud, S., Mensch, A., et al. (2022).</strong> "Training Compute-Optimal Large Language Models"<br>
+                            <em>Chinchilla paper: Revised scaling laws showing optimal compute allocation</em><br>
+                            <a href="https://arxiv.org/abs/2203.15556" target="_blank" style="color: #667eea;">https://arxiv.org/abs/2203.15556</a></p>
+                        </div>
+
+                        <h3 style="margin-top: 25px;">Optimization & Efficiency</h3>
+                        <div style="margin-left: 20px; line-height: 2;">
+                            <p><strong>Dao, T., Fu, D. Y., Ermon, S., et al. (2022).</strong> "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness"<br>
+                            <em>Efficient attention mechanism using tiling and kernel fusion</em><br>
+                            <a href="https://arxiv.org/abs/2205.14135" target="_blank" style="color: #667eea;">https://arxiv.org/abs/2205.14135</a></p>
+                        </div>
+
+                        <h3 style="margin-top: 25px;">Alignment & Safety</h3>
+                        <div style="margin-left: 20px; line-height: 2;">
+                            <p><strong>Bai, Y., Kadavath, S., Kundu, S., et al. (2022).</strong> "Constitutional AI: Harmlessness from AI Feedback"<br>
+                            <em>Self-improvement and alignment through AI-generated feedback</em><br>
+                            <a href="https://arxiv.org/abs/2212.08073" target="_blank" style="color: #667eea;">https://arxiv.org/abs/2212.08073</a></p>
+
+                            <p style="margin-top: 15px;"><strong>Rafailov, R., Sharma, A., Mitchell, E., et al. (2023).</strong> "Direct Preference Optimization: Your Language Model is Secretly a Reward Model"<br>
+                            <em>DPO: Simplified alignment method without explicit reward modeling</em><br>
+                            <a href="https://arxiv.org/abs/2305.18290" target="_blank" style="color: #667eea;">https://arxiv.org/abs/2305.18290</a></p>
+                        </div>
+
+                        <h3 style="margin-top: 25px;">Emergent Capabilities</h3>
+                        <div style="margin-left: 20px; line-height: 2;">
+                            <p><strong>Wei, J., Tay, Y., Bommasani, R., et al. (2022).</strong> "Emergent Abilities of Large Language Models"<br>
+                            <em>Documents qualitative improvements that emerge at scale</em><br>
+                            <a href="https://arxiv.org/abs/2206.07682" target="_blank" style="color: #667eea;">https://arxiv.org/abs/2206.07682</a></p>
+                        </div>
+
+                        <div class="info-box" style="margin-top: 30px; background-color: #f8f9fa;">
+                            <p><strong>Note:</strong> This field moves rapidly. For the latest research, check <a href="https://arxiv.org/" target="_blank" style="color: #667eea;">arXiv.org</a>, <a href="https://paperswithcode.com/" target="_blank" style="color: #667eea;">Papers with Code</a>, and conference proceedings (NeurIPS, ICML, ACL, EMNLP).</p>
                         </div>
                     </div>
                 </div>

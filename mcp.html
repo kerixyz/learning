@@ -546,7 +546,7 @@
                 <ol>
                     <li><strong>Simple Chatbots (2020-2022)</strong> - Basic text responses, no external integrations</li>
                     <li><strong>Function Calling (2023)</strong> - LLMs could request specific function calls, but implementations were custom</li>
-                    <li><strong>MCP Era (2024+)</strong> - Standardized protocol for tool use, context sharing, and agent coordination</li>
+                    <li><strong>MCP Era (November 25, 2024+)</strong> - Standardized protocol for tool use, context sharing, and agent coordination</li>
                 </ol>
             </div>
 
@@ -580,6 +580,17 @@
                     MCP is a standardized protocol that allows AI models to securely connect to and interact with
                     external data sources, tools, and services in a consistent way.
                 </p>
+            </div>
+
+            <div class="info-box" style="background: #f0f9ff; border-left-color: #0066cc;">
+                <h3 style="margin-top: 0;">📋 Official Technical Specifications</h3>
+                <p>For authoritative information about MCP, refer to these official sources:</p>
+                <ul style="margin-bottom: 0;">
+                    <li><strong>MCP Protocol Specification:</strong> <a href="https://spec.modelcontextprotocol.io/" target="_blank">https://spec.modelcontextprotocol.io/</a></li>
+                    <li><strong>MCP Documentation:</strong> <a href="https://modelcontextprotocol.io/" target="_blank">https://modelcontextprotocol.io/</a></li>
+                    <li><strong>MCP GitHub Organization:</strong> <a href="https://github.com/modelcontextprotocol" target="_blank">https://github.com/modelcontextprotocol</a></li>
+                    <li><strong>Official Announcement:</strong> <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank">https://www.anthropic.com/news/model-context-protocol</a></li>
+                </ul>
             </div>
 
             <h2>Core Concepts</h2>
@@ -1211,17 +1222,31 @@ await server.connect(transport);</code></pre>
             <h2>Popular Agent Frameworks</h2>
 
             <div class="card">
-                <h3>🔷 Claude Agent SDK</h3>
-                <p>Official SDK from Anthropic for building agents with Claude and MCP.</p>
+                <h3>🔷 Anthropic SDKs</h3>
+                <p>There are TWO separate but complementary official SDKs for building agents with Claude and MCP:</p>
+
+                <h4 style="margin-top: 1.5rem;">1. Anthropic Claude SDK (<code>@anthropic-ai/sdk</code>)</h4>
+                <p>Official SDK for the Claude API - handles LLM interactions, messaging, and tool use.</p>
                 <ul>
-                    <li>Native MCP integration</li>
+                    <li>Claude API integration</li>
                     <li>TypeScript and Python support</li>
-                    <li>Built-in error handling and retry logic</li>
+                    <li>Tool use (function calling)</li>
                     <li>Streaming responses</li>
                     <li>Multi-turn conversations</li>
                 </ul>
-                <pre><code>npm install @anthropic-ai/sdk
-npm install @modelcontextprotocol/sdk</code></pre>
+                <pre><code>npm install @anthropic-ai/sdk</code></pre>
+
+                <h4 style="margin-top: 1.5rem;">2. MCP SDK (<code>@modelcontextprotocol/sdk</code>)</h4>
+                <p>Official SDK for the Model Context Protocol - handles MCP server/client implementation.</p>
+                <ul>
+                    <li>Build MCP servers and clients</li>
+                    <li>Expose tools, resources, and prompts</li>
+                    <li>JSON-RPC protocol handling</li>
+                    <li>Transport layer (stdio, HTTP+SSE)</li>
+                </ul>
+                <pre><code>npm install @modelcontextprotocol/sdk</code></pre>
+
+                <p style="margin-top: 1rem;"><strong>How they work together:</strong> Use <code>@anthropic-ai/sdk</code> to interact with Claude, and <code>@modelcontextprotocol/sdk</code> to build MCP servers that expose tools Claude can use.</p>
             </div>
 
             <div class="card">
@@ -1233,14 +1258,20 @@ npm install @modelcontextprotocol/sdk</code></pre>
                     <li>Memory management</li>
                     <li>Can integrate with MCP servers</li>
                 </ul>
-                <pre><code>from langchain.agents import initialize_agent
-from langchain.tools import Tool
+                <div class="warning-box" style="margin: 1rem 0;">
+                    <strong>⚠️ Note:</strong> <code>initialize_agent</code> was deprecated in LangChain 0.1.0 (early 2024). Use the modern pattern below instead.
+                </div>
+                <pre><code>from langchain.agents import create_react_agent, AgentExecutor
+from langchain import hub
 
-agent = initialize_agent(
-    tools=[...],
-    llm=llm,
-    agent="zero-shot-react-description"
-)</code></pre>
+# Get the prompt template
+prompt = hub.pull("hwchase17/react")
+
+# Create the agent
+agent = create_react_agent(llm, tools, prompt)
+
+# Create agent executor
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)</code></pre>
             </div>
 
             <div class="card">
@@ -2092,6 +2123,57 @@ Agent:
                     <li><strong>AutoGen:</strong> Multi-agent conversation framework</li>
                     <li><strong>LlamaIndex:</strong> Data framework for LLM applications</li>
                     <li><strong>Semantic Kernel:</strong> Microsoft's AI orchestration SDK</li>
+                </ul>
+            </div>
+
+            <h2>Sources & References</h2>
+
+            <div class="card">
+                <h3>🔗 Official MCP Resources</h3>
+                <ul>
+                    <li><strong>MCP Protocol Specification:</strong> <a href="https://spec.modelcontextprotocol.io/" target="_blank">https://spec.modelcontextprotocol.io/</a></li>
+                    <li><strong>MCP Documentation:</strong> <a href="https://modelcontextprotocol.io/" target="_blank">https://modelcontextprotocol.io/</a></li>
+                    <li><strong>MCP GitHub Organization:</strong> <a href="https://github.com/modelcontextprotocol" target="_blank">https://github.com/modelcontextprotocol</a></li>
+                    <li><strong>MCP TypeScript SDK:</strong> <a href="https://github.com/modelcontextprotocol/typescript-sdk" target="_blank">https://github.com/modelcontextprotocol/typescript-sdk</a></li>
+                    <li><strong>MCP Python SDK:</strong> <a href="https://github.com/modelcontextprotocol/python-sdk" target="_blank">https://github.com/modelcontextprotocol/python-sdk</a></li>
+                    <li><strong>Official MCP Announcement:</strong> <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank">https://www.anthropic.com/news/model-context-protocol</a></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>🦜 LangChain</h3>
+                <ul>
+                    <li><strong>LangChain Documentation:</strong> <a href="https://python.langchain.com/docs/introduction/" target="_blank">https://python.langchain.com/docs/introduction/</a></li>
+                    <li><strong>LangChain Agents Guide:</strong> <a href="https://python.langchain.com/docs/modules/agents/" target="_blank">https://python.langchain.com/docs/modules/agents/</a></li>
+                    <li><strong>LangChain GitHub:</strong> <a href="https://github.com/langchain-ai/langchain" target="_blank">https://github.com/langchain-ai/langchain</a></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>🧠 AutoGen</h3>
+                <ul>
+                    <li><strong>AutoGen Documentation:</strong> <a href="https://microsoft.github.io/autogen/" target="_blank">https://microsoft.github.io/autogen/</a></li>
+                    <li><strong>AutoGen GitHub:</strong> <a href="https://github.com/microsoft/autogen" target="_blank">https://github.com/microsoft/autogen</a></li>
+                    <li><strong>AutoGen Examples:</strong> <a href="https://microsoft.github.io/autogen/docs/Examples/" target="_blank">https://microsoft.github.io/autogen/docs/Examples/</a></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>🌊 CrewAI</h3>
+                <ul>
+                    <li><strong>CrewAI Documentation:</strong> <a href="https://docs.crewai.com/" target="_blank">https://docs.crewai.com/</a></li>
+                    <li><strong>CrewAI GitHub:</strong> <a href="https://github.com/joaomdmoura/crewAI" target="_blank">https://github.com/joaomdmoura/crewAI</a></li>
+                    <li><strong>CrewAI Examples:</strong> <a href="https://github.com/joaomdmoura/crewAI-examples" target="_blank">https://github.com/joaomdmoura/crewAI-examples</a></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>🤖 Anthropic Claude</h3>
+                <ul>
+                    <li><strong>Claude API Documentation:</strong> <a href="https://docs.anthropic.com/" target="_blank">https://docs.anthropic.com/</a></li>
+                    <li><strong>Anthropic SDK (TypeScript):</strong> <a href="https://github.com/anthropics/anthropic-sdk-typescript" target="_blank">https://github.com/anthropics/anthropic-sdk-typescript</a></li>
+                    <li><strong>Anthropic SDK (Python):</strong> <a href="https://github.com/anthropics/anthropic-sdk-python" target="_blank">https://github.com/anthropics/anthropic-sdk-python</a></li>
+                    <li><strong>Claude Tool Use Guide:</strong> <a href="https://docs.anthropic.com/en/docs/tool-use" target="_blank">https://docs.anthropic.com/en/docs/tool-use</a></li>
                 </ul>
             </div>
 
