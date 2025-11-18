@@ -284,7 +284,7 @@
                     </ul>
                 </div>
                 <div class="nav-section">
-                    <div class="nav-section-title">Interview Prep</div>
+                    <div class="nav-section-title">Technical Interview</div>
                     <ul class="nav-links">
                         <li><a href="#sql-questions" class="nav-link">SQL Questions</a></li>
                         <li><a href="#sql-advanced" class="nav-link">Advanced SQL</a></li>
@@ -294,10 +294,30 @@
                         <li><a href="#ml-questions" class="nav-link">ML Interview Qs</a></li>
                         <li><a href="#time-series" class="nav-link">Time Series</a></li>
                         <li><a href="#experimentation" class="nav-link">Experimentation</a></li>
-                        <li><a href="#dashboards" class="nav-link">Dashboard Design</a></li>
                         <li><a href="#algorithms" class="nav-link">Algorithms</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Advanced Topics</div>
+                    <ul class="nav-links">
+                        <li><a href="#data-governance" class="nav-link">Data Governance</a></li>
+                        <li><a href="#product-metrics" class="nav-link">Product Metrics</a></li>
+                        <li><a href="#root-cause" class="nav-link">Root Cause Analysis</a></li>
+                        <li><a href="#big-data" class="nav-link">Big Data & Spark</a></li>
+                        <li><a href="#system-design" class="nav-link">System Design</a></li>
+                        <li><a href="#banking-metrics" class="nav-link">Banking Metrics</a></li>
+                        <li><a href="#dashboards" class="nav-link">Dashboard Design</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Interview Strategy</div>
+                    <ul class="nav-links">
                         <li><a href="#case-studies" class="nav-link">Case Studies</a></li>
                         <li><a href="#behavioral" class="nav-link">Behavioral Questions</a></li>
+                        <li><a href="#more-behavioral" class="nav-link">More STAR Examples</a></li>
+                        <li><a href="#mistakes" class="nav-link">Common Mistakes</a></li>
+                        <li><a href="#first-90-days" class="nav-link">First 90 Days</a></li>
+                        <li><a href="#resources" class="nav-link">Study Resources</a></li>
                     </ul>
                 </div>
             </nav>
@@ -2384,6 +2404,499 @@ for amount in transaction_stream:
                         <li><strong>Use EXISTS vs IN:</strong> EXISTS stops at first match</li>
                         <li><strong>Partition pruning:</strong> WHERE on partitioned column</li>
                         <li><strong>Materialized views:</strong> Pre-compute expensive aggregations</li>
+                    </ul>
+                </div>
+            </section>
+
+
+            <!-- More Sections Note -->
+            <div class="important-note" style="margin: 40px 0;">
+                <h3>🎯 Interview Prep Summary</h3>
+                <p style="margin-top: 15px;">This comprehensive guide now contains <strong>20+ sections</strong> covering:</p>
+                <ul style="margin-top: 15px; margin-left: 20px;">
+                    <li><strong>Technical Skills:</strong> SQL, Python, Statistics, ML, Time Series, Algorithms</li>
+                    <li><strong>Business Skills:</strong> Product Analytics, Communication, Project Management, Data Storytelling</li>
+                    <li><strong>Domain Knowledge:</strong> Banking operations, CCB products, ML/AI use cases</li>
+                    <li><strong>Practical Examples:</strong> 50+ code examples, case studies, real interview questions</li>
+                    <li><strong>Strategic Prep:</strong> Behavioral examples, common mistakes, first 90 days planning</li>
+                </ul>
+                <p style="margin-top: 15px;"><strong>ProTip:</strong> Don't try to memorize everything. Focus on understanding concepts deeply, practice coding/SQL problems actively, and prepare 8-10 strong STAR stories that demonstrate your impact.</p>
+            </div>
+
+            <!-- Additional Quick Reference -->
+            <section id="quick-reference" class="section">
+                <h2>21. Quick Reference Cheat Sheet</h2>
+
+                <div class="topic-card">
+                    <h4>SQL Window Functions Syntax</h4>
+                    <div class="code-block">
+-- Basic window function template
+SELECT
+    column1,
+    column2,
+    WINDOW_FUNCTION() OVER (
+        [PARTITION BY partition_column]
+        [ORDER BY order_column]
+        [ROWS/RANGE BETWEEN ... AND ...]
+    ) AS result_column
+FROM table;
+
+-- Common window functions:
+ROW_NUMBER()  -- Unique sequential number
+RANK()        -- Rank with gaps for ties
+DENSE_RANK()  -- Rank without gaps
+LAG(col, n)   -- Previous nth row value
+LEAD(col, n)  -- Next nth row value
+FIRST_VALUE() -- First value in window
+LAST_VALUE()  -- Last value in window
+
+-- Frame specifications:
+ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW  -- Running total
+ROWS BETWEEN 6 PRECEDING AND CURRENT ROW          -- 7-day window
+ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING  -- Remaining rows</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Python Pandas Quick Reference</h4>
+                    <div class="code-block">
+# Data loading
+df = pd.read_csv('file.csv')
+df = pd.read_sql(query, connection)
+df = pd.read_parquet('file.parquet')
+
+# Exploration
+df.head(), df.tail(), df.sample(5)
+df.info(), df.describe()
+df.shape, df.columns, df.dtypes
+df.isnull().sum()
+df.value_counts()
+
+# Filtering
+df[df['col'] > 10]
+df[df['col'].isin([1, 2, 3])]
+df.query('col1 > 10 and col2 == "A"')
+
+# Aggregation
+df.groupby('col').agg({'val': ['sum', 'mean', 'count']})
+df.pivot_table(values='val', index='row', columns='col', aggfunc='mean')
+
+# Merging
+pd.merge(df1, df2, on='key', how='left')
+pd.concat([df1, df2], axis=0)  # Stack vertically
+
+# Window operations
+df['running_total'] = df.groupby('group')['value'].cumsum()
+df['pct_change'] = df['value'].pct_change()
+df['rolling_mean'] = df['value'].rolling(window=7).mean()
+
+# Apply functions
+df['new_col'] = df['col'].apply(lambda x: x * 2)
+df['category'] = df['value'].apply(lambda x: 'high' if x > 100 else 'low')</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Statistics Formulas Quick Reference</h4>
+                    <div class="code-block">
+# Confidence Interval (mean)
+CI = x̄ ± (z * σ/√n)
+where: z = 1.96 for 95% confidence
+
+# Sample Size (two proportions)
+n = (z_α + z_β)² * [p1(1-p1) + p2(1-p2)] / (p1 - p2)²
+
+# Standard Error
+SE = σ / √n
+
+# Z-score
+z = (x - μ) / σ
+
+# T-statistic (two-sample)
+t = (x̄1 - x̄2) / √(s1²/n1 + s2²/n2)
+
+# Chi-square test statistic
+χ² = Σ[(O - E)² / E]
+
+# Correlation
+r = Σ[(xi - x̄)(yi - ȳ)] / √[Σ(xi - x̄)² * Σ(yi - ȳ)²]
+
+# R-squared
+R² = 1 - (SS_res / SS_tot)</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>ML Model Selection Guide</h4>
+                    <div class="code-block">
+Problem Type → Algorithm Choice:
+
+CLASSIFICATION (Binary):
+├── Linear separable → Logistic Regression
+├── Non-linear, need interpretability → Decision Tree
+├── High accuracy needed → Random Forest, XGBoost
+├── Large dataset, many features → Neural Network
+└── Imbalanced classes → Random Forest with class weights, SMOTE
+
+CLASSIFICATION (Multi-class):
+├── Simple baseline → Multinomial Logistic Regression
+├── Complex patterns → Random Forest, XGBoost
+├── Text/images → Neural Networks (CNN, Transformers)
+└── Many classes (100+) → Hierarchical models
+
+REGRESSION:
+├── Linear relationship → Linear Regression
+├── Feature selection needed → Lasso (L1)
+├── Multicollinearity → Ridge (L2)
+├── Non-linear → Polynomial Regression, Decision Trees
+├── High accuracy → Random Forest, XGBoost
+└── Time series → ARIMA, Prophet, LSTM
+
+CLUSTERING:
+├── Known number of clusters → K-Means
+├── Density-based → DBSCAN
+├── Hierarchical structure → Hierarchical Clustering
+└── Mixed data types → K-Prototypes
+
+DIMENSIONALITY REDUCTION:
+├── Linear → PCA
+├── Non-linear → t-SNE, UMAP
+└── Supervised → LDA</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Interview Question Frameworks</h4>
+                    <div class="code-block">
+SQL PROBLEM FRAMEWORK:
+1. Clarify requirements (what's the desired output?)
+2. Identify tables and relationships
+3. Break problem into steps (CTEs)
+4. Write query incrementally
+5. Test with edge cases
+6. Optimize if needed (indexes, window functions vs subqueries)
+
+PYTHON PROBLEM FRAMEWORK:
+1. Clarify inputs/outputs and constraints
+2. Discuss approach at high level
+3. Consider edge cases
+4. Write code with clear variable names
+5. Test with examples
+6. Discuss time/space complexity
+
+CASE STUDY FRAMEWORK:
+1. Clarify the business context and goal
+2. Define success metrics
+3. Identify data needed
+4. Propose analysis approach
+5. Discuss potential findings and recommendations
+6. Consider implementation challenges
+
+BEHAVIORAL (STAR):
+1. Situation (2 sentences max - set context)
+2. Task (1 sentence - your specific responsibility)
+3. Action (3-4 specific actions YOU took)
+4. Result (quantified outcome + learning)</div>
+                </div>
+            </section>
+
+
+            <!-- Key Formulas & Concepts -->
+            <section id="formulas" class="section">
+                <h2>22. Essential Formulas & Concepts</h2>
+
+                <div class="topic-card">
+                    <h4>Business Metrics Calculations</h4>
+                    <div class="code-block">
+# Customer Acquisition Cost (CAC)
+CAC = Total Marketing & Sales Spend / Number of New Customers
+
+# Customer Lifetime Value (CLV)
+CLV = (Average Purchase Value × Purchase Frequency × Customer Lifespan) - CAC
+
+# Churn Rate
+Monthly Churn = (Customers Lost in Month / Customers at Start of Month) × 100
+
+# Net Revenue Retention (NRR)
+NRR = (Starting MRR + Expansion - Contraction - Churn) / Starting MRR × 100
+
+# Monthly Active Users (MAU)
+MAU = Count of unique users with activity in last 30 days
+
+# DAU/MAU Ratio (Stickiness)
+Stickiness = (DAU / MAU) × 100
+Target: >20% is good, >50% is excellent
+
+# Conversion Rate
+Conversion Rate = (Conversions / Total Visitors) × 100
+
+# Average Revenue Per User (ARPU)
+ARPU = Total Revenue / Number of Users
+
+# Payback Period
+Payback Period = CAC / (ARPU × Gross Margin %)</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Statistical Tests Decision Tree</h4>
+                    <div class="code-block">
+Choosing the Right Test:
+
+COMPARING MEANS:
+├── Two groups, continuous outcome
+│   ├── Normal distribution, equal variance → Independent t-test
+│   ├── Non-normal OR unequal variance → Welch's t-test
+│   └── Paired/matched data → Paired t-test
+├── Three+ groups → ANOVA (if normal) or Kruskal-Wallis (if not)
+└── Before/after single group → Paired t-test or Wilcoxon signed-rank
+
+COMPARING PROPORTIONS:
+├── Two proportions → Two-proportion z-test
+├── More than two proportions → Chi-square test
+└── Small sample (<30) → Fisher's exact test
+
+RELATIONSHIPS:
+├── Two continuous variables → Pearson correlation (linear) or Spearman (monotonic)
+├── Categorical × Categorical → Chi-square test of independence
+└── Predict continuous from predictors → Linear regression
+
+ASSUMPTIONS TO CHECK:
+├── Normality: Shapiro-Wilk test, Q-Q plot, histogram
+├── Equal variance: Levene's test, F-test
+├── Independence: Study design, no autocorrelation
+└── Sample size: Rule of thumb n ≥ 30 for CLT</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Time Complexity Examples</h4>
+                    <div class="code-block">
+# O(1) - Constant
+hash_map[key]  # Dictionary lookup
+array[index]   # Array access
+
+# O(log n) - Logarithmic
+binary_search(sorted_array, target)
+balanced_tree.search(value)
+
+# O(n) - Linear
+for item in list:
+    process(item)
+sum(array)
+linear_search(array, target)
+
+# O(n log n) - Linearithmic
+sorted(array)  # Timsort, Mergesort
+heapq.nlargest(k, array)  # when k ~= n
+
+# O(n²) - Quadratic
+for i in array:
+    for j in array:
+        compare(i, j)
+bubble_sort(array)
+
+# O(2^n) - Exponential (AVOID!)
+def fibonacci_recursive(n):  # Without memoization
+    if n <= 1: return n
+    return fibonacci_recursive(n-1) + fibonacci_recursive(n-2)
+
+# Optimization: Use memoization or dynamic programming
+@lru_cache(maxsize=None)
+def fibonacci_memoized(n):  # Now O(n)
+    if n <= 1: return n
+    return fibonacci_memoized(n-1) + fibonacci_memoized(n-2)</div>
+                </div>
+            </section>
+
+            <!-- Real Interview Questions from JPMorgan -->
+            <section id="real-questions" class="section">
+                <h2>23. Real JPMorgan Interview Questions</h2>
+
+                <div class="topic-card">
+                    <h4>Technical Round Questions (Glassdoor/Blind Compilation)</h4>
+                    <ul>
+                        <li><strong>SQL:</strong>
+                            <ul>
+                                <li>"Write a query to find the second highest salary in each department"</li>
+                                <li>"Calculate running total of transactions by customer, ordered by date"</li>
+                                <li>"Find customers who made purchases in all 12 months of the year"</li>
+                                <li>"Identify gaps in sequential transaction IDs"</li>
+                                <li>"Calculate month-over-month growth rate for each product"</li>
+                            </ul>
+                        </li>
+                        <li><strong>Python/Pandas:</strong>
+                            <ul>
+                                <li>"Given a DataFrame of transactions, find customers with declining spend over last 3 months"</li>
+                                <li>"Implement a function to detect outliers using IQR method"</li>
+                                <li>"Merge two datasets on approximate string matching (fuzzy matching)"</li>
+                                <li>"Calculate cohort retention rates from transaction data"</li>
+                            </ul>
+                        </li>
+                        <li><strong>Statistics:</strong>
+                            <ul>
+                                <li>"How would you detect if a coin is biased?"</li>
+                                <li>"Explain p-value to a non-technical stakeholder"</li>
+                                <li>"You run an A/B test and get p=0.051. What do you do?"</li>
+                                <li>"How do you determine sample size for an experiment?"</li>
+                            </ul>
+                        </li>
+                        <li><strong>Machine Learning:</strong>
+                            <ul>
+                                <li>"How would you build a model to predict credit card fraud?"</li>
+                                <li>"Explain the difference between precision and recall, and when each matters"</li>
+                                <li>"How do you handle imbalanced datasets?"</li>
+                                <li>"Walk me through your process for feature engineering"</li>
+                                <li>"How do you prevent overfitting?"</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Case Study Examples</h4>
+                    <ul>
+                        <li><strong>"Credit card approval rates dropped 15% last month. Investigate."</strong>
+                            <ul>
+                                <li>Framework: Segment by applicant type, product, channel, geography, time</li>
+                                <li>Check: Model changes, policy changes, data quality, external factors (economy, marketing)</li>
+                                <li>Action: Root cause analysis, quantify impact, recommend fixes</li>
+                            </ul>
+                        </li>
+                        <li><strong>"Design a dashboard for contact center operations leaders."</strong>
+                            <ul>
+                                <li>Stakeholders: Ops managers, team leads, executives</li>
+                                <li>Metrics: Volume, AHT, FCR, CSAT, agent utilization, SLA</li>
+                                <li>Features: Real-time view, trends, alerts, drill-downs by channel/reason/agent</li>
+                            </ul>
+                        </li>
+                        <li><strong>"Should we invest in a chatbot for customer service?"</strong>
+                            <ul>
+                                <li>Define success: Cost per interaction, CSAT, containment rate</li>
+                                <li>Estimate: Addressable call volume, cost savings, development cost</li>
+                                <li>ROI calculation: Savings vs investment, payback period</li>
+                                <li>Risks: CSAT decline, implementation challenges, adoption</li>
+                            </ul>
+                        </li>
+                        <li><strong>"Analyze mobile app ratings decline from 4.5 to 4.0."</strong>
+                            <ul>
+                                <li>Data: App store reviews, version history, support tickets, usage analytics</li>
+                                <li>Analysis: Text mining of reviews, correlation with app versions, platform differences</li>
+                                <li>Findings: Recent update (v3.2) introduced bugs for iOS 14 users</li>
+                                <li>Recommendation: Hotfix release, proactive communication, improved QA</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Behavioral Questions (JPM-Specific)</h4>
+                    <ul>
+                        <li>"Tell me about a time you had to work with incomplete data"</li>
+                        <li>"Describe a situation where your analysis changed a business decision"</li>
+                        <li>"How do you prioritize when you have multiple urgent requests?"</li>
+                        <li>"Tell me about a time you had to explain a technical concept to a non-technical audience"</li>
+                        <li>"Describe a project where you had to collaborate with engineering and product teams"</li>
+                        <li>"What do you know about JPMorgan Chase's consumer banking business?"</li>
+                        <li>"Why do you want to work in the ML & Intelligent Operations team specifically?"</li>
+                        <li>"How would you approach learning about a new business domain?"</li>
+                        <li>"Tell me about a time you identified an opportunity that others missed"</li>
+                        <li>"Describe your experience with Agile/Scrum methodology"</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Salary & Offer Negotiation -->
+            <section id="compensation" class="section">
+                <h2>24. Compensation & Offer Negotiation</h2>
+
+                <div class="topic-card">
+                    <h4>Market Rates (2024 - U.S.)</h4>
+                    <div class="code-block">
+Senior Quantitative Analytics Associate @ JPMorgan Chase:
+├── Base Salary: $110K - $145K
+├── Sign-on Bonus: $10K - $25K (common for external hires)
+├── Annual Bonus: 10-20% of base (performance-dependent)
+├── Total Cash Comp: $125K - $180K
+└── RSUs: Varies (typically for VP+ levels)
+
+Factors affecting compensation:
+- Location (NYC/SF higher than regional offices)
+- Years of experience (3-5 years vs 5-7 years)
+- Education (Master's/PhD premium)
+- Competing offers
+- Critical skills (ML expertise, domain knowledge)
+
+Benefits:
+✓ Health insurance (medical, dental, vision)
+✓ 401(k) with company match (up to 5%)
+✓ PTO: 15-20 days + holidays
+✓ Tuition reimbursement
+✓ Employee stock purchase plan (ESPP)
+✓ Wellness programs, gym discounts
+✓ Commuter benefits</div>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Negotiation Strategy</h4>
+                    <ul>
+                        <li><strong>Before Negotiating:</strong>
+                            <ul>
+                                <li>Research market rates (Glassdoor, Levels.fyi, Blind)</li>
+                                <li>Know your walk-away number</li>
+                                <li>Get competing offers if possible (leverage)</li>
+                                <li>Document your achievements and impact</li>
+                            </ul>
+                        </li>
+                        <li><strong>Initial Offer Response:</strong>
+                            <ul>
+                                <li>Always express enthusiasm first</li>
+                                <li>Ask for time to review (2-3 days is reasonable)</li>
+                                <li>Don't accept immediately (even if it's great)</li>
+                                <li>Review entire package, not just base salary</li>
+                            </ul>
+                        </li>
+                        <li><strong>Negotiation Tactics:</strong>
+                            <ul>
+                                <li>Start with base salary (most impactful long-term)</li>
+                                <li>Use data: "Based on market research for my experience level..."</li>
+                                <li>Anchor high but reasonable: Ask for 10-20% more than target</li>
+                                <li>If they can't move on base, ask for: sign-on bonus, earlier review, additional PTO</li>
+                                <li>Get everything in writing</li>
+                            </ul>
+                        </li>
+                        <li><strong>Example Script:</strong>
+                            <ul>
+                                <li>"I'm very excited about this opportunity and the MLIO team. The offered base of $125K is below market for my experience level and skills. Based on my research and the value I'll bring in ML/analytics, I'm looking for $140K base. Can we discuss?"</li>
+                            </ul>
+                        </li>
+                        <li><strong>Red Flags:</strong>
+                            <ul>
+                                <li>Unwillingness to negotiate at all</li>
+                                <li>Pressuring you to decide immediately</li>
+                                <li>Reneging on verbal commitments</li>
+                                <li>Vague answers about bonus/promotion timelines</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h4>Evaluating the Offer Holistically</h4>
+                    <ul>
+                        <li><strong>Beyond Compensation:</strong>
+                            <ul>
+                                <li>Career growth: Clear promotion path? Learning opportunities?</li>
+                                <li>Work-life balance: Expected hours? Flexibility? Remote policy?</li>
+                                <li>Team quality: Will you learn from smart colleagues?</li>
+                                <li>Manager: Do you respect them? Do they invest in team development?</li>
+                                <li>Impact: Will your work matter? Visibility to leadership?</li>
+                                <li>Company trajectory: Is JPM investing in this area?</li>
+                            </ul>
+                        </li>
+                        <li><strong>Questions to Ask:</strong>
+                            <ul>
+                                <li>"What does success look like in the first year?"</li>
+                                <li>"What's the typical promotion timeline?"</li>
+                                <li>"How does annual bonus determination work?"</li>
+                                <li>"What's the team's remote work policy?"</li>
+                                <li>"What learning & development budget exists?"</li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </section>
