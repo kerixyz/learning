@@ -5258,7 +5258,12 @@ the same two-pointer technique?"
             });
 
             // Show selected page
-            document.getElementById('page-' + pageId).classList.add('active');
+            const targetPage = document.getElementById('page-' + pageId);
+            if (!targetPage) {
+                console.error('Page not found:', 'page-' + pageId);
+                return;
+            }
+            targetPage.classList.add('active');
 
             // Update navigation
             document.querySelectorAll('.nav-link[data-page]').forEach(item => {
